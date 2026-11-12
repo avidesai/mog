@@ -35,13 +35,13 @@ CI (`.github/workflows/core.yml`) runs the Python tests on every push and `swift
 
 | Asset | Where | Status |
 |---|---|---|
-| Deterministic engines (scorer, planner, habit, denylist) — Python reference + tests | `mog-core/mogcore`, `tests/` | Green. `python -m pytest -q` |
-| Data tables with citations: 37 metrics, 30 rules, denylist, reference quantiles | `mog-core/data/*.json` | Reliability tiers PROVISIONAL until week-9 harness; `verify:true` citations need checking against papers |
-| Swift port `MogCore` (SwiftPM, iOS 18) + golden fixtures | `mog-core/swift/MogCore` | Written, **not compiled** (no toolchain here). First Xcode task: `swift test` |
-| Copy deck — every UI string, name-agnostic (`{app_name}`) | `mog-core/copy/strings.json`, `voice.md` | Scanned against denylist in CI |
-| Legal drafts: biometric retention/destruction policy, privacy policy, terms | `mog-core/legal/` | Drafts for counsel; must be hosted before first capture |
-| App Store listing, screenshots order, privacy labels, App Review notes (TrueDepth) | `mog-core/appstore/` | Draft |
-| 12-week build plan with done-criteria, spend tracker, cut list | `mog-core/plan/build-plan.md` | Starts Mon 17 Nov if you say go |
+| Deterministic engines (scorer, planner, habit, denylist) — Python reference, 65 tests | `core/mogcore`, `core/tests` | Green. `python -m pytest -q` |
+| Data tables with citations: 36 metrics, 30 rules, denylist, reference quantiles | `core/data/*.json` | Reliability tiers PROVISIONAL until week-9 harness; `verify:true` citations need checking against papers |
+| Swift port `MogCore` (SwiftPM, iOS 18) + golden fixtures | `core/swift/MogCore` | Written, **not compiled** (no toolchain here). First Xcode task: `swift test` |
+| Copy deck — every UI string, name-agnostic (`{app_name}`) | `core/copy/` | Scanned against denylist in CI |
+| Legal drafts: biometric retention/destruction policy, privacy policy, terms | `core/legal/` | Drafts for counsel; must be hosted before first capture |
+| App Store listing, screenshots order, privacy labels, App Review notes (TrueDepth) | `core/appstore/` | Draft |
+| 12-week build plan with done-criteria, spend tracker, cut list | `core/plan/build-plan.md` | Starts Mon 17 Nov if you say go |
 
 Snapshots in this Project: `mog-foundation-research.md`, `mog-engineering-design-doc.md`, `mog-design-language-bible.md`.
 
@@ -57,7 +57,7 @@ Snapshots in this Project: `mog-foundation-research.md`, `mog-engineering-design
 - App name.
 - Profile capture: v1 or v1.1.
 
-## Next steps (in order) — see `mog-core/plan/build-plan.md` for the week-by-week
+## Next steps (in order) — see `core/plan/build-plan.md` for the week-by-week
 1. **Week 1 (17–23 Nov):** pay the $99; Xcode project; ARKit + MediaPipe landmark dump; capture yourself 10× over 3 sessions; compute per-metric CV. Go/no-go on the thesis.
 2. **Week 2:** profile spike (go/no-go on profile in v1); compile `MogCore`, pass fixtures.
 3. Weeks 3–8: capture gates → metrics → results/paywall → habit layer → backend/consent/deletion → phrasing.

@@ -7,7 +7,7 @@ the same JSON and must pass the same fixtures.
 
 ```
 data/
-  metrics.json             ~37 metrics: definition, reference (mean, sd) per sex with citation,
+  metrics.json             ~36 metrics: definition, reference (mean, sd) per sex with citation,
                            direction, evidence grade, provisional reliability tier, confidence floor
   references.json          every citation; `verify: true` = re-check the figure against the paper
   rules.json               30 human-authored rules with safety tiers, triggers, excludes, static copy
