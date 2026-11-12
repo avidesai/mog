@@ -1076,7 +1076,7 @@
       "reliability_tier": "B",
       "confidence_floor": 0.7,
       "plain": "How even your skin tone and texture are.",
-      "note": "Fink, Grammer & Matts 2006 and related work: skin colour homogeneity is among the stronger, fastest-changing predictors of rated attractiveness. Requires the stricter skin lighting gate.",
+      "note": "Fink, Grammer & Matts 2006 and related work: skin colour homogeneity is among the stronger, fastest-changing predictors of rated attractiveness. Requires the stricter skin lighting gate. v1 source: core/appearance/skin.py — illumination-normalised texture + chroma spread inside a cheek/forehead mask; a spread, not a level, so no skin-tone preference by construction. Residual ≈0.05 luma dependence documented; measured in the week-9 fairness smoke.",
       "modifiable": true
     },
     {
@@ -1108,7 +1108,7 @@
       "reliability_tier": "B",
       "confidence_floor": 0.7,
       "plain": "How much soft tissue sits over your facial structure.",
-      "note": "Coetzee et al. 2009 and Re & Rule: perceived facial adiposity is a reliable predictor of rated attractiveness and health. Lower-better is applied only down to the reference mean minus 1 SD; below that the term is flat, so the engine never rewards very low adiposity.",
+      "note": "Coetzee et al. 2009 and Re & Rule: perceived facial adiposity is a reliable predictor of rated attractiveness and health. Lower-better is applied only down to the reference mean minus 1 SD; below that the term is flat, so the engine never rewards very low adiposity. v1 source: core/appearance/adiposity.py — geometric proxy from the mesh (lower-face width, cheek fullness, submental bulge). Labelled as a proxy in the metric card.",
       "modifiable": true
     },
     {

@@ -86,3 +86,7 @@ Methodology screen should say so if asked.
   plan is done, never scans.
 - Every strong-evidence rule must cite at least one clinical reference.
 - All copy is scanned against the denylist in CI. Fix the copy, not the list.
+
+## Appearance heads — cheap path (`appearance/`)
+
+`skin.py` and `adiposity.py` are the zero-training versions of the two appearance metrics, with tests in `tests/test_appearance.py` (clean vs blotchy, lighting-gradient invariance, tone invariance within the luma gate, geometry monotonicity). The Swift port is `ios/Mog/Geometry/Appearance.swift` and is wired into the capture pipeline. Both are proxies and say so; the week-9 harness tunes their constants against the reference ranges.

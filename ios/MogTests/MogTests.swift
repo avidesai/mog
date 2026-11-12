@@ -29,18 +29,18 @@ final class GateTests: XCTestCase {
     func testAngleGate() {
         let ev = GateEvaluator()
         let good = FaceFrame(timestamp: 0, vertices: [], pose: .init(yaw: 1, pitch: -1, roll: 0.5, distance: 0.55), blendShapes: [:],
-                             luma: LumaStats(mean: 0.5, leftMean: 0.5, rightMean: 0.5, clippedFraction: 0, sharpness: 0.01))
+                             luma: LumaStats(mean: 0.5, leftMean: 0.5, rightMean: 0.5, clippedFraction: 0, sharpness: 0.01), skin: nil)
         XCTAssertTrue(ev.evaluate(good).allPass)
-        let yawed = FaceFrame(timestamp: 0, vertices: [], pose: .init(yaw: 6, pitch: 0, roll: 0, distance: 0.55), blendShapes: [:], luma: good.luma)
+        let yawed = FaceFrame(timestamp: 0, vertices: [], pose: .init(yaw: 6, pitch: 0, roll: 0, distance: 0.55), blendShapes: [:], luma: good.luma, skin: nil)
         XCTAssertFalse(ev.evaluate(yawed).angle)
         XCTAssertEqual(ev.evaluate(yawed).hintKey, "capture.hint_yaw")
-        let close = FaceFrame(timestamp: 0, vertices: [], pose: .init(yaw: 0, pitch: 0, roll: 0, distance: 0.30), blendShapes: [:], luma: good.luma)
+        let close = FaceFrame(timestamp: 0, vertices: [], pose: .init(yaw: 0, pitch: 0, roll: 0, distance: 0.30), blendShapes: [:], luma: good.luma, skin: nil)
         XCTAssertEqual(ev.evaluate(close).hintKey, "capture.hint_further")
     }
     func testExpressionGate() {
         let ev = GateEvaluator()
         let smiling = FaceFrame(timestamp: 0, vertices: [], pose: .init(yaw: 0, pitch: 0, roll: 0, distance: 0.55), blendShapes: [.mouthSmileLeft: 0.6],
-                                luma: LumaStats(mean: 0.5, leftMean: 0.5, rightMean: 0.5, clippedFraction: 0, sharpness: 0.01))
+                                luma: LumaStats(mean: 0.5, leftMean: 0.5, rightMean: 0.5, clippedFraction: 0, sharpness: 0.01), skin: nil)
         XCTAssertFalse(ev.evaluate(smiling).expression)
     }
 }

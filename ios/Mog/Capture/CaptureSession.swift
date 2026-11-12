@@ -14,6 +14,8 @@ struct FaceFrame {
     let pose: Pose
     let blendShapes: [ARFaceAnchor.BlendShapeLocation: Float]
     let luma: LumaStats
+    /// Skin evenness statistics, computed only on frames that are being collected (it is the costliest per-frame step).
+    let skin: SkinEvenness.Stats?
 
     struct Pose { let yaw: Double; let pitch: Double; let roll: Double; let distance: Double }
 }
@@ -65,8 +67,11 @@ final class CaptureSession: NSObject, ObservableObject, ARSessionDelegate {
         }
         let pose = Self.pose(of: face, camera: frame.camera)
         let luma = LumaStats.compute(from: frame.capturedImage, face: face, camera: frame.camera)
+        var collecting = false
+        if case .capturing = phase { collecting = true }
+        let skin = collecting ? SkinEvenness.compute(pixelBuffer: frame.capturedImage, face: face, camera: frame.camera) : nil
         let ff = FaceFrame(timestamp: frame.timestamp, vertices: face.geometry.vertices, pose: pose,
-                           blendShapes: face.blendShapes.reduce(into: [:]) { $0[$1.key] = $1.value.floatValue }, luma: luma)
+                           blendShapes: face.blendShapes.reduce(into: [:]) { $0[$1.key] = $1.value.floatValue }, luma: luma, skin: skin)
         let report = gateEvaluator.evaluate(ff)
         gates = report
         hint = report.hint
