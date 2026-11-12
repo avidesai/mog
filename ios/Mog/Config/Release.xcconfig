@@ -1,0 +1,2 @@
+#include? "Secrets.xcconfig"
+APP_DISPLAY_NAME = Mog
