@@ -5,6 +5,7 @@ import MogCore
 /// plain explanation. The capture overlay is a placeholder until overlays are drawn from stored
 /// landmark subsets (week 5 decision — see build plan).
 struct MetricDetailView: View {
+    @Environment(AppModel.self) private var app
     @Environment(\.dismiss) private var dismiss
     let m: MetricResult
 
@@ -32,7 +33,7 @@ struct MetricDetailView: View {
                             }
                             if m.display != .category {
                                 RangeTrack(value: v, low: nil, high: nil, refMean: m.refMean, refSD: m.refSD)
-                                Text(Copy.f("common.typical_range", ["sex_plural": "s", "ref_low": MetricFormat.value(m.refMean - m.refSD, unit: m.metric.unit), "ref_high": MetricFormat.value(m.refMean + m.refSD, unit: m.metric.unit)]))
+                                Text(Copy.f("common.typical_range", ["sex_plural": Copy.s(app.profile.sex == .male ? "common.sex_plural_male" : "common.sex_plural_female"), "ref_low": MetricFormat.value(m.refMean - m.refSD, unit: m.metric.unit), "ref_high": MetricFormat.value(m.refMean + m.refSD, unit: m.metric.unit)]))
                                     .style(TypeStyle.detail, color: Tokens.Colors.ink500)
                             }
                             Divider().overlay(Tokens.Colors.line200)

@@ -50,7 +50,11 @@ struct CaptureView: View {
                 Spacer()
             }
         }
-        .onAppear { start() }
+        .onAppear {
+            // A capture outside a scan window is a re-scan attempt (feeds the distress thresholds; never blocks).
+            if let h = app.habit, h.scanWindowOpen(today: LocalDay.today()) == nil { Store.counters().rescanAttempts += 1 }
+            start()
+        }
         .onDisappear { cap.stop() }
         .onChange(of: cap.phase) { _, p in
             if case .aborted(let gate) = p, !gate.isEmpty { app.analytics.track(.captureAborted(gate: gate)) }
@@ -88,21 +92,20 @@ struct CaptureView: View {
     private func start() {
         guard CaptureSession.isSupported else { return }
         cap.start { frames in
-            // Runs on the AR session's thread. Compute here, then hop to main for state + persistence.
+            // ARSession's delegateQueue is nil → this arrives on the main queue. The geometry pass over
+            // 10 frames takes a few ms. `frames` is released when the closure returns; nothing is written anywhere.
             let readings = GeometryPipeline.readings(from: frames, beardPresence: 0, hairlineStage: 1)
-            // `frames` is released when this closure returns; nothing was written anywhere.
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 processing = true
                 app.analytics.track(.captureCompleted(pose: "frontal"))
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {   // let the processing steps read
-                    do {
-                        let r = try app.commit(readings: readings, profileCaptured: false)
-                        result = r
-                        onScored?(r)
-                    } catch {
-                        cap.stop()
-                        processing = false
-                    }
+                try? await Task.sleep(for: .milliseconds(900))   // let the processing steps read
+                do {
+                    let r = try app.commit(readings: readings, profileCaptured: false)
+                    result = r
+                    onScored?(r)
+                } catch {
+                    cap.stop()
+                    processing = false
                 }
             }
         }

@@ -130,6 +130,12 @@ class HabitEngine:
         self.s.completions.get(local_date, set()).discard(task_id)
         return self.day_status(local_date)
 
+    def uncomplete_everywhere(self, task_id: str) -> None:
+        """Remove every completion of a task (one-off tasks are either done or not).
+        Streak and banking are not rolled back, same as uncomplete_task."""
+        for ids in self.s.completions.values():
+            ids.discard(task_id)
+
     def _on_day_complete(self, local_date: str) -> None:
         last = self.s.last_complete_date
         if last is None:

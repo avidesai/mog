@@ -138,7 +138,7 @@ struct TaskRow: View {
             }.buttonStyle(.plain).disabled(locked)
             Button(action: onOpen) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(title).style(TypeStyle.rowTitle, color: locked ? Tokens.Colors.ink500 : Tokens.Colors.ink900).strikethrough(done, color: Tokens.Colors.ink300)
+                    Text(title).strikethrough(done, color: Tokens.Colors.ink300).style(TypeStyle.rowTitle, color: locked ? Tokens.Colors.ink500 : Tokens.Colors.ink900)
                     if let subtitle { Text(subtitle).style(TypeStyle.detail, color: Tokens.Colors.ink500) }
                 }
                 Spacer(minLength: 0)

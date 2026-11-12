@@ -2,7 +2,7 @@
 
 Rules-only scorer, habit layer in v1, profile capture pending spike 2. Budget $300–400. Dates assume a start on **Mon 17 Nov 2026**; shift everything if the start moves. Each week has a definition of done; if a week's done-criterion isn't met, the next week doesn't start — scope gets cut instead.
 
-**What's already built (this repo):** data tables with citations, deterministic scorer + planner + habit engine with 64 tests and golden fixtures, full copy deck, legal drafts, App Store listing and review notes, design system v7 and 28 screens. The iOS work below is porting and wiring, not inventing.
+**What's already built (this repo):** data tables with citations, deterministic scorer + planner + habit engine with a test suite and golden fixtures, full copy deck, legal drafts, App Store listing and review notes, design system v7 and 28 screens. The iOS work below is porting and wiring, not inventing.
 
 | Wk | Dates | Focus | Done when |
 |---|---|---|---|

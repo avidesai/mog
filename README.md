@@ -3,7 +3,7 @@
 iPhone-first facial-harmony measurement app for the looksmaxxing audience. Working name. Guided capture → on-device geometry → deterministic score against published norms, with a stated band → evidence-graded plan → one habit loop (streak, eight-week path, scans at weeks 4 and 8).
 
 ```
-core/      deterministic engines — Python reference (65 tests) + Swift port (MogCore), shared JSON tables,
+core/      deterministic engines — Python reference (test suite in core/tests) + Swift port (MogCore), shared JSON tables,
            copy deck, legal drafts, App Store assets, 12-week build plan
 ios/       the app: SwiftUI, iOS 18, ARKit + MediaPipe capture, depends on core/swift/MogCore
 design/    design system (tokens, components, brand book) and the 28 v1 artboards as HTML

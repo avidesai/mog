@@ -20,7 +20,7 @@ mogcore/
   habit.py      day completion, streak, one repair/month, week banking, scan windows, distress card
   denylist.py   the tier-X scanner
   cli.py        python -m mogcore.cli {score|plan|check|catalog}
-tests/          61 tests, including the authoring gates
+tests/          the suite, including the authoring gates (run: python -m pytest -q)
 fixtures/       scoring_cases.json — golden cases the Swift port must reproduce
 tools/          build_reference.py, make_fixtures.py
 ```

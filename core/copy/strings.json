@@ -32,13 +32,15 @@
     "likely_band": "likely {low}–{high}",
     "measured_locked": "{metric} · measured, locked",
     "typical_range": "Typical range for adult {sex_plural}, {ref_low}–{ref_high}",
-    "suppressed_low_confidence": "Not measured on this capture — the landmarks here weren't confident enough. A retake in brighter, even light usually fixes it.",
+    "suppressed_low_confidence": "Not measured on this capture — the landmarks here weren't confident enough. A retake in brighter, even light usually resolves it.",
     "suppressed_occluded": "Not measured — something was covering this area. Hair, glasses or a hand will do it.",
     "suppressed_pose_missing": "Needs a profile capture.",
     "suppressed_not_shipped": "This measurement didn't meet our reliability bar, so we don't show it.",
     "category_low": "below typical",
     "category_typical": "typical",
-    "category_high": "above typical"
+    "category_high": "above typical",
+    "sex_plural_male": "men",
+    "sex_plural_female": "women"
   },
   "onboarding": {
     "start_title": "Measured, not guessed.",
@@ -54,7 +56,7 @@
     "goal_hair": "Better hair and hairline",
     "goal_eye_area": "A fresher eye area",
     "goal_better_photos": "Looking better in photos",
-    "goal_general": "Just see where I stand",
+    "goal_general": "See where I stand",
     "about_title": "Two things the reference ranges depend on",
     "about_body": "Published facial norms are reported by sex and by age. These are the only two things we ask, and they only select which reference table you're compared against.",
     "about_sex_label": "Reference table",

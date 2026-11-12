@@ -17,12 +17,12 @@ enum SkinEvenness {
     static func compute(pixelBuffer: CVPixelBuffer, face: ARFaceAnchor, camera: ARCamera) -> Stats? {
         guard CVPixelBufferGetPlaneCount(pixelBuffer) >= 2 else { return nil }
         let w = CVPixelBufferGetWidth(pixelBuffer), h = CVPixelBufferGetHeight(pixelBuffer)
-        // Face bounding box in buffer coordinates (same transform as LumaStats).
+        // Buffer coordinates directly (see LumaStats: landscape-right + buffer size = identity transform).
         let size = CGSize(width: w, height: h)
         func project(_ p: SIMD3<Float>) -> (Int, Int) {
             let wp = face.transform * SIMD4<Float>(p, 1)
-            let q = camera.projectPoint(SIMD3(wp.x, wp.y, wp.z), orientation: .portrait, viewportSize: size)
-            return (max(0, min(w - 1, Int(q.y))), max(0, min(h - 1, w - 1 - Int(q.x))))   // (bx, by) in landscape buffer
+            let q = camera.projectPoint(SIMD3(wp.x, wp.y, wp.z), orientation: .landscapeRight, viewportSize: size)
+            return (max(0, min(w - 1, Int(q.x))), max(0, min(h - 1, Int(q.y))))
         }
         let v = face.geometry.vertices
         guard v.count > 100 else { return nil }

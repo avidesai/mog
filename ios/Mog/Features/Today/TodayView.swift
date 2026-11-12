@@ -10,6 +10,7 @@ struct TodayView: View {
     @State private var showDayComplete = false
     @State private var showStreakSave = false
     @State private var showDistress = false
+    @State private var pendingToggle: PlanTask?   // a tap parked behind the streak-save decision
     @State private var tick = 0   // bump to re-render after engine mutations
 
     private var today: String { LocalDay.today() }
@@ -27,6 +28,7 @@ struct TodayView: View {
         .sheet(isPresented: $showDayComplete) { DayCompleteView(days: app.habit?.s.currentDays ?? 0) }
         .sheet(isPresented: $showStreakSave) { StreakSaveView(available: app.habit?.repairAvailable(today: today) ?? false) { useRepair in
             if useRepair, let h = app.habit, h.useRepair(today: today) { Store.save(habit: h.s); app.analytics.track(.repairUsed) }
+            if let t = pendingToggle { pendingToggle = nil; performToggle(t) }
             tick += 1
         } }
         .onAppear { checkTriggers() }
@@ -132,13 +134,32 @@ struct TodayView: View {
 
     // MARK: actions
 
+    /// The streak-save decision must come BEFORE the completion that would otherwise restart the
+    /// streak (completing the day moves last_complete_date to today, after which a repair has
+    /// nothing to bridge). So: if this tap would complete the day and the streak is at risk, park
+    /// the tap, ask, then apply.
     private func toggle(_ t: PlanTask) {
         guard let h = app.habit else { return }
+        let status = h.dayStatus(today)
+        let alreadyDoneToday = status.dailyDone.contains(t.id) || (h.s.completions[today]?.contains(t.id) ?? false)
+        let wouldCompleteDay = !status.complete && t.cadence == .daily && !alreadyDoneToday
+            && status.dailyDue.allSatisfy { $0 == t.id || status.dailyDone.contains($0) }
+        if wouldCompleteDay && h.streakAtRisk(today: today) {
+            pendingToggle = t
+            showStreakSave = true
+            return
+        }
+        performToggle(t)
+    }
+
+    private func performToggle(_ t: PlanTask) {
+        guard let h = app.habit else { return }
         let wasComplete = h.dayStatus(today).complete
-        let done = h.s.completions[today]?.contains(t.id) ?? false
-        if done { h.uncompleteTask(t.id, on: today) }
+        let doneToday = h.s.completions[today]?.contains(t.id) ?? false
+        let doneEver = h.s.completions.values.contains { $0.contains(t.id) }
+        if doneToday { h.uncompleteTask(t.id, on: today) }
+        else if t.cadence == .once && doneEver { h.uncompleteEverywhere(t.id) }   // a one-off is either done or not
         else {
-            if h.streakAtRisk(today: today) && !wasComplete { showStreakSave = true }
             _ = try? h.completeTask(t.id, on: today)
             app.analytics.track(.taskCompleted(rule: t.ruleId))
         }

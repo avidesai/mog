@@ -18,11 +18,13 @@ struct LumaStats {
     static func compute(from pixelBuffer: CVPixelBuffer, face: ARFaceAnchor, camera: ARCamera) -> LumaStats {
         guard CVPixelBufferGetPlaneCount(pixelBuffer) >= 1 else { return .zero }
         let w = CVPixelBufferGetWidth(pixelBuffer), h = CVPixelBufferGetHeight(pixelBuffer)
-        // Project the face anchor origin and a few mesh extremes to get a bounding box in image space.
+        // Project a subsample of mesh vertices to get the face's bounding box in BUFFER coordinates.
+        // capturedImage is in the sensor's native landscape-right orientation, so projecting with
+        // .landscapeRight and the buffer's own size yields pixel coordinates directly — no axis swap.
         let size = CGSize(width: w, height: h)
         func project(_ p: SIMD3<Float>) -> CGPoint {
             let world = face.transform * SIMD4<Float>(p, 1)
-            return camera.projectPoint(SIMD3(world.x, world.y, world.z), orientation: .portrait, viewportSize: size)
+            return camera.projectPoint(SIMD3(world.x, world.y, world.z), orientation: .landscapeRight, viewportSize: size)
         }
         let verts = face.geometry.vertices
         guard !verts.isEmpty else { return .zero }
@@ -30,8 +32,7 @@ struct LumaStats {
         for i in stride(from: 0, to: verts.count, by: 40) {
             let q = project(verts[i]); minX = min(minX, q.x); maxX = max(maxX, q.x); minY = min(minY, q.y); maxY = max(maxY, q.y)
         }
-        // projectPoint gives portrait-oriented coordinates; the buffer is landscape. Swap axes.
-        let x0 = max(0, Int(minY)), x1 = min(w - 1, Int(maxY)), y0 = max(0, Int(w - 1 - Int(maxX))), y1 = min(h - 1, Int(w - 1 - Int(minX)))
+        let x0 = max(0, Int(minX)), x1 = min(w - 1, Int(maxX)), y0 = max(0, Int(minY)), y1 = min(h - 1, Int(maxY))
         guard x1 > x0 + 8, y1 > y0 + 8 else { return .zero }
 
         CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
@@ -43,7 +44,9 @@ struct LumaStats {
         let step = max(1, (x1 - x0) / 64)
         var sum = 0.0, sumL = 0.0, sumR = 0.0, n = 0.0, nL = 0.0, nR = 0.0, clipped = 0.0
         var lapSum = 0.0, lapSq = 0.0, lapN = 0.0
-        let midY = (y0 + y1) / 2   // left/right halves of the face run along the buffer's y axis in portrait
+        // With the phone held upright, the buffer's x axis runs along the face's vertical axis and
+        // its y axis across the face — so left/right halves split on y.
+        let midY = (y0 + y1) / 2
         var y = y0 + step
         while y < y1 - step {
             var x = x0 + step

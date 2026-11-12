@@ -125,6 +125,12 @@ public final class HabitEngine {
         return dayStatus(localDate)
     }
 
+    /// Remove every completion of a task (used for one-off tasks, which are either done or not).
+    /// Streak and banking are not rolled back, same as uncompleteTask.
+    public func uncompleteEverywhere(_ taskId: String) {
+        for k in s.completions.keys { s.completions[k]?.remove(taskId) }
+    }
+
     private func onDayComplete(_ localDate: String) {
         if let last = s.lastCompleteDate {
             let gap = LocalDate.diff(localDate, last)

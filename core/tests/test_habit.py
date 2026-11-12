@@ -205,3 +205,23 @@ def test_timezone_change_does_not_break_streak():
     complete_day(e, day(1))
     complete_day(e, day(2))
     assert e.s.current_days == 2
+
+
+def test_uncomplete_everywhere_for_once_tasks():
+    e = eng()
+    e.complete_task("haircut", day(1))
+    e.complete_task("haircut", day(3))
+    e.uncomplete_everywhere("haircut")
+    assert not any("haircut" in ids for ids in e.s.completions.values())
+
+
+def test_streak_save_decision_must_precede_completion():
+    """Documents the ordering the UI must respect: once the day completes, a repair has nothing to bridge."""
+    e = eng()
+    complete_day(e, day(1)); complete_day(e, day(2))
+    # miss day 3; on day 4 the UI must call use_repair BEFORE completing the day
+    assert e.streak_at_risk(day(4))
+    complete_day(e, day(4))
+    assert not e.streak_at_risk(day(4))
+    assert not e.use_repair(day(4))
+    assert e.s.current_days == 1

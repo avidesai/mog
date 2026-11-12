@@ -1,4 +1,4 @@
-# Mog — project index (as of 11 Nov 2026, evening)
+# Mog — project index (as of 12 Nov 2026)
 
 Working name: **Mog** (open question — collisions with Mogged / MogMax and tension with the no-comparative-language voice rule).
 
@@ -12,11 +12,30 @@ Working name: **Mog** (open question — collisions with Mogged / MogMax and ten
 | **Gamified Direction canvas — the chosen v1 screen set (28 artboards)** | https://claude.ai/artifact/SkhqbXsYoAxQNjT2wJJE19 | v27 — canonical |
 | Original "v1 Screens" canvas (instrument direction, bronze) | https://claude.ai/artifact/RU2rRYx5hzZ9a3xHTbGQ9k | superseded, kept for reference |
 
-## Code and launch assets — `mog-core` (zip attached in chat; also in this Project as docs)
+## The repo — `mog` (monorepo, 5 commits, ready to push to github.com/avidesai/mog)
+
+```
+core/     engines + data + copy + legal + appstore + plan + appearance heads (73 tests)
+ios/      SwiftUI app (XcodeGen), not yet compiled
+backend/  Supabase schema, RLS, delete_everything() — verified on PostgreSQL 16, CI job
+site/     policies site builder (versioned URLs) + GitHub Pages workflow
+design/   design system + 28 artboards as HTML      docs/  eng doc, bible, research, this index
+```
+Push: create an empty private repo `avidesai/mog` on GitHub, then from the unzipped repo folder
+`git remote add origin git@github.com:avidesai/mog.git && git push -u origin main` (or `git clone mog.bundle mog`).
+CI (`.github/workflows/core.yml`) runs the Python tests on every push and `swift test` on macOS.
+
+**Done since the first push-ready state (12 Nov, early):** backend schema with the deletion test the eng doc demanded (passes for real); policies site ready to host the moment a domain exists; skin-evenness and adiposity proxies prototyped in Python with lighting/tone-invariance tests and ported to Swift (spike 5's cheap path, done before the spike).
+
+**iOS status:** every v1 screen, the capture gates, the mesh-geometry metric layer, persistence, the habit loop and the spike tools are written. The first Xcode build will surface compiler nits (no toolchain here). Week 1 = `xcodegen generate`, build, run Settings › Debug › Vertex picker and Landmark dump on your own face, then `python core/tools/cv_analysis.py captures/`.
+
+**Hypothesis worth testing in the same spike:** the ARKit mesh is 3D and pose-normalised, so profile angles are computed from the *frontal* capture's midline. If their reliability holds, the separate profile capture (spike 2, the plan's biggest unknown) may be unnecessary.
+
+## Code and launch assets — `core/` (also in this Project as docs)
 
 | Asset | Where | Status |
 |---|---|---|
-| Deterministic engines (scorer, planner, habit, denylist) — Python reference, 65 tests | `mog-core/mogcore`, `tests/` | Green. `python -m pytest -q` |
+| Deterministic engines (scorer, planner, habit, denylist) — Python reference + tests | `mog-core/mogcore`, `tests/` | Green. `python -m pytest -q` |
 | Data tables with citations: 37 metrics, 30 rules, denylist, reference quantiles | `mog-core/data/*.json` | Reliability tiers PROVISIONAL until week-9 harness; `verify:true` citations need checking against papers |
 | Swift port `MogCore` (SwiftPM, iOS 18) + golden fixtures | `mog-core/swift/MogCore` | Written, **not compiled** (no toolchain here). First Xcode task: `swift test` |
 | Copy deck — every UI string, name-agnostic (`{app_name}`) | `mog-core/copy/strings.json`, `voice.md` | Scanned against denylist in CI |
