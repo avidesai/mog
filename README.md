@@ -5,10 +5,12 @@ iPhone-first facial-harmony measurement app for the looksmaxxing audience. Worki
 ```
 core/      deterministic engines — Python reference (test suite in core/tests) + Swift port (MogCore), shared JSON tables,
            copy deck, legal drafts, App Store assets, 12-week build plan
-ios/       the app: SwiftUI, iOS 18, ARKit + MediaPipe capture, depends on core/swift/MogCore
+ios/       the app: SwiftUI, iOS 18, ARKit mesh capture, depends on core/swift/MogCore
+backend/   Supabase schema, RLS, tested delete_everything(); Edge Functions
+site/      public policies site (versioned URLs), GitHub Pages workflow
 design/    design system (tokens, components, brand book) and the 28 v1 artboards as HTML
 docs/      engineering design doc, design-language bible, foundation research, project index
-tools/     spike analysis (landmark dumps → per-metric CV)
+tools/     token generator; spike analysis lives in core/tools/cv_analysis.py
 ```
 
 ## Start here
