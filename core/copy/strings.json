@@ -166,13 +166,15 @@
     "reference": "Reference",
     "reading": "Reading",
     "evidence": "Evidence",
-    "overlay_hint": "Long-press the capture to hide the geometry",
+    "overlay_hint": "Long-press to hide the geometry",
     "reliability_A": "Measured to within 2% across sessions",
     "reliability_B": "Measured to within 5% across sessions, shown as a range",
     "reliability_C": "Shown as a category — not precise enough for a number",
     "fwhr_explainer": "The community treats a higher ratio as desirable. A 2015 meta-analysis across fourteen samples found the opposite association with rated attractiveness. We show it because you expect it; it carries no weight in the score.",
     "community_explainer": "No clinical norm exists for this. The reference range is the community's convention, and the score weight is capped near zero.",
-    "beard_note": "Facial hair reduces how precisely the jaw and chin can be located. This reading is shown with wider uncertainty."
+    "beard_note": "Facial hair reduces how precisely the jaw and chin can be located. This reading is shown with wider uncertainty.",
+    "schematic_note": "Schematic face. Your numbers, not your photo.",
+    "geometry_note": "Your measured geometry from this capture. Not stored."
   },
   "paywall": {
     "title": "Pro",

@@ -53,7 +53,7 @@ Services/       UserProfile (UserDefaults), Store (SwiftData, complete file prot
 | 24 frontal + profile-from-mesh metrics via heuristics / picked indices | Facial thirds (need trichion), cervicomental, gonial, ramus, forehead slope — need appearance layer or profile capture |
 | Free/Pro gating of result rows; compliant paywall layout | RevenueCat + Superwall (5); `PurchasesStub` until then |
 | Today / task detail / day complete / streak save / distress card, all driven by `HabitEngine` | — |
-| Plan (now / later / info / professional), Path, Progress with noise-aware deltas | Overlays on the capture (5) |
+| Plan (now / later / info / professional), Path, Progress with noise-aware deltas; measurement overlays drawn on the user's own mesh projection in-session and on a labelled schematic afterwards (nothing geometric persisted — see `Features/Results/Overlay.swift`) | Photo backdrop under the in-session overlay (5; the geometry is the user's, the photo is cosmetic) |
 | Settings incl. Delete everything (local wipe) | Supabase sync + server-side deletion + Sign in with Apple (7); appearance heads skin/adiposity (spike 5); LLM phrasing (8) |
 | Analytics allowlist | PostHog transport (7) |
 

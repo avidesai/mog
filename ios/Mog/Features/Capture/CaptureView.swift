@@ -95,7 +95,9 @@ struct CaptureView: View {
             // ARSession's delegateQueue is nil → this arrives on the main queue. The geometry pass over
             // 10 frames takes a few ms. `frames` is released when the closure returns; nothing is written anywhere.
             let readings = GeometryPipeline.readings(from: frames, beardPresence: 0, hairlineStage: 1)
+            let still = frames.last.map { SessionStill.make(from: $0, points: GeometryPipeline.landmarker.points(from: $0.vertices)) }
             Task { @MainActor in
+                app.sessionStill = still
                 processing = true
                 app.analytics.track(.captureCompleted(pose: "frontal"))
                 try? await Task.sleep(for: .milliseconds(900))   // let the processing steps read

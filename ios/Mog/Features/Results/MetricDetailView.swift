@@ -2,8 +2,8 @@ import SwiftUI
 import MogCore
 
 /// One measurement: value, reference range on a track, reading, reliability, evidence, and the
-/// plain explanation. The capture overlay is a placeholder until overlays are drawn from stored
-/// landmark subsets (week 5 decision — see build plan).
+/// plain explanation. The overlay draws the measured geometry on the user's own mesh projection in the
+/// capture session, and on a labelled schematic afterwards — see Overlay.swift for the privacy decision.
 struct MetricDetailView: View {
     @Environment(AppModel.self) private var app
     @Environment(\.dismiss) private var dismiss
@@ -18,6 +18,11 @@ struct MetricDetailView: View {
                     EvidenceBadge(grade: m.metric.evidence_grade)
                 }
                 Text(m.metric.plain).style(TypeStyle.body, color: Tokens.Colors.ink700)
+
+                if m.display != .suppressed, OverlaySpecs.spec(for: m.id) != nil {
+                    MeasurementOverlayView(metric: m, still: app.sessionStill)
+                    Text(Copy.s("metric_detail.overlay_hint")).style(TypeStyle.caption, color: Tokens.Colors.ink500)
+                }
 
                 if let v = m.value, m.display != .suppressed {
                     Card {

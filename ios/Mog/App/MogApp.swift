@@ -5,6 +5,7 @@ import MogCore
 @main
 struct MogApp: App {
     @State private var app = AppModel()
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
         WindowGroup {
@@ -13,6 +14,7 @@ struct MogApp: App {
                 .preferredColorScheme(.light)   // one light register; only the capture viewport is dark
                 .tint(Tokens.Colors.accent)
                 .onAppear { app.onForeground() }
+                .onChange(of: scenePhase) { _, p in if p == .background { app.sessionStill = nil } }
         }
         .modelContainer(Store.container)
     }
@@ -35,6 +37,8 @@ final class AppModel {
     var latestPlan: PlanResult?
     var habit: HabitEngine?
     var isPro: Bool = false
+    /// In-memory only; overlays draw on it during the session a capture happened in. Cleared on background.
+    var sessionStill: SessionStill?
 
     let purchases: Purchases = PurchasesStub()
     let analytics = Analytics()
