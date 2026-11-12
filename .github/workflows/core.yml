@@ -17,3 +17,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: cd core/swift/MogCore && ./sync-data.sh && swift build && swift test
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_PASSWORD: postgres }
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get install -y -q postgresql-client
+      - run: backend/supabase/tests/run_local.sh "host=localhost port=5432 user=postgres password=postgres"
