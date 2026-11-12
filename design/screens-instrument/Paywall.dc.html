@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Paywall — Mog Pro</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&display=swap');
+body{margin:0;font-family:"Inter Tight",system-ui,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+a{color:#6E6E73}a:hover{color:#3A3A3D}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #FAFAF8; display: flex; flex-direction: column; padding: 0 20px 24px">
+
+  <div style="height: 56px; display: flex; align-items: center">
+    <button type="button" aria-label="Close" style="width: 44px; height: 44px; margin-left: -12px; background: none; border: none; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" stroke="#6E6E73" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+
+  <h1 style="margin: 8px 0 0; font-size: 28px; line-height: 34px; font-weight: 600; letter-spacing: -0.022em; color: #111112">Your score is free.<br>The measurements aren't.</h1>
+
+  <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px">
+    <div style="font-size: 15px; line-height: 22px; letter-spacing: -0.012em; color: #3A3A3D">All 35 measurements, with the reference range for each</div>
+    <div style="font-size: 15px; line-height: 22px; letter-spacing: -0.012em; color: #3A3A3D">Every finding drawn on your own photo</div>
+    <div style="font-size: 15px; line-height: 22px; letter-spacing: -0.012em; color: #3A3A3D">Profile analysis</div>
+    <div style="font-size: 15px; line-height: 22px; letter-spacing: -0.012em; color: #3A3A3D">A plan ranked by evidence, not guesswork</div>
+    <div style="font-size: 15px; line-height: 22px; letter-spacing: -0.012em; color: #3A3A3D">Monthly re-scans with what changed</div>
+  </div>
+
+  <div style="flex-grow: 1"></div>
+
+  <div style="display: flex; flex-direction: column; gap: 10px">
+
+    <button type="button" style="text-align: left; background: #FFFFFF; border: 2px solid #2E5BFF; border-radius: 8px; padding: 14px 16px; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: space-between">
+      <span>
+        <span style="display: block; font-size: 15px; font-weight: 600; letter-spacing: -0.012em; color: #111112">Annual</span>
+        <span style="display: block; margin-top: 2px; font-size: 13px; letter-spacing: -0.01em; color: #6E6E73">3 days free, then $34.99/year</span>
+      </span>
+      <span style="font-size: 12px; font-weight: 500; letter-spacing: 0.01em; padding: 2px 6px; border-radius: 4px; border: 1px solid #E3E3DF; color: #6E6E73">$0.67/wk</span>
+    </button>
+
+    <button type="button" style="text-align: left; background: transparent; border: 1px solid #E3E3DF; border-radius: 8px; padding: 14px 16px; font-family: inherit; cursor: pointer">
+      <span style="display: block; font-size: 15px; font-weight: 600; letter-spacing: -0.012em; color: #111112">Weekly</span>
+      <span style="display: block; margin-top: 2px; font-size: 13px; letter-spacing: -0.01em; color: #6E6E73">$4.99/week, cancel any time</span>
+    </button>
+
+    <button type="button" style="text-align: left; background: transparent; border: 1px solid #E3E3DF; border-radius: 8px; padding: 14px 16px; font-family: inherit; cursor: pointer">
+      <span style="display: block; font-size: 15px; font-weight: 600; letter-spacing: -0.012em; color: #111112">Lifetime</span>
+      <span style="display: block; margin-top: 2px; font-size: 13px; letter-spacing: -0.01em; color: #6E6E73">$59.99 once, no subscription</span>
+    </button>
+
+    <button type="button" style="margin-top: 6px; height: 48px; border-radius: 8px; border: none; background: #2E5BFF; color: #FFFFFF; font-family: inherit; font-size: 15px; font-weight: 600; letter-spacing: -0.012em; cursor: pointer">Start 3 days free</button>
+
+    <p style="margin: 4px 0 0; font-size: 11px; line-height: 15px; letter-spacing: 0.01em; color: #6E6E73">Your trial converts to $34.99/year on 14 November unless cancelled at least 24 hours before. Manage or cancel in your App Store settings.</p>
+
+    <div style="display: flex; justify-content: center; gap: 16px; margin-top: 4px">
+      <a href="#terms" style="font-size: 11px; letter-spacing: 0.01em">Terms</a>
+      <a href="#privacy" style="font-size: 11px; letter-spacing: 0.01em">Privacy</a>
+      <a href="#restore" style="font-size: 11px; letter-spacing: 0.01em">Restore purchases</a>
+    </div>
+
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

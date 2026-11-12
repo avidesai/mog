@@ -1,0 +1,46 @@
+<!-- @dsCard group="Results" height=470 -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:20px;background:var(--paper,#FAFAF8);font-family:"Inter Tight",system-ui,sans-serif;font-feature-settings:"tnum" 1;-webkit-font-smoothing:antialiased}
+.card{background:var(--surface-50,#fff);border:1px solid var(--line-200,#E3E3DF);border-radius:16px;padding:16px}
+.t3{font-size:17px;line-height:24px;font-weight:600;letter-spacing:-.016em;color:var(--ink-900,#111112);margin:0}
+.body{font-size:15px;line-height:22px;letter-spacing:-.012em;color:var(--ink-700,#3A3A3D);margin:0}
+.bodysm{font-size:13px;line-height:19px;letter-spacing:-.010em;color:var(--ink-700,#3A3A3D);margin:0}
+.label{font-size:12px;line-height:16px;font-weight:500;letter-spacing:.01em;color:var(--ink-500,#6E6E73)}
+.cap{font-size:11px;line-height:15px;letter-spacing:.01em;color:var(--ink-500,#6E6E73)}
+.val{font-size:24px;line-height:28px;font-weight:500;letter-spacing:-.015em;color:var(--ink-900,#111112);font-variant-numeric:tabular-nums}
+.unit{font-size:15px;font-weight:400;color:var(--ink-500,#6E6E73)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.badge{font-size:12px;line-height:16px;font-weight:500;letter-spacing:.01em;padding:2px 6px;border-radius:4px;border:1px solid var(--line-200,#E3E3DF);color:var(--ink-500,#6E6E73);white-space:nowrap}
+.track{position:relative;height:4px;border-radius:2px;background:var(--line-200,#E3E3DF);margin:12px 0 4px}
+.band{position:absolute;top:0;bottom:0;background:var(--accent-wash,#EBEFFF);border-radius:2px}
+.mark{position:absolute;top:-3px;width:2px;height:10px;background:var(--accent,#2E5BFF);border-radius:1px}
+.stack{display:flex;flex-direction:column;gap:12px;max-width:380px}
+</style>
+<div style="max-width:320px">
+  <div style="position:relative;border-radius:8px;overflow:hidden;background:#E3E3DF;aspect-ratio:3/4">
+    <svg viewBox="0 0 300 400" style="position:absolute;inset:0;width:100%;height:100%" aria-label="Gonial angle measured at 128 degrees on a profile capture">
+      <rect width="300" height="400" fill="var(--line-200,#E3E3DF)"/>
+      <path d="M118 44c44 0 74 32 76 76 2 34-4 58-10 78-5 17 6 20 14 24 6 3 4 9-4 12l-28 10c-6 2-9 6-9 13v30c0 10-7 16-18 16h-62" fill="var(--surface-50,#fff)" opacity=".55"/>
+      <g stroke="var(--ink-500,#6E6E73)" stroke-width="1" opacity=".4" fill="none">
+        <path d="M118 44c44 0 74 32 76 76 2 34-4 58-10 78-5 17 6 20 14 24 6 3 4 9-4 12l-28 10c-6 2-9 6-9 13v30c0 10-7 16-18 16h-62"/>
+      </g>
+      <line x1="30" y1="150" x2="270" y2="150" stroke="var(--line-200,#E3E3DF)" stroke-width="1.5" stroke-dasharray="5 5" opacity=".9"/>
+      <text x="34" y="144" font-size="10" fill="var(--ink-500,#6E6E73)" font-family="Inter Tight, sans-serif">Frankfort horizontal</text>
+      <g stroke="var(--accent,#2E5BFF)" stroke-width="2" fill="none" stroke-linecap="round">
+        <path d="M186 218 L148 296"/>
+        <path d="M148 296 L80 302"/>
+        <path d="M172 250 A54 54 0 0 0 148 272" stroke-width="2"/>
+      </g>
+      <circle cx="186" cy="218" r="4" fill="var(--accent,#2E5BFF)"/>
+      <circle cx="148" cy="296" r="4" fill="var(--accent,#2E5BFF)"/>
+      <circle cx="80" cy="302" r="4" fill="var(--accent,#2E5BFF)"/>
+      <g>
+        <rect x="186" y="252" width="56" height="26" rx="4" fill="var(--surface-50,#fff)" stroke="var(--line-200,#E3E3DF)"/>
+        <text x="214" y="270" font-size="16" font-weight="500" text-anchor="middle" fill="var(--ink-900,#111112)" font-family="Inter Tight, sans-serif">128°</text>
+      </g>
+    </svg>
+  </div>
+  <p class="bodysm" style="margin-top:12px">One measurement at a time. Long-press hides all geometry to show the unmarked photo.</p>
+</div>

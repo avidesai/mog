@@ -1,0 +1,63 @@
+<!-- @dsCard group="Plan" height=560 -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:20px;background:var(--paper,#FAFAF8);font-family:"Inter Tight",system-ui,sans-serif;font-feature-settings:"tnum" 1;-webkit-font-smoothing:antialiased}
+.card{background:var(--surface-50,#fff);border:1px solid var(--line-200,#E3E3DF);border-radius:16px;padding:16px}
+.t3{font-size:17px;line-height:24px;font-weight:600;letter-spacing:-.016em;color:var(--ink-900,#111112);margin:0}
+.body{font-size:15px;line-height:22px;letter-spacing:-.012em;color:var(--ink-700,#3A3A3D);margin:0}
+.bodysm{font-size:13px;line-height:19px;letter-spacing:-.010em;color:var(--ink-700,#3A3A3D);margin:0}
+.label{font-size:12px;line-height:16px;font-weight:500;letter-spacing:.01em;color:var(--ink-500,#6E6E73)}
+.cap{font-size:11px;line-height:15px;letter-spacing:.01em;color:var(--ink-500,#6E6E73)}
+.val{font-size:24px;line-height:28px;font-weight:500;letter-spacing:-.015em;color:var(--ink-900,#111112);font-variant-numeric:tabular-nums}
+.unit{font-size:15px;font-weight:400;color:var(--ink-500,#6E6E73)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.badge{font-size:12px;line-height:16px;font-weight:500;letter-spacing:.01em;padding:2px 6px;border-radius:4px;border:1px solid var(--line-200,#E3E3DF);color:var(--ink-500,#6E6E73);white-space:nowrap}
+.track{position:relative;height:4px;border-radius:2px;background:var(--line-200,#E3E3DF);margin:12px 0 4px}
+.band{position:absolute;top:0;bottom:0;background:var(--accent-wash,#EBEFFF);border-radius:2px}
+.mark{position:absolute;top:-3px;width:2px;height:10px;background:var(--accent,#2E5BFF);border-radius:1px}
+.stack{display:flex;flex-direction:column;gap:12px;max-width:380px}
+</style>
+<div class="stack">
+
+  <div class="card">
+    <div class="row" style="align-items:flex-start">
+      <div style="font-size:24px;font-weight:500;color:var(--ink-300,#A8A8AD);font-variant-numeric:tabular-nums;line-height:24px">1</div>
+      <span class="badge" style="color:var(--ink-900,#111112);border-color:var(--ink-900,#111112)">Well supported by research</span>
+    </div>
+    <h3 class="t3" style="margin-top:10px">Lower body fat gradually</h3>
+    <p class="body" style="margin-top:6px">Reducing body fat at roughly 0.5–1% of bodyweight per week sharpens the jaw–neck transition more reliably than any jaw exercise or device.</p>
+    <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--line-200,#E3E3DF)">
+      <span class="label">Why this</span>
+      <p class="bodysm" style="margin-top:4px">Based on <span style="color:var(--accent,#2E5BFF);font-weight:500">facial adiposity, high</span> and <span style="color:var(--accent,#2E5BFF);font-weight:500">cervicomental angle 132°</span></p>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+      <span class="badge">8–24 weeks</span><span class="badge">High effort</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row" style="align-items:flex-start">
+      <div style="font-size:24px;font-weight:500;color:var(--ink-300,#A8A8AD);font-variant-numeric:tabular-nums;line-height:24px">2</div>
+      <span class="badge" style="color:var(--ink-900,#111112);border-color:var(--ink-900,#111112)">Well supported by research</span>
+    </div>
+    <h3 class="t3" style="margin-top:10px">Daily broad-spectrum SPF</h3>
+    <p class="body" style="margin-top:6px">Skin evenness is one of the strongest and fastest-moving contributors to rated attractiveness, and sun exposure is the main driver of unevenness over time.</p>
+    <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--line-200,#E3E3DF)">
+      <span class="label">Why this</span>
+      <p class="bodysm" style="margin-top:4px">Based on <span style="color:var(--accent,#2E5BFF);font-weight:500">skin evenness, moderate</span></p>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+      <span class="badge">2–12 weeks</span><span class="badge">Low effort</span>
+    </div>
+  </div>
+
+  <div style="border-top:1px solid var(--line-200,#E3E3DF);padding-top:16px">
+    <div class="label" style="margin-bottom:12px">To discuss with a professional</div>
+    <div class="card" style="border-left:1px dashed var(--line-200,#E3E3DF);border-left-width:3px">
+      <h3 class="t3">Chin projection</h3>
+      <p class="body" style="margin-top:6px">Your profile shows a retruded chin relative to the E-line. This is something a board-certified surgeon could assess. We don't recommend procedures and we have no financial relationship with any provider.</p>
+    </div>
+  </div>
+
+</div>

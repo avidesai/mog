@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Before the camera opens</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap');
+body{margin:0;font-family:"Inter Tight",system-ui,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+a{color:#2E5BFF}a:hover{color:#1F44CC}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #FBF9F5; display: flex; flex-direction: column; padding: 0 20px 26px; overflow: hidden">
+
+  <div style="height: 56px; flex-shrink: 0"></div>
+
+  <h1 style="margin: 8px 0 0; font-size: 28px; line-height: 34px; font-weight: 600; letter-spacing: -0.022em; color: #1A1714">Before the camera opens</h1>
+
+  <div style="margin-top: 18px; background: #FFFFFF; border: 2px solid #1A1714; border-radius: 20px; padding: 20px">
+
+    <p style="margin: 0; font-size: 15px; line-height: 22px; letter-spacing: -0.012em; color: #1A1714">To measure your face, the app reads its geometry from the camera. Here is exactly what happens to that.</p>
+
+    <div style="margin-top: 18px; display: flex; flex-direction: column; gap: 14px">
+      <div style="display: flex; gap: 12px">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true" style="flex-shrink: 0; margin-top: 1px"><rect x="5" y="2" width="10" height="16" rx="2" stroke="#2E5BFF" stroke-width="1.8"/><circle cx="10" cy="14.5" r="1" fill="#2E5BFF"/></svg>
+        <span>
+          <span style="display: block; font-size: 14px; font-weight: 600; letter-spacing: -0.012em; color: #1A1714">It stays on this iPhone</span>
+          <span style="display: block; margin-top: 2px; font-size: 13px; line-height: 19px; letter-spacing: -0.01em; color: #4A443D">Photos, the face mesh and every landmark are processed here and never uploaded.</span>
+        </span>
+      </div>
+      <div style="display: flex; gap: 12px">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true" style="flex-shrink: 0; margin-top: 1px"><path d="M4 6h12M7 6V4h6v2M6 6l1 10h6l1-10" stroke="#2E5BFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>
+          <span style="display: block; font-size: 14px; font-weight: 600; letter-spacing: -0.012em; color: #1A1714">Photos are deleted on the spot</span>
+          <span style="display: block; margin-top: 2px; font-size: 13px; line-height: 19px; letter-spacing: -0.01em; color: #4A443D">As soon as the measurements are computed. What stays are numbers like "128°", and they stay on the phone.</span>
+        </span>
+      </div>
+      <div style="display: flex; gap: 12px">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true" style="flex-shrink: 0; margin-top: 1px"><circle cx="10" cy="10" r="7.5" stroke="#2E5BFF" stroke-width="1.8"/><path d="M10 6v4l3 2" stroke="#2E5BFF" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span>
+          <span style="display: block; font-size: 14px; font-weight: 600; letter-spacing: -0.012em; color: #1A1714">Kept until you delete them</span>
+          <span style="display: block; margin-top: 2px; font-size: 13px; line-height: 19px; letter-spacing: -0.01em; color: #4A443D">One tap in Settings erases everything. Nothing is recoverable afterwards, by us or anyone.</span>
+        </span>
+      </div>
+      <div style="display: flex; gap: 12px">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true" style="flex-shrink: 0; margin-top: 1px"><path d="M3 10s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z" stroke="#2E5BFF" stroke-width="1.8"/><path d="M4 4l12 12" stroke="#2E5BFF" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span>
+          <span style="display: block; font-size: 14px; font-weight: 600; letter-spacing: -0.012em; color: #1A1714">Nobody else sees it</span>
+          <span style="display: block; margin-top: 2px; font-size: 13px; line-height: 19px; letter-spacing: -0.01em; color: #4A443D">Not sold, not shared, not sent to advertisers or analytics. Ever.</span>
+        </span>
+      </div>
+    </div>
+
+    <a href="Methodology.dc.html" style="display: inline-block; margin-top: 18px; font-size: 13px; line-height: 19px; letter-spacing: -0.01em; text-decoration: underline">Read the full biometric data policy</a>
+
+  </div>
+
+  <div style="flex-grow: 1"></div>
+
+  <button type="button" style="width: 100%; height: 54px; border-radius: 16px; border: none; border-bottom: 4px solid #1F44CC; background: #2E5BFF; color: #FFFFFF; font-family: inherit; font-size: 16px; font-weight: 700; letter-spacing: -0.012em; cursor: pointer">I agree to face scanning on this device</button>
+  <a href="OnboardingStart.dc.html" style="display: flex; align-items: center; justify-content: center; height: 48px; margin-top: 6px; font-size: 15px; font-weight: 600; letter-spacing: -0.012em; color: #4A443D; text-decoration: none">Not now</a>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

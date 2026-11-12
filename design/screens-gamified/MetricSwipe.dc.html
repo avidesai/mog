@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Metrics — one at a time</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap');
+body{margin:0;font-family:"Inter Tight",system-ui,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+a{color:#2E5BFF}a:hover{color:#1F44CC}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #FBF9F5; display: flex; flex-direction: column; overflow: hidden">
+
+  <div style="height: 56px; display: flex; align-items: center; padding: 0 20px; flex-shrink: 0">
+    <a href="ResultsOverview.dc.html" aria-label="Back to all measurements" style="width: 44px; height: 44px; margin-left: -12px; display: flex; align-items: center; justify-content: center; text-decoration: none">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 2.5L4.5 8l5.5 5.5" stroke="#1A1714" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <span style="margin-left: 4px; font-size: 17px; font-weight: 600; letter-spacing: -0.016em; color: #1A1714">Jaw &amp; chin</span>
+    <span style="margin-left: auto; font-size: 14px; font-weight: 600; letter-spacing: -0.01em; color: #7A7268">7 / 35</span>
+  </div>
+
+  <div style="padding: 0 20px; display: flex; gap: 3px; flex-shrink: 0">
+    <span style="flex: 1 1 0; height: 4px; border-radius: 2px; background: #2E5BFF"></span>
+    <span style="flex: 1 1 0; height: 4px; border-radius: 2px; background: #2E5BFF"></span>
+    <span style="flex: 1 1 0; height: 4px; border-radius: 2px; background: #2E5BFF"></span>
+    <span style="flex: 1 1 0; height: 4px; border-radius: 2px; background: #2E5BFF"></span>
+    <span style="flex: 1 1 0; height: 4px; border-radius: 2px; background: #EFE9DD"></span>
+    <span style="flex: 1 1 0; height: 4px; border-radius: 2px; background: #EFE9DD"></span>
+  </div>
+
+  <div style="flex-grow: 1; min-height: 0; position: relative; margin: 18px 20px 0">
+
+    <div style="position: absolute; left: 14px; right: 14px; top: 10px; height: 470px; border-radius: 24px; background: #F6F2E9; border: 1.5px solid #E6E0D6; transform: rotate(3deg)"></div>
+    <div style="position: absolute; left: 7px; right: 7px; top: 5px; height: 474px; border-radius: 24px; background: #FAF7F0; border: 1.5px solid #E6E0D6; transform: rotate(-1.5deg)"></div>
+
+    <a href="MetricDetail.dc.html" style="position: absolute; left: 0; right: 0; top: 0; height: 480px; border-radius: 24px; background: #FFFFFF; border: 1.5px solid #E6E0D6; box-sizing: border-box; padding: 14px; display: flex; flex-direction: column; text-decoration: none; color: inherit">
+
+      <div style="border-radius: 16px; overflow: hidden; background: #E6E0D6; height: 228px; position: relative; flex-shrink: 0">
+        <svg viewBox="0 0 320 228" style="position: absolute; inset: 0; width: 100%; height: 100%" role="img" aria-label="Profile capture with the gonial angle drawn at 128 degrees">
+          <rect width="320" height="228" fill="#E6E0D6"/>
+          <path d="M126 16c44 0 74 32 76 76 2 34-5 58-11 78-5 17 7 20 15 24 6 3 4 9-4 12l-28 10c-6 2-9 6-9 13v26" fill="#FFFFFF" opacity="0.55"/>
+          <g stroke="#7A7268" stroke-width="1" opacity="0.35" fill="none">
+            <path d="M126 16c44 0 74 32 76 76 2 34-5 58-11 78-5 17 7 20 15 24 6 3 4 9-4 12l-28 10c-6 2-9 6-9 13v26"/>
+          </g>
+          <line x1="28" y1="92" x2="292" y2="92" stroke="#7A7268" stroke-width="1" stroke-dasharray="4 4" opacity="0.6"/>
+          <g stroke="#2E5BFF" stroke-width="2.4" fill="none" stroke-linecap="round">
+            <path d="M196 140 L158 186"/>
+            <path d="M158 186 L84 192"/>
+            <path d="M184 156 A44 44 0 0 0 158 162"/>
+          </g>
+          <circle cx="196" cy="140" r="5" fill="#2E5BFF"/>
+          <circle cx="158" cy="186" r="5" fill="#2E5BFF"/>
+          <circle cx="84" cy="192" r="5" fill="#2E5BFF"/>
+        </svg>
+      </div>
+
+      <div style="padding: 16px 4px 0; flex-grow: 1; display: flex; flex-direction: column">
+
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+          <span style="font-size: 20px; font-weight: 700; letter-spacing: -0.018em; color: #1A1714">Gonial angle</span>
+          <span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.01em; padding: 3px 8px; border-radius: 999px; border: 1.5px solid #E6E0D6; color: #4A443D; white-space: nowrap">Reasonable support</span>
+        </div>
+
+        <div style="margin-top: 10px; display: flex; align-items: baseline; gap: 8px">
+          <span style="font-size: 40px; line-height: 40px; font-weight: 700; letter-spacing: -0.02em; color: #1A1714">128°</span>
+          <span style="font-size: 14px; font-weight: 600; letter-spacing: -0.01em; color: #7A7268">typical 115–125°</span>
+        </div>
+
+        <div style="margin-top: 14px; position: relative; height: 10px; border-radius: 999px; background: #EFE9DD">
+          <div style="position: absolute; left: 30%; width: 40%; top: 0; bottom: 0; background: #E8EDFF; border-radius: 999px"></div>
+          <div style="position: absolute; left: 78%; top: -3px; width: 5px; height: 16px; background: #2E5BFF; border-radius: 3px"></div>
+        </div>
+
+        <p style="margin: 14px 0 0; font-size: 14px; line-height: 20px; letter-spacing: -0.012em; color: #4A443D">A touch more open than typical, so the jaw reads soft in profile. Body fat sits on top of this — and that part moves.</p>
+
+        <div style="flex-grow: 1"></div>
+        <div style="font-size: 12px; letter-spacing: -0.01em; color: #7A7268">Tap for how it was measured and what would move it</div>
+
+      </div>
+    </a>
+  </div>
+
+  <div style="flex-shrink: 0; padding: 22px 20px 26px; display: flex; align-items: center; justify-content: center; gap: 22px">
+    <button type="button" aria-label="Previous measurement" style="width: 56px; height: 56px; border-radius: 999px; background: #FFFFFF; border: 1.5px solid #E6E0D6; border-bottom-width: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer">
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 2.5L4.5 8l5.5 5.5" stroke="#4A443D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <span style="font-size: 13px; font-weight: 500; letter-spacing: -0.01em; color: #7A7268">swipe</span>
+    <button type="button" aria-label="Next measurement" style="width: 56px; height: 56px; border-radius: 999px; background: #FFFFFF; border: 1.5px solid #E6E0D6; border-bottom-width: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer">
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 2.5L11.5 8 6 13.5" stroke="#4A443D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

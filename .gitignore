@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+# Swift / Xcode
+.build/
+DerivedData/
+*.xcodeproj/
+!ios/project.yml
+*.xcworkspace/
+xcuserdata/
+*.xcuserstate
+.swiftpm/
+Packages/
+# Secrets — never commit
+ios/Mog/Config/Secrets.xcconfig
+*.p8
+*.p12
+*.mobileprovision
+# Spike captures (landmark dumps are personal data; keep them out of git)
+tools/captures/
+# OS
+.DS_Store

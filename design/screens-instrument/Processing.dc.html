@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Processing — measuring your capture</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Instrument+Serif&display=swap');
+body{margin:0;font-family:"Inter Tight",system-ui,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+a{color:#2E5BFF}a:hover{color:#1F44CC}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #FBF9F5; display: flex; flex-direction: column; align-items: center; padding: 0 20px 32px">
+
+  <div style="height: 92px; flex-shrink: 0"></div>
+
+  <div style="width: 270px; height: 360px; position: relative; border-radius: 16px; overflow: hidden; background: #F3EFE6; flex-shrink: 0">
+    <svg viewBox="0 0 270 360" style="position: absolute; inset: 0; width: 100%; height: 100%" role="img" aria-label="The landmark scaffold drawing over your capture">
+      <rect width="270" height="360" fill="#F3EFE6"/>
+      <ellipse cx="135" cy="180" rx="80" ry="108" fill="#FFFFFF" opacity="0.7"/>
+      <g stroke="#2E5BFF" stroke-width="1.1" fill="none" opacity="0.9">
+        <ellipse cx="135" cy="180" rx="80" ry="108"/>
+        <path d="M80 146h40M150 146h40"/>
+        <path d="M135 136v54l-13 11M118 232h34"/>
+        <path d="M74 168l11 50 22 48 28 18 28-18 22-48 11-50"/>
+        <path d="M55 180h160M135 72v216"/>
+      </g>
+      <g fill="#2E5BFF">
+        <circle cx="80" cy="146" r="3"/><circle cx="120" cy="146" r="3"/>
+        <circle cx="150" cy="146" r="3"/><circle cx="190" cy="146" r="3"/>
+        <circle cx="135" cy="190" r="3"/><circle cx="118" cy="232" r="3"/>
+        <circle cx="152" cy="232" r="3"/><circle cx="135" cy="288" r="3"/>
+        <circle cx="55" cy="180" r="3"/><circle cx="215" cy="180" r="3"/>
+      </g>
+      <g stroke="#8E6020" stroke-width="1" stroke-dasharray="4 4" opacity="0.8">
+        <line x1="24" y1="146" x2="246" y2="146"/>
+      </g>
+    </svg>
+  </div>
+
+  <div style="margin-top: 36px; width: 100%; max-width: 270px; flex-shrink: 0">
+    <div style="height: 3px; background: #E6E0D6; border-radius: 2px">
+      <div style="width: 64%; height: 3px; background: #2E5BFF; border-radius: 2px"></div>
+    </div>
+  </div>
+
+  <div style="margin-top: 18px; font-size: 17px; line-height: 24px; font-weight: 600; letter-spacing: -0.016em; color: #1A1714">Measuring 8 accepted frames</div>
+  <div style="margin-top: 6px; font-size: 13px; line-height: 19px; letter-spacing: -0.01em; color: #7A7268; text-align: center">Two were dropped for head movement</div>
+
+  <div style="flex-grow: 1"></div>
+
+  <div style="display: flex; align-items: center; gap: 8px; background: #F3EFE6; border-radius: 999px; padding: 9px 16px; flex-shrink: 0">
+    <svg width="12" height="14" viewBox="0 0 12 14" fill="none" aria-hidden="true">
+      <path d="M3 6V4a3 3 0 016 0v2" stroke="#7A7268" stroke-width="1.3"/>
+      <rect x="2" y="6" width="8" height="6.5" rx="1.2" stroke="#7A7268" stroke-width="1.3"/>
+    </svg>
+    <span style="font-size: 12px; line-height: 16px; letter-spacing: 0.01em; color: #4A443D">Everything is computed on this iPhone</span>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

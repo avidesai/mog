@@ -1,0 +1,43 @@
+<!-- @dsCard height=320 -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500&family=Instrument+Serif&display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:var(--paper,#FAFAF8)}
+  svg{display:block;width:960px;height:320px}
+  .slab{fill:var(--accent,#2E5BFF);rx:var(--radius-lg,12px)}
+  .ink{fill:var(--ink-900,#111112);rx:var(--radius-lg,12px)}
+  .tint{fill:var(--accent-wash,#EBEFFF);rx:var(--radius-lg,12px)}
+  .sig{fill:var(--caution,#B5731A);rx:var(--radius-lg,12px)}
+  .rule{stroke:var(--paper,#FAFAF8);stroke-width:1.5;fill:none}
+  .node{fill:var(--paper,#FAFAF8)}
+  .name{font-family:"Instrument Serif",Georgia,serif;font-size:120px;letter-spacing:-.03em;fill:var(--ink-900,#111112)}
+  .tag{font-family:"Inter Tight",system-ui,sans-serif;font-size:14px;letter-spacing:-.01em;fill:var(--ink-500,#6E6E73)}
+</style>
+<svg viewBox="0 0 960 320" role="img" aria-label="Mog design system cover">
+<!-- blocks: accent 192x224 slab, ink-900 248x104 bleeding right, accent-wash 152x104, caution 80x104; sides are spacing steps (20/32/56 multiples), corners radius-lg
+     arrangement: one tall slab with satellites, the ink block bleeding off the right edge — the system composes in flush modular panels, not equal squares
+     pattern: a few hairline rules with endpoint nodes, cut out of the blocks in the ground colour — the product measures a line between two landmarks, so the measurement segment is the one motif that is only this brand
+     scales: pitch and insets from space-5 (20) and space-8 (32); every corner radius-lg (12) -->
+  <rect class="slab" x="504" y="48" width="192" height="224"/>
+  <rect class="ink"  x="712" y="48" width="248" height="104"/>
+  <rect class="tint" x="712" y="168" width="152" height="104"/>
+  <rect class="sig"  x="880" y="168" width="80" height="104"/>
+
+  <g>
+    <path class="rule" d="M532 100 H932"/>
+    <circle class="node" cx="532" cy="100" r="5"/>
+    <circle class="node" cx="932" cy="100" r="5"/>
+  </g>
+  <g>
+    <path class="rule" d="M532 220 H836"/>
+    <circle class="node" cx="532" cy="220" r="5"/>
+    <circle class="node" cx="836" cy="220" r="5"/>
+  </g>
+  <g>
+    <path class="rule" d="M668 68 V252"/>
+    <circle class="node" cx="668" cy="68" r="5"/>
+    <circle class="node" cx="668" cy="252" r="5"/>
+  </g>
+
+  <text class="name" x="48" y="252">Mog</text>
+  <text class="tag" x="52" y="288">Same face, same score. Every number shows its basis.</text>
+</svg>

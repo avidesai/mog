@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Share card composer</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Instrument+Serif&display=swap');
+body{margin:0;font-family:"Inter Tight",system-ui,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+a{color:#2E5BFF}a:hover{color:#1F44CC}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #FBF9F5; display: flex; flex-direction: column; overflow: hidden">
+
+  <div style="height: 52px; display: flex; align-items: center; padding: 0 20px; flex-shrink: 0">
+    <button type="button" aria-label="Close" style="width: 44px; height: 44px; margin-left: -12px; background: none; border: none; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" stroke="#4A443D" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+    <span style="margin-left: 4px; font-size: 15px; font-weight: 600; letter-spacing: -0.012em; color: #1A1714">Share card</span>
+  </div>
+
+  <div style="flex-grow: 1; display: flex; align-items: center; justify-content: center; min-height: 0; padding: 0 20px">
+    <div style="width: 254px; height: 452px; border-radius: 16px; background: #F5EEDD; box-sizing: border-box; padding: 26px 22px; display: flex; flex-direction: column; position: relative; overflow: hidden">
+
+      <svg viewBox="0 0 254 452" style="position: absolute; inset: 0; width: 100%; height: 100%" aria-hidden="true">
+        <g stroke="#8E6020" stroke-width="1" opacity="0.3">
+          <line x1="0" y1="118" x2="254" y2="118"/>
+          <line x1="0" y1="330" x2="254" y2="330"/>
+        </g>
+        <g fill="#8E6020" opacity="0.3">
+          <circle cx="30" cy="118" r="3.5"/><circle cx="224" cy="118" r="3.5"/>
+          <circle cx="30" cy="330" r="3.5"/><circle cx="224" cy="330" r="3.5"/>
+        </g>
+      </svg>
+
+      <div style="position: relative; margin-top: 76px">
+        <div style="font-family: 'Instrument Serif', Georgia, serif; font-size: 104px; line-height: 88px; letter-spacing: -0.035em; color: #1A1714">6.4</div>
+        <div style="margin-top: 14px; font-size: 13px; line-height: 19px; letter-spacing: -0.01em; color: #4A443D">likely 5.9–6.9</div>
+        <div style="margin-top: 10px; display: inline-block; font-size: 12px; line-height: 16px; font-weight: 500; letter-spacing: 0.01em; padding: 3px 8px; border-radius: 4px; border: 1px solid #8E6020; color: #8E6020">HTN · 68th percentile</div>
+      </div>
+
+      <div style="flex-grow: 1"></div>
+
+      <div style="position: relative; display: flex; align-items: center; gap: 8px">
+        <svg width="20" height="10" viewBox="0 0 20 10" fill="none" aria-hidden="true">
+          <line x1="3" y1="5" x2="17" y2="5" stroke="#8E6020" stroke-width="1.6"/>
+          <circle cx="3" cy="5" r="2.8" fill="#8E6020"/><circle cx="17" cy="5" r="2.8" fill="#8E6020"/>
+        </svg>
+        <span style="font-size: 16px; font-weight: 600; letter-spacing: -0.03em; color: #1A1714">mog</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding: 0 20px 24px; flex-shrink: 0">
+
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-top: 1px solid #E6E0D6; border-bottom: 1px solid #E6E0D6">
+      <label for="incl" style="font-size: 15px; line-height: 22px; letter-spacing: -0.012em; color: #1A1714">Include my score</label>
+      <input id="incl" type="checkbox" checked style="width: 20px; height: 20px; accent-color: #2E5BFF">
+    </div>
+
+    <div style="display: flex; gap: 8px; margin-top: 14px">
+      <button type="button" style="flex-grow: 1; height: 44px; border-radius: 10px; border: 1px solid #E6E0D6; background: transparent; color: #4A443D; font-family: inherit; font-size: 13px; font-weight: 500; letter-spacing: -0.01em; cursor: pointer">Story 9:16</button>
+      <button type="button" style="flex-grow: 1; height: 44px; border-radius: 10px; border: 1.5px solid #2E5BFF; background: #E8EDFF; color: #2E5BFF; font-family: inherit; font-size: 13px; font-weight: 600; letter-spacing: -0.01em; cursor: pointer">Square 1:1</button>
+    </div>
+
+    <button type="button" style="margin-top: 10px; height: 50px; border-radius: 10px; border: none; background: #1A1714; color: #FBF9F5; font-family: inherit; font-size: 15px; font-weight: 600; letter-spacing: -0.012em; cursor: pointer; width: 100%">Export</button>
+
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

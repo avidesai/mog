@@ -1,0 +1,223 @@
+{
+ "sex": "male",
+ "age_band": "18-24",
+ "profile_captured": true,
+ "readings": {
+  "fwhr": {
+   "value": 1.786646,
+   "confidence": 0.9,
+   "iqr": 0.0096,
+   "occluded": false
+  },
+  "canthal_tilt_deg": {
+   "value": 4.131561,
+   "confidence": 0.9,
+   "iqr": 0.16,
+   "occluded": false
+  },
+  "intercanthal_to_width_ratio": {
+   "value": 0.22496,
+   "confidence": 0.9,
+   "iqr": 0.00128,
+   "occluded": false
+  },
+  "eye_aspect_ratio": {
+   "value": 0.287148,
+   "confidence": 0.9,
+   "iqr": 0.0032,
+   "occluded": false
+  },
+  "eye_width_to_intercanthal": {
+   "value": 0.952445,
+   "confidence": 0.9,
+   "iqr": 0.0064,
+   "occluded": false
+  },
+  "facial_thirds_upper": {
+   "value": 0.334655,
+   "confidence": 0.9,
+   "iqr": 0.002,
+   "occluded": false
+  },
+  "facial_thirds_middle": {
+   "value": 0.318557,
+   "confidence": 0.9,
+   "iqr": 0.002,
+   "occluded": false
+  },
+  "facial_thirds_lower": {
+   "value": 0.357457,
+   "confidence": 0.9,
+   "iqr": 0.002,
+   "occluded": false
+  },
+  "lower_third_split": {
+   "value": 0.327729,
+   "confidence": 0.9,
+   "iqr": 0.0024,
+   "occluded": false
+  },
+  "midface_ratio": {
+   "value": 1.009041,
+   "confidence": 0.9,
+   "iqr": 0.0056,
+   "occluded": false
+  },
+  "nasal_width_to_intercanthal": {
+   "value": 1.05712,
+   "confidence": 0.9,
+   "iqr": 0.0072,
+   "occluded": false
+  },
+  "nose_length_to_face_height": {
+   "value": 0.287461,
+   "confidence": 0.9,
+   "iqr": 0.0016,
+   "occluded": false
+  },
+  "mouth_width_to_nose": {
+   "value": 1.731758,
+   "confidence": 0.9,
+   "iqr": 0.0112,
+   "occluded": false
+  },
+  "mouth_width_to_interpupillary": {
+   "value": 0.755784,
+   "confidence": 0.9,
+   "iqr": 0.0056,
+   "occluded": false
+  },
+  "lip_ratio_upper_lower": {
+   "value": 0.731237,
+   "confidence": 0.9,
+   "iqr": 0.012,
+   "occluded": false
+  },
+  "bigonial_to_bizygomatic": {
+   "value": 0.715,
+   "confidence": 0.9,
+   "iqr": 0.004,
+   "occluded": false
+  },
+  "chin_width_to_mouth": {
+   "value": 0.916765,
+   "confidence": 0.9,
+   "iqr": 0.008,
+   "occluded": false
+  },
+  "bitemporal_to_bizygomatic": {
+   "value": 0.849265,
+   "confidence": 0.9,
+   "iqr": 0.0032,
+   "occluded": false
+  },
+  "face_height_to_width": {
+   "value": 0.91345,
+   "confidence": 0.9,
+   "iqr": 0.004,
+   "occluded": false
+  },
+  "symmetry_index": {
+   "value": 0.959066,
+   "confidence": 0.9,
+   "iqr": 0.0012,
+   "occluded": false
+  },
+  "brow_to_eye_distance_ratio": {
+   "value": 0.296936,
+   "confidence": 0.9,
+   "iqr": 0.0064,
+   "occluded": false
+  },
+  "philtrum_length_ratio": {
+   "value": 0.219547,
+   "confidence": 0.9,
+   "iqr": 0.0024,
+   "occluded": false
+  },
+  "nasofrontal_angle_deg": {
+   "value": 123.624717,
+   "confidence": 0.9,
+   "iqr": 0.56,
+   "occluded": false
+  },
+  "nasolabial_angle_deg": {
+   "value": 96.108418,
+   "confidence": 0.9,
+   "iqr": 0.56,
+   "occluded": false
+  },
+  "nasal_tip_projection_goode": {
+   "value": 0.583775,
+   "confidence": 0.9,
+   "iqr": 0.0024,
+   "occluded": false
+  },
+  "facial_convexity_deg": {
+   "value": 178.605402,
+   "confidence": 0.9,
+   "iqr": 0.4,
+   "occluded": false
+  },
+  "mentolabial_angle_deg": {
+   "value": 115.424898,
+   "confidence": 0.9,
+   "iqr": 0.88,
+   "occluded": false
+  },
+  "cervicomental_angle_deg": {
+   "value": 130.0,
+   "confidence": 0.9,
+   "iqr": 0.72,
+   "occluded": false
+  },
+  "chin_projection_eline_mm": {
+   "value": 1.343516,
+   "confidence": 0.9,
+   "iqr": 0.16,
+   "occluded": false
+  },
+  "gonial_angle_deg": {
+   "value": 115.754644,
+   "confidence": 0.9,
+   "iqr": 0.48,
+   "occluded": false
+  },
+  "ramus_to_mandible_ratio": {
+   "value": 0.71742,
+   "confidence": 0.9,
+   "iqr": 0.0064,
+   "occluded": false
+  },
+  "forehead_slope_deg": {
+   "value": 15.275704,
+   "confidence": 0.9,
+   "iqr": 0.4,
+   "occluded": false
+  },
+  "skin_evenness": {
+   "value": 0.766471,
+   "confidence": 0.9,
+   "iqr": 0.0096,
+   "occluded": false
+  },
+  "facial_adiposity": {
+   "value": 0.72,
+   "confidence": 0.9,
+   "iqr": 0.012,
+   "occluded": false
+  },
+  "hairline_stage": {
+   "value": 1.0,
+   "confidence": 0.9,
+   "iqr": 0.0,
+   "occluded": false
+  },
+  "beard_presence": {
+   "value": 0.0,
+   "confidence": 0.9,
+   "iqr": 0.0,
+   "occluded": false
+  }
+ }
+}

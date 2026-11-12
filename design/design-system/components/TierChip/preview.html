@@ -1,0 +1,41 @@
+<!-- @dsCard group="Results" height=300 -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:20px;background:var(--paper,#FAFAF8);font-family:"Inter Tight",system-ui,sans-serif;font-feature-settings:"tnum" 1;-webkit-font-smoothing:antialiased}
+.card{background:var(--surface-50,#fff);border:1px solid var(--line-200,#E3E3DF);border-radius:16px;padding:16px}
+.t3{font-size:17px;line-height:24px;font-weight:600;letter-spacing:-.016em;color:var(--ink-900,#111112);margin:0}
+.body{font-size:15px;line-height:22px;letter-spacing:-.012em;color:var(--ink-700,#3A3A3D);margin:0}
+.bodysm{font-size:13px;line-height:19px;letter-spacing:-.010em;color:var(--ink-700,#3A3A3D);margin:0}
+.label{font-size:12px;line-height:16px;font-weight:500;letter-spacing:.01em;color:var(--ink-500,#6E6E73)}
+.cap{font-size:11px;line-height:15px;letter-spacing:.01em;color:var(--ink-500,#6E6E73)}
+.val{font-size:24px;line-height:28px;font-weight:500;letter-spacing:-.015em;color:var(--ink-900,#111112);font-variant-numeric:tabular-nums}
+.unit{font-size:15px;font-weight:400;color:var(--ink-500,#6E6E73)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.badge{font-size:12px;line-height:16px;font-weight:500;letter-spacing:.01em;padding:2px 6px;border-radius:4px;border:1px solid var(--line-200,#E3E3DF);color:var(--ink-500,#6E6E73);white-space:nowrap}
+.track{position:relative;height:4px;border-radius:2px;background:var(--line-200,#E3E3DF);margin:12px 0 4px}
+.band{position:absolute;top:0;bottom:0;background:var(--accent-wash,#EBEFFF);border-radius:2px}
+.mark{position:absolute;top:-3px;width:2px;height:10px;background:var(--accent,#2E5BFF);border-radius:1px}
+.stack{display:flex;flex-direction:column;gap:12px;max-width:380px}
+</style>
+<div class="stack">
+  <div>
+    <div class="label" style="margin-bottom:10px">Tier chips — never colored by tier, never all-caps on the full name</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <span class="badge" style="color:var(--ink-700,#3A3A3D)">LTN</span>
+      <span class="badge" style="color:var(--ink-700,#3A3A3D)">MTN</span>
+      <span class="badge" style="color:var(--ink-700,#3A3A3D)">HTN</span>
+      <span class="badge" style="color:var(--ink-700,#3A3A3D)">Chadlite</span>
+    </div>
+  </div>
+  <div>
+    <div class="label" style="margin-bottom:10px">Evidence badges — meaning carried by label and border, never fill</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <span class="badge" style="color:var(--ink-900,#111112);border-color:var(--ink-900,#111112)">Well supported by research</span>
+      <span class="badge" style="color:var(--ink-700,#3A3A3D)">Reasonable support</span>
+      <span class="badge">Limited evidence</span>
+      <span class="badge" style="border-style:dashed">Community metric, little evidence</span>
+      <span class="badge" style="color:var(--caution,#B5731A);border-color:var(--caution,#B5731A)">Research points the other way</span>
+    </div>
+  </div>
+</div>

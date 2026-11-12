@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>You — data, consent, subscription</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap');
+body{margin:0;font-family:"Inter Tight",system-ui,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+a{color:#1A1714;text-decoration:none}a:hover{color:#2E5BFF}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #FBF9F5; display: flex; flex-direction: column; overflow: hidden">
+
+  <div style="height: 56px; display: flex; align-items: center; padding: 0 20px; flex-shrink: 0">
+    <span style="font-size: 17px; font-weight: 600; letter-spacing: -0.016em; color: #1A1714">You</span>
+  </div>
+
+  <div style="flex-grow: 1; min-height: 0; overflow: hidden; padding: 2px 20px 0">
+
+    <div style="background: #FFFFFF; border: 1.5px solid #E6E0D6; border-radius: 16px; padding: 14px 16px; display: flex; align-items: center; gap: 12px">
+      <span style="width: 40px; height: 40px; border-radius: 999px; background: #F3EFE6; display: flex; align-items: center; justify-content: center">
+        <svg width="18" height="18" viewBox="0 0 22 22" fill="none" aria-hidden="true"><circle cx="11" cy="8" r="3.5" stroke="#4A443D" stroke-width="2"/><path d="M4.5 18.5c1-3.5 3.5-5 6.5-5s5.5 1.5 6.5 5" stroke="#4A443D" stroke-width="2" stroke-linecap="round"/></svg>
+      </span>
+      <span style="flex-grow: 1">
+        <span style="display: block; font-size: 15px; font-weight: 600; letter-spacing: -0.014em; color: #1A1714">Signed in with Apple</span>
+        <span style="display: block; margin-top: 1px; font-size: 12px; letter-spacing: -0.01em; color: #7A7268">Pro · renews 14 Nov 2027</span>
+      </span>
+      <a href="Paywall.dc.html" style="font-size: 13px; font-weight: 600; letter-spacing: -0.01em; color: #2E5BFF">Manage</a>
+    </div>
+
+    <div style="margin-top: 20px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: #7A7268">WHAT YOU'VE AGREED TO</div>
+    <div style="margin-top: 8px; background: #FFFFFF; border: 1.5px solid #E6E0D6; border-radius: 16px; overflow: hidden">
+      <div style="display: flex; align-items: center; gap: 12px; padding: 13px 16px">
+        <span style="flex-grow: 1">
+          <span style="display: block; font-size: 15px; font-weight: 600; letter-spacing: -0.014em; color: #1A1714">Face scanning on this device</span>
+          <span style="display: block; margin-top: 1px; font-size: 12px; letter-spacing: -0.01em; color: #7A7268">Agreed 2 Sep · policy v1.0</span>
+        </span>
+        <label for="c1" style="position: relative; width: 44px; height: 26px; display: block"><input id="c1" type="checkbox" checked aria-label="Face scanning on this device" style="position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0"><span style="position: absolute; inset: 0; border-radius: 999px; background: #2E5BFF"></span><span style="position: absolute; top: 3px; left: 21px; width: 20px; height: 20px; border-radius: 999px; background: #FFFFFF"></span></label>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; padding: 13px 16px; border-top: 1px solid #EFE9DD">
+        <span style="flex-grow: 1">
+          <span style="display: block; font-size: 15px; font-weight: 600; letter-spacing: -0.014em; color: #1A1714">Back up my numbers to the cloud</span>
+          <span style="display: block; margin-top: 1px; font-size: 12px; letter-spacing: -0.01em; color: #7A7268">Measurements only. Never photos or landmarks.</span>
+        </span>
+        <label for="c2" style="position: relative; width: 44px; height: 26px; display: block"><input id="c2" type="checkbox" aria-label="Back up numbers to the cloud" style="position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0"><span style="position: absolute; inset: 0; border-radius: 999px; background: #D8D2C6"></span><span style="position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 999px; background: #FFFFFF"></span></label>
+      </div>
+    </div>
+
+    <div style="margin-top: 20px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: #7A7268">REMINDERS</div>
+    <div style="margin-top: 8px; background: #FFFFFF; border: 1.5px solid #E6E0D6; border-radius: 16px; overflow: hidden">
+      <div style="display: flex; align-items: center; gap: 12px; padding: 13px 16px">
+        <span style="flex-grow: 1; font-size: 15px; font-weight: 600; letter-spacing: -0.014em; color: #1A1714">Daily, at</span>
+        <span style="font-size: 15px; font-weight: 500; letter-spacing: -0.01em; color: #4A443D">8:00 pm</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; padding: 13px 16px; border-top: 1px solid #EFE9DD">
+        <span style="flex-grow: 1; font-size: 15px; font-weight: 600; letter-spacing: -0.014em; color: #1A1714">When a scan unlocks</span>
+        <label for="c3" style="position: relative; width: 44px; height: 26px; display: block"><input id="c3" type="checkbox" checked aria-label="Notify when a scan unlocks" style="position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0"><span style="position: absolute; inset: 0; border-radius: 999px; background: #2E5BFF"></span><span style="position: absolute; top: 3px; left: 21px; width: 20px; height: 20px; border-radius: 999px; background: #FFFFFF"></span></label>
+      </div>
+    </div>
+
+    <div style="margin-top: 20px; background: #FFFFFF; border: 1.5px solid #E6E0D6; border-radius: 16px; overflow: hidden">
+      <a href="Methodology.dc.html" style="display: flex; align-items: center; padding: 13px 16px; font-size: 15px; font-weight: 600; letter-spacing: -0.014em">How the score works<span style="margin-left: auto; color: #B5ADA2">›</span></a>
+      <a href="Consent.dc.html" style="display: flex; align-items: center; padding: 13px 16px; border-top: 1px solid #EFE9DD; font-size: 15px; font-weight: 600; letter-spacing: -0.014em">Biometric data policy<span style="margin-left: auto; color: #B5ADA2">›</span></a>
+      <a href="#terms" style="display: flex; align-items: center; padding: 13px 16px; border-top: 1px solid #EFE9DD; font-size: 15px; font-weight: 600; letter-spacing: -0.014em">Terms<span style="margin-left: auto; color: #B5ADA2">›</span></a>
+    </div>
+
+    <button type="button" style="margin-top: 20px; width: 100%; height: 50px; border-radius: 16px; background: transparent; border: 1.5px solid #A8372A; font-family: inherit; font-size: 15px; font-weight: 700; letter-spacing: -0.012em; color: #A8372A; cursor: pointer">Delete everything</button>
+    <p style="margin: 8px 0 0; font-size: 11px; line-height: 15px; letter-spacing: 0.01em; color: #7A7268; text-align: center">Every measurement, scan and setting, on this phone and anywhere we hold it. Not recoverable.</p>
+
+  </div>
+
+  <div style="flex-shrink: 0; border-top: 1.5px solid #E6E0D6; background: #FBF9F5; display: flex; padding: 10px 8px 26px">
+    <a href="Main.dc.html" style="flex: 1 1 0; display: flex; flex-direction: column; align-items: center; gap: 4px">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="8.5" stroke="#7A7268" stroke-width="2"/><path d="M11 6.5V11l3 2" stroke="#7A7268" stroke-width="2" stroke-linecap="round"/></svg>
+      <span style="font-size: 10px; font-weight: 600; letter-spacing: 0.01em; color: #7A7268">Today</span>
+    </a>
+    <a href="Journey.dc.html" style="flex: 1 1 0; display: flex; flex-direction: column; align-items: center; gap: 4px">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><circle cx="6" cy="16.5" r="3" stroke="#7A7268" stroke-width="2"/><circle cx="16" cy="5.5" r="3" stroke="#7A7268" stroke-width="2"/><path d="M8.5 14.5L13.5 8" stroke="#7A7268" stroke-width="2" stroke-linecap="round"/></svg>
+      <span style="font-size: 10px; font-weight: 600; letter-spacing: 0.01em; color: #7A7268">Path</span>
+    </a>
+    <a href="ResultsOverview.dc.html" style="flex: 1 1 0; display: flex; flex-direction: column; align-items: center; gap: 4px">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><rect x="3.5" y="4.5" width="15" height="13" rx="2.5" stroke="#7A7268" stroke-width="2"/><path d="M7 11h8" stroke="#7A7268" stroke-width="2" stroke-linecap="round"/></svg>
+      <span style="font-size: 10px; font-weight: 600; letter-spacing: 0.01em; color: #7A7268">Metrics</span>
+    </a>
+    <span style="flex: 1 1 0; display: flex; flex-direction: column; align-items: center; gap: 4px">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><circle cx="11" cy="8" r="3.5" stroke="#2E5BFF" stroke-width="2"/><path d="M4.5 18.5c1-3.5 3.5-5 6.5-5s5.5 1.5 6.5 5" stroke="#2E5BFF" stroke-width="2" stroke-linecap="round"/></svg>
+      <span style="font-size: 10px; font-weight: 600; letter-spacing: 0.01em; color: #2E5BFF">You</span>
+    </span>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

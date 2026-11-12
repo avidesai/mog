@@ -1,0 +1,49 @@
+{
+  "v": 3,
+  "createdOnFiles": { "v": 1, "at": "2026-11-11T18:45:00Z" },
+  "title": "Mog — v1 Screens",
+  "launch": { "view": "canvas" },
+  "pages": [],
+  "boards": {
+    "Onboarding.dc.html": { "x": 0, "y": 0, "w": 390, "h": 844, "title": "Onboarding — goals" },
+    "Consent.dc.html": { "x": 470, "y": 0, "w": 390, "h": 844, "title": "Consent" },
+    "Capture.dc.html": { "x": 940, "y": 0, "w": 390, "h": 844, "title": "Capture — gate failing" },
+    "Processing.dc.html": { "x": 1410, "y": 0, "w": 390, "h": 844, "title": "Processing" },
+    "Main.dc.html": { "x": 0, "y": 1244, "w": 390, "h": 844, "title": "Reveal — free result" },
+    "Results.dc.html": { "x": 470, "y": 1244, "w": 390, "h": 844, "title": "Results" },
+    "MetricDetail.dc.html": { "x": 940, "y": 1244, "w": 390, "h": 844, "title": "Metric detail" },
+    "Paywall.dc.html": { "x": 1410, "y": 1244, "w": 390, "h": 844, "title": "Paywall" },
+    "Plan.dc.html": { "x": 0, "y": 2488, "w": 390, "h": 844, "title": "Plan" },
+    "ShareCard.dc.html": { "x": 470, "y": 2488, "w": 390, "h": 844, "title": "Share card" },
+    "Methodology.dc.html": { "x": 940, "y": 2488, "w": 390, "h": 844, "title": "Methodology" },
+    "History.dc.html": { "x": 1410, "y": 2488, "w": 390, "h": 844, "title": "History — re-scan deltas" }
+  },
+  "order": [
+    "Onboarding.dc.html",
+    "Consent.dc.html",
+    "Capture.dc.html",
+    "Processing.dc.html",
+    "Main.dc.html",
+    "Results.dc.html",
+    "MetricDetail.dc.html",
+    "Paywall.dc.html",
+    "Plan.dc.html",
+    "ShareCard.dc.html",
+    "Methodology.dc.html",
+    "History.dc.html"
+  ],
+  "notes": {
+    "row1": { "x": 0, "y": -300, "text": "Getting in", "kind": "title1", "maxW": 1800 },
+    "row2": { "x": 0, "y": 944, "text": "The result", "kind": "title1", "maxW": 1800 },
+    "row3": { "x": 0, "y": 2188, "text": "Acting on it", "kind": "title1", "maxW": 1800 }
+  },
+  "designSystems": [
+    {
+      "title": "Mog",
+      "namespace": "mog",
+      "artifact": "https://claude.ai/artifact/Ud39Qbn4PiDgu5m1HJTLec",
+      "version": "1794422537-c011",
+      "copiedAt": "2026-11-11T18:45:00Z"
+    }
+  ]
+}

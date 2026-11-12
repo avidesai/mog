@@ -1,0 +1,1175 @@
+{
+  "$schema_version": 1,
+  "$notes": [
+    "Reference ranges are published anthropometric / cephalometric norms for adults, stated as (mean, sd) per sex where the literature gives them, otherwise as a typical range converted to a mean and sd under a normal assumption. Every entry cites its source key in references.json.",
+    "Where the literature is pooled (no sex split), the same values are used for both sexes and `pooled` is true.",
+    "`direction` says which way a deviation is scored: 'toward_mean' (both tails penalised), 'higher_better', 'lower_better', or 'none' (displayed only, never scored).",
+    "reliability_tier is PROVISIONAL until the test-retest harness (eng doc, Telemetry) measures it. Provisional tiers were set from the landmark source's known precision. The harness overrides this file.",
+    "score_weight_cap is derived from evidence_grade per the eng doc table and is recomputed by the engine; it is stored here only so the file is self-describing.",
+    "`modifiable` marks metrics a tier-1/2 rule can actually move (soft tissue, skin). 'Most improvable' is chosen only among these; bone metrics are never called improvable."
+  ],
+  "metrics": [
+    {
+      "id": "fwhr",
+      "name": "Facial width-to-height ratio",
+      "short": "fWHR",
+      "unit": "ratio",
+      "pose": "frontal",
+      "inputs": [
+        "zygion_l",
+        "zygion_r",
+        "brow_mid",
+        "upper_lip_top"
+      ],
+      "definition": "Bizygomatic width divided by the distance from the midpoint of the brow line to the top of the upper lip.",
+      "reference": {
+        "male": {
+          "mean": 1.9,
+          "sd": 0.12
+        },
+        "female": {
+          "mean": 1.85,
+          "sd": 0.12
+        },
+        "pooled": false,
+        "source": "geniole2015"
+      },
+      "direction": "none",
+      "evidence_grade": "contradicted",
+      "reliability_tier": "A",
+      "confidence_floor": 0.7,
+      "community_name": "fWHR",
+      "plain": "How wide your face is relative to its height between brow and lip.",
+      "note": "Geniole et al. 2015 meta-analysis: higher fWHR associated with LOWER rated attractiveness (r = -0.26). Shown with the 'Research points the other way' badge. Zero score weight.",
+      "modifiable": false
+    },
+    {
+      "id": "canthal_tilt_deg",
+      "name": "Canthal tilt",
+      "short": "Canthal tilt",
+      "unit": "deg",
+      "pose": "frontal",
+      "inputs": [
+        "canthus_inner_l",
+        "canthus_outer_l",
+        "canthus_inner_r",
+        "canthus_outer_r"
+      ],
+      "definition": "Angle between the intercanthal axis (medial to lateral canthus) and the horizontal, averaged across both eyes. Positive = lateral canthus higher.",
+      "reference": {
+        "male": {
+          "mean": 4.1,
+          "sd": 2.0
+        },
+        "female": {
+          "mean": 4.1,
+          "sd": 2.0
+        },
+        "pooled": true,
+        "source": "rhee2012"
+      },
+      "direction": "higher_better",
+      "evidence_grade": "weak",
+      "reliability_tier": "B",
+      "confidence_floor": 0.72,
+      "community_name": "Canthal tilt / 'hunter eyes'",
+      "plain": "The upward angle of your eyes from the inner corner to the outer corner.",
+      "note": "Population variation is documented by ancestry; pooled reference used with a wider band when ancestry is unknown. Roll gate ±2° matters: a 2° roll error is a full SD.",
+      "modifiable": false
+    },
+    {
+      "id": "intercanthal_to_width_ratio",
+      "name": "Interocular distance ratio",
+      "short": "Eye spacing",
+      "unit": "ratio",
+      "pose": "frontal",
+      "inputs": [
+        "canthus_inner_l",
+        "canthus_inner_r",
+        "zygion_l",
+        "zygion_r"
+      ],
+      "definition": "Intercanthal distance divided by bizygomatic width.",
+      "reference": {
+        "male": {
+          "mean": 0.228,
+          "sd": 0.016
+        },
+        "female": {
+          "mean": 0.236,
+          "sd": 0.016
+        },
+        "pooled": false,
+        "source": "farkas1994"
+      },
+      "direction": "toward_mean",
+      "evidence_grade": "moderate",
+      "reliability_tier": "A",
+      "confidence_floor": 0.72,
+      "community_name": "IPD / eye spacing",
+      "plain": "How far apart your eyes sit relative to the width of your face.",
+      "modifiable": false
+    },
+    {
+      "id": "eye_aspect_ratio",
+      "name": "Eye aspect ratio",
+      "short": "Eye shape",
+      "unit": "ratio",
+      "pose": "frontal",
+      "inputs": [
+        "canthus_inner_l",
+        "canthus_outer_l",
+        "lid_upper_l",
+        "lid_lower_l",
+        "canthus_inner_r",
+        "canthus_outer_r",
+        "lid_upper_r",
+        "lid_lower_r"
+      ],
+      "definition": "Palpebral fissure height divided by fissure width, averaged across both eyes.",
+      "reference": {
+        "male": {
+          "mean": 0.33,
+          "sd": 0.04
+        },
+        "female": {
+          "mean": 0.35,
+          "sd": 0.04
+        },
+        "pooled": false,
+        "source": "farkas1994"
+      },
+      "direction": "none",
+      "evidence_grade": "weak",
+      "reliability_tier": "B",
+      "confidence_floor": 0.72,
+      "community_name": "Eye shape / 'almond eyes'",
+      "plain": "How tall your eye opening is relative to its width.",
+      "note": "Highly expression-dependent; neutral-expression gate is required. Displayed only.",
+      "modifiable": false
+    },
+    {
+      "id": "eye_width_to_intercanthal",
+      "name": "Eye width to spacing",
+      "short": "Eye proportion",
+      "unit": "ratio",
+      "pose": "frontal",
+      "inputs": [
+        "canthus_inner_l",
+        "canthus_outer_l",
+        "canthus_inner_r",
+        "canthus_outer_r"
+      ],
+      "definition": "Mean palpebral fissure width divided by intercanthal distance. The 'one eye width between the eyes' rule gives 1.0.",
+      "reference": {
+        "male": {
+          "mean": 0.97,
+          "sd": 0.08
+        },
+        "female": {
+          "mean": 0.96,
+          "sd": 0.08
+        },
+        "pooled": false,
+        "source": "farkas1994"
+      },
+      "direction": "toward_mean",
+      "evidence_grade": "moderate",
+      "reliability_tier": "A",
+      "confidence_floor": 0.72,
+      "plain": "Whether the gap between your eyes is about one eye wide.",
+      "modifiable": false
+    },
+    {
+      "id": "facial_thirds_upper",
+      "name": "Upper third share",
+      "short": "Upper third",
+      "unit": "ratio",
+      "pose": "frontal",
+      "inputs": [
+        "trichion",
+        "glabella",
+        "subnasale",
+        "menton"
+      ],
+      "definition": "Trichion-to-glabella height divided by total trichion-to-menton height.",
+      "reference": {
+        "male": {
+          "mean": 0.333,
+          "sd": 0.025
+        },
+        "female": {
+          "mean": 0.333,
+          "sd": 0.025
+        },
+        "pooled": true,
+        "source": "farkas1994"
+      },
+      "direction": "toward_mean",
+      "evidence_grade": "moderate",
+      "reliability_tier": "C",
+      "confidence_floor": 0.65,
+      "plain": "Forehead height as a share of your whole face.",
+      "note": "Trichion is unreliable with hairstyle and hairline recession; provisional tier C, qualitative only.",
+      "modifiable": false
+    },
+    {
+      "id": "facial_thirds_middle",
+      "name": "Middle third share",
+      "short": "Middle third",
+      "unit": "ratio",
+      "pose": "frontal",
+      "inputs": [
+        "glabella",
+        "subnasale",
+        "trichion",
+        "menton"
+      ],
+      "definition": "Glabella-to-subnasale height divided by total trichion-to-menton height.",
+      "reference": {
+        "male": {
+          "mean": 0.333,
+          "sd": 0.025
+        },
+        "female": {
+          "mean": 0.333,
+          "sd": 0.025
+        },
+        "pooled": true,
+        "source": "farkas1994"
+      },
+      "direction": "toward_mean",
+      "evidence_grade": "moderate",
+      "reliability_tier": "C",
+      "confidence_floor": 0.65,
+      "plain": "Nose-length region as a share of your whole face.",
+      "modifiable": false
+    },
+    {
+      "id": "facial_thirds_lower",
+      "name": "Lower third share",
+      "short": "Lower third",
+      "unit": "ratio",
+      "pose": "frontal",
+      "inputs": [
+        "subnasale",
+        "menton",
+        "trichion"
+      ],
+      "definition": "Subnasale-to-menton height divided by total trichion-to-menton height.",
+      "reference": {
+        "male": {
+          "mean": 0.333,
+          "sd": 0.025
+        },
+        "female": {
+          "mean": 0.333,
+          "sd": 0.025
+        },
+        "pooled": true,
+        "source": "farkas1994"
+      },
+      "direction": "toward_mean",
+      "evidence_grade": "moderate",
+      "reliability_tier": "C",
+      "confidence_floor": 0.65,
+      "plain": "Nose-base-to-chin as a share of your whole face.",
+      "modifiable": false
+    },
+    {
+      "id": "lower_third_split",
+      "name": "Lower third split",
+      "short": "Lip-to-chin",
+      "unit": "ratio",
+      "pose": "frontal",
+      "inputs": [
+        "subnasale",
+        "stomion",
+        "menton"
+      ],
+      "definition": "Subnasale-to-stomion divided by subnasale-to-menton. Classical ideal 1:2 gives 0.333.",
+      "reference": {
+        "male": {
+          "mean": 0.34,
+          "sd": 0.03
+        },
+        "female": {
+          "mean": 0.34,
+          "sd": 0.03
+        },
+        "pooled": true,
+        "source": "farkas1994"
+      },
+      "direction": "toward_mean",
+      "evidence_grade": "moderate",
+      "reliability_tier": "A",
+      "confidence_floor": 0.72,
+      "plain": "Where your mouth sits between nose and chin.",
+      "modifiable": false
+    },
+    {
+      "id": "midface_ratio",
+      "name": "Midface ratio",
+      "short": "Midface",
+      "unit": "ratio",
+      "pose": "frontal",
+      "inputs": [
+        "pupil_l",
+        "pupil_r",
+        "upper_lip_top"
+      ],
+      "definition": "Interpupillary distance divided by the vertical distance from the interpupillary line to the top of the upper lip.",
+      "reference": {
+        "male": {
+          "mean": 1.0,
+          "sd": 0.07
+        },
+        "female": {
+          "mean": 1.05,
+          "sd": 0.07
+        },
+        "pooled": false,
+        "source": "community_convention"
+      },
+      "direction": "toward_mean",
+      "evidence_grade": "community",
+      "reliability_tier": "A",
+      "confidence_floor": 0.72,
+      "community_name": "Midface ratio / 'compact midface'",
+      "plain": "Eye spacing relative to the height of your midface.",
+      "note": "Community convention; no clinical norm located. Displayed with the community badge, weight cap 0.02.",
+      "modifiable": false
+    },
+    {
+      "id": "nasal_width_to_intercanthal",
+      "name": "Nasal base width",
+      "short": "Nose width",
+      "unit": "ratio",
+      "pose": "frontal",
+      "inputs": [
+        "alare_l",
+        "alare_r",
+        "canthus_inner_l",
+        "canthus_inner_r"
+      ],
+      "definition": "Alar base width divided by intercanthal distance. The classical rule says the alar base equals the intercanthal distance (1.0).",
+      "reference": {
+        "male": {
+          "mean": 1.08,
+          "sd": 0.09
+        },
+        "female": {
+          "mean": 1.02,
+          "sd": 0.09
+        },
+        "pooled": false,
+        "source": "farkas1994"
+      },
+      "direction": "toward_mean",
+      "evidence_grade": "moderate",
+      "reliability_tier": "A",
+      "confidence_floor": 0.72,
+      "plain": "How wide your nose base is relative to your eye spacing.",
+      "note": "Most distance-sensitive metric in the set (Ward et al. 2018: ~30% wider at 12 in than 5 ft). The distance gate exists for this.",
+      "modifiable": false
+    },
+    {
+      "id": "nose_length_to_face_height",
+      "name": "Nose length",
+      "short": "Nose length",
+      "unit": "ratio",
+      "pose": "frontal",
+      "inputs": [
+        "nasion",
+        "subnasale",
+        "trichion",
+        "menton"
+      ],
+      "definition": "Nasion-to-subnasale divided by total face height.",
+      "reference": {
+        "male": {
+          "mean": 0.27,
+          "sd": 0.02
+        },
+        "female": {
+          "mean": 0.27,
+          "sd": 0.02
+        },
+        "pooled": true,
+        "source": "farkas1994"
+      },
+      "direction": "toward_mean",
+      "evidence_grade": "weak",
+      "reliability_tier": "B",
+      "confidence_floor": 0.7,
+      "plain": "How long your nose is relative to your face.",
+      "modifiable": false
+    },
+    {
+      "id": "mouth_width_to_nose",
+      "name": "Mouth to nose width",
+      "short": "Mouth width",
+      "unit": "ratio",
+      "pose": "frontal",
+      "inputs": [
+        "cheilion_l",
+        "cheilion_r",
+        "alare_l",
+        "alare_r"
+      ],
+      "definition": "Mouth width divided by alar base width.",
+      "reference": {
+        "male": {
+          "mean": 1.55,
+          "sd": 0.14
+        },
+        "female": {
+          "mean": 1.6,
+          "sd": 0.14
+        },
+        "pooled": false,
+        "source": "farkas1994"
+      },
+      "direction": "toward_mean",
+      "evidence_grade": "weak",
+      "reliability_tier": "B",
+      "confidence_floor": 0.7,
+      "plain": "How wide your mouth is relative to your nose.",
+      "modifiable": false
+    },
+    {
+      "id": "mouth_width_to_interpupillary",
+      "name": "Mouth to pupil spacing",
+      "short": "Mouth span",
+      "unit": "ratio",
+      "pose": "frontal",
+      "inputs": [
+        "cheilion_l",
+        "cheilion_r",
+        "pupil_l",
+        "pupil_r"
+      ],
+      "definition": "Mouth width divided by interpupillary distance.",
+      "reference": {
+        "male": {
+          "mean": 0.82,
+          "sd": 0.07
+        },
+        "female": {
+          "mean": 0.83,
+          "sd": 0.07
+        },
+        "pooled": false,
+        "source": "farkas1994"
+      },
+      "direction": "toward_mean",
+      "evidence_grade": "weak",
+      "reliability_tier": "B",
+      "confidence_floor": 0.7,
+      "plain": "Whether your mouth corners line up under your pupils.",
+      "modifiable": false
+    },
+    {
+      "id": "lip_ratio_upper_lower",
+      "name": "Upper to lower lip ratio",
+      "short": "Lip ratio",
+      "unit": "ratio",
+      "pose": "frontal",
+      "inputs": [
+        "labrale_superius",
+        "stomion",
+        "labrale_inferius"
+      ],
+      "definition": "Upper vermilion height divided by lower vermilion height.",
+      "reference": {
+        "male": {
+          "mean": 0.7,
+          "sd": 0.15
+        },
+        "female": {
+          "mean": 0.75,
+          "sd": 0.15
+        },
+        "pooled": false,
+        "source": "popenko2017"
+      },
+      "direction": "toward_mean",
+      "evidence_grade": "moderate",
+      "reliability_tier": "B",
+      "confidence_floor": 0.7,
+      "plain": "The fullness of your upper lip relative to your lower lip.",
+      "note": "Popenko et al. 2017 (JAMA Facial Plast Surg): 1:2 ratio rated most attractive in women. Male norm less studied; shown with wider band.",
+      "modifiable": false
+    },
+    {
+      "id": "bigonial_to_bizygomatic",
+      "name": "Jaw to cheek width",
+      "short": "Jaw width",
+      "unit": "ratio",
+      "pose": "frontal",
+      "inputs": [
+        "gonion_l",
+        "gonion_r",
+        "zygion_l",
+        "zygion_r"
+      ],
+      "definition": "Bigonial width divided by bizygomatic width.",
+      "reference": {
+        "male": {
+          "mean": 0.78,
+          "sd": 0.05
+        },
+        "female": {
+          "mean": 0.74,
+          "sd": 0.05
+        },
+        "pooled": false,
+        "source": "farkas1994"
+      },
+      "direction": "toward_mean",
+      "evidence_grade": "moderate",
+      "reliability_tier": "B",
+      "confidence_floor": 0.68,
+      "community_name": "Jaw width / 'wide jaw'",
+      "plain": "How wide your jaw is relative to your cheekbones.",
+      "note": "Gonion is a soft-tissue estimate from the frontal view and is adiposity-sensitive; the adiposity head is a covariate.",
+      "modifiable": true
+    },
+    {
+      "id": "chin_width_to_mouth",
+      "name": "Chin width",
+      "short": "Chin width",
+      "unit": "ratio",
+      "pose": "frontal",
+      "inputs": [
+        "chin_lateral_l",
+        "chin_lateral_r",
+        "cheilion_l",
+        "cheilion_r"
+      ],
+      "definition": "Soft-tissue chin width at the mentolabial level divided by mouth width.",
+      "reference": {
+        "male": {
+          "mean": 0.9,
+          "sd": 0.1
+        },
+        "female": {
+          "mean": 0.85,
+          "sd": 0.1
+        },
+        "pooled": false,
+        "source": "community_convention"
+      },
+      "direction": "none",
+      "evidence_grade": "community",
+      "reliability_tier": "C",
+      "confidence_floor": 0.65,
+      "plain": "How wide your chin is relative to your mouth.",
+      "modifiable": false
+    },
+    {
+      "id": "bitemporal_to_bizygomatic",
+      "name": "Forehead to cheek width",
+      "short": "Forehead width",
+      "unit": "ratio",
+      "pose": "frontal",
+      "inputs": [
+        "frontotemporale_l",
+        "frontotemporale_r",
+        "zygion_l",
+        "zygion_r"
+      ],
+      "definition": "Minimum frontal (bitemporal) width divided by bizygomatic width.",
+      "reference": {
+        "male": {
+          "mean": 0.8,
+          "sd": 0.04
+        },
+        "female": {
+          "mean": 0.81,
+          "sd": 0.04
+        },
+        "pooled": false,
+        "source": "farkas1994"
+      },
+      "direction": "none",
+      "evidence_grade": "weak",
+      "reliability_tier": "B",
+      "confidence_floor": 0.68,
+      "plain": "How wide your forehead is relative to your cheekbones.",
+      "modifiable": false
+    },
+    {
+      "id": "face_height_to_width",
+      "name": "Facial index",
+      "short": "Face length",
+      "unit": "ratio",
+      "pose": "frontal",
+      "inputs": [
+        "nasion",
+        "menton",
+        "zygion_l",
+        "zygion_r"
+      ],
+      "definition": "Morphological face height (nasion to menton) divided by bizygomatic width.",
+      "reference": {
+        "male": {
+          "mean": 0.88,
+          "sd": 0.05
+        },
+        "female": {
+          "mean": 0.86,
+          "sd": 0.05
+        },
+        "pooled": false,
+        "source": "farkas1994"
+      },
+      "direction": "toward_mean",
+      "evidence_grade": "moderate",
+      "reliability_tier": "A",
+      "confidence_floor": 0.72,
+      "plain": "How long your face is relative to its width.",
+      "modifiable": false
+    },
+    {
+      "id": "symmetry_index",
+      "name": "Bilateral symmetry",
+      "short": "Symmetry",
+      "unit": "ratio",
+      "pose": "frontal",
+      "inputs": [
+        "all_paired_landmarks",
+        "midsagittal_plane"
+      ],
+      "definition": "1 minus the mean normalised displacement between each paired landmark and its mirror across the fitted midsagittal plane, in the de-rotated frame.",
+      "reference": {
+        "male": {
+          "mean": 0.955,
+          "sd": 0.015
+        },
+        "female": {
+          "mean": 0.957,
+          "sd": 0.015
+        },
+        "pooled": true,
+        "source": "farkas1994_asym"
+      },
+      "direction": "higher_better",
+      "evidence_grade": "moderate",
+      "reliability_tier": "B",
+      "confidence_floor": 0.72,
+      "plain": "How closely the left and right halves of your face mirror each other.",
+      "note": "Reference is provisional pending the harness: lighting asymmetry inflates measured asymmetry, which is why the luma gate exists.",
+      "modifiable": false
+    },
+    {
+      "id": "brow_to_eye_distance_ratio",
+      "name": "Brow height",
+      "short": "Brow position",
+      "unit": "ratio",
+      "pose": "frontal",
+      "inputs": [
+        "brow_lower_l",
+        "lid_upper_l",
+        "brow_lower_r",
+        "lid_upper_r",
+        "canthus_inner_l",
+        "canthus_outer_l"
+      ],
+      "definition": "Vertical distance from lower brow edge to upper lid crease, divided by palpebral fissure width, averaged.",
+      "reference": {
+        "male": {
+          "mean": 0.3,
+          "sd": 0.08
+        },
+        "female": {
+          "mean": 0.38,
+          "sd": 0.08
+        },
+        "pooled": false,
+        "source": "community_convention"
+      },
+      "direction": "none",
+      "evidence_grade": "community",
+      "reliability_tier": "B",
+      "confidence_floor": 0.68,
+      "community_name": "Brow position / 'low-set brows'",
+      "plain": "How close your brows sit to your eyes.",
+      "modifiable": false
+    },
+    {
+      "id": "philtrum_length_ratio",
+      "name": "Philtrum length",
+      "short": "Philtrum",
+      "unit": "ratio",
+      "pose": "frontal",
+      "inputs": [
+        "subnasale",
+        "labrale_superius",
+        "subnasale",
+        "menton"
+      ],
+      "definition": "Subnasale-to-labrale-superius divided by lower-face height (subnasale to menton).",
+      "reference": {
+        "male": {
+          "mean": 0.22,
+          "sd": 0.03
+        },
+        "female": {
+          "mean": 0.21,
+          "sd": 0.03
+        },
+        "pooled": false,
+        "source": "farkas1994"
+      },
+      "direction": "toward_mean",
+      "evidence_grade": "weak",
+      "reliability_tier": "A",
+      "confidence_floor": 0.72,
+      "community_name": "Philtrum length",
+      "plain": "The distance between your nose and upper lip, relative to your lower face.",
+      "modifiable": false
+    },
+    {
+      "id": "nasofrontal_angle_deg",
+      "name": "Nasofrontal angle",
+      "short": "Nose bridge angle",
+      "unit": "deg",
+      "pose": "profile",
+      "inputs": [
+        "glabella",
+        "nasion",
+        "pronasale"
+      ],
+      "definition": "Angle at nasion between the glabella tangent and the nasal dorsum tangent.",
+      "reference": {
+        "male": {
+          "mean": 125.0,
+          "sd": 7.0
+        },
+        "female": {
+          "mean": 130.0,
+          "sd": 7.0
+        },
+        "pooled": false,
+        "source": "powell_humphreys1984"
+      },
+      "direction": "toward_mean",
+      "evidence_grade": "moderate",
+      "reliability_tier": "B",
+      "confidence_floor": 0.68,
+      "plain": "The angle where your forehead meets your nose bridge.",
+      "modifiable": false
+    },
+    {
+      "id": "nasolabial_angle_deg",
+      "name": "Nasolabial angle",
+      "short": "Nose-lip angle",
+      "unit": "deg",
+      "pose": "profile",
+      "inputs": [
+        "columella_point",
+        "subnasale",
+        "labrale_superius"
+      ],
+      "definition": "Angle at subnasale between the columella tangent and the upper lip tangent.",
+      "reference": {
+        "male": {
+          "mean": 95.0,
+          "sd": 7.0
+        },
+        "female": {
+          "mean": 102.0,
+          "sd": 7.0
+        },
+        "pooled": false,
+        "source": "armijo2012"
+      },
+      "direction": "toward_mean",
+      "evidence_grade": "moderate",
+      "reliability_tier": "B",
+      "confidence_floor": 0.68,
+      "plain": "The angle between the base of your nose and your upper lip.",
+      "note": "Armijo et al. 2012 (Arch Facial Plast Surg): ideal 93.4–98.5° men, 95.5–100.1° women by rater survey.",
+      "modifiable": false
+    },
+    {
+      "id": "nasal_tip_projection_goode",
+      "name": "Nasal tip projection",
+      "short": "Nose projection",
+      "unit": "ratio",
+      "pose": "profile",
+      "inputs": [
+        "alar_crease",
+        "pronasale",
+        "nasion"
+      ],
+      "definition": "Goode ratio: perpendicular from alar crease to pronasale divided by nasion-to-pronasale length.",
+      "reference": {
+        "male": {
+          "mean": 0.58,
+          "sd": 0.03
+        },
+        "female": {
+          "mean": 0.58,
+          "sd": 0.03
+        },
+        "pooled": true,
+        "source": "goode1984"
+      },
+      "direction": "toward_mean",
+      "evidence_grade": "moderate",
+      "reliability_tier": "B",
+      "confidence_floor": 0.68,
+      "plain": "How far your nose tip projects from your face.",
+      "modifiable": false
+    },
+    {
+      "id": "facial_convexity_deg",
+      "name": "Facial convexity",
+      "short": "Profile convexity",
+      "unit": "deg",
+      "pose": "profile",
+      "inputs": [
+        "glabella",
+        "subnasale",
+        "pogonion"
+      ],
+      "definition": "Angle at subnasale formed by glabella-subnasale and subnasale-pogonion (soft tissue). 180 = straight.",
+      "reference": {
+        "male": {
+          "mean": 168.0,
+          "sd": 5.0
+        },
+        "female": {
+          "mean": 169.0,
+          "sd": 5.0
+        },
+        "pooled": false,
+        "source": "legan_burstone1980"
+      },
+      "direction": "toward_mean",
+      "evidence_grade": "moderate",
+      "reliability_tier": "B",
+      "confidence_floor": 0.68,
+      "community_name": "Profile / 'recessed' vs 'forward grown'",
+      "plain": "Whether your profile is straight, convex or concave from forehead to chin.",
+      "note": "Legan & Burstone 1980: 12° ± 4° angle of convexity, expressed here as 168° ± 4–5°.",
+      "modifiable": false
+    },
+    {
+      "id": "mentolabial_angle_deg",
+      "name": "Mentolabial angle",
+      "short": "Lip-chin angle",
+      "unit": "deg",
+      "pose": "profile",
+      "inputs": [
+        "labrale_inferius",
+        "sulcus_mentolabialis",
+        "pogonion"
+      ],
+      "definition": "Angle at the mentolabial sulcus between the lower lip tangent and the chin tangent.",
+      "reference": {
+        "male": {
+          "mean": 122.0,
+          "sd": 11.0
+        },
+        "female": {
+          "mean": 124.0,
+          "sd": 11.0
+        },
+        "pooled": false,
+        "source": "naini2017"
+      },
+      "direction": "toward_mean",
+      "evidence_grade": "moderate",
+      "reliability_tier": "B",
+      "confidence_floor": 0.68,
+      "plain": "The angle of the fold between your lower lip and chin.",
+      "modifiable": false
+    },
+    {
+      "id": "cervicomental_angle_deg",
+      "name": "Cervicomental angle",
+      "short": "Jaw-neck angle",
+      "unit": "deg",
+      "pose": "profile",
+      "inputs": [
+        "menton",
+        "cervical_point",
+        "neck_tangent"
+      ],
+      "definition": "Angle at the cervical point between the submental line and the anterior neck line.",
+      "reference": {
+        "male": {
+          "mean": 112.0,
+          "sd": 9.0
+        },
+        "female": {
+          "mean": 112.0,
+          "sd": 9.0
+        },
+        "pooled": true,
+        "source": "ellenbogen1980"
+      },
+      "direction": "lower_better",
+      "evidence_grade": "strong",
+      "reliability_tier": "B",
+      "confidence_floor": 0.7,
+      "community_name": "Jaw-neck definition / 'submental fat'",
+      "plain": "How sharply your jaw turns into your neck.",
+      "note": "Ellenbogen & Karlin 1980: aesthetically ideal 105–120°. Strongly adiposity-driven, hence the strongest evidence for a modifiable metric.",
+      "modifiable": true
+    },
+    {
+      "id": "chin_projection_eline_mm",
+      "name": "Chin to E-line",
+      "short": "Chin projection",
+      "unit": "mm",
+      "pose": "profile",
+      "inputs": [
+        "pronasale",
+        "pogonion",
+        "labrale_inferius"
+      ],
+      "definition": "Signed perpendicular distance from soft-tissue pogonion to the Ricketts E-line (pronasale to pogonion is the line; measured here as lower-lip-to-E-line as the clinical proxy). Negative = behind the line.",
+      "reference": {
+        "male": {
+          "mean": -2.0,
+          "sd": 2.0
+        },
+        "female": {
+          "mean": -2.0,
+          "sd": 2.0
+        },
+        "pooled": true,
+        "source": "ricketts1968"
+      },
+      "direction": "toward_mean",
+      "evidence_grade": "moderate",
+      "reliability_tier": "C",
+      "confidence_floor": 0.65,
+      "plain": "Where your chin sits relative to a line from nose tip to chin.",
+      "note": "Requires metric scale; on a rear-camera profile capture, iris-based scale is the fallback. Provisional tier C until spike 4.",
+      "modifiable": false
+    },
+    {
+      "id": "gonial_angle_deg",
+      "name": "Gonial angle",
+      "short": "Jaw angle",
+      "unit": "deg",
+      "pose": "profile",
+      "inputs": [
+        "articulare_proxy",
+        "gonion",
+        "menton"
+      ],
+      "definition": "Soft-tissue approximation of the angle at gonion between the ramus tangent and the mandibular border tangent.",
+      "reference": {
+        "male": {
+          "mean": 122.0,
+          "sd": 6.0
+        },
+        "female": {
+          "mean": 124.0,
+          "sd": 6.0
+        },
+        "pooled": false,
+        "source": "soft_tissue_gonial_norms"
+      },
+      "direction": "toward_mean",
+      "evidence_grade": "weak",
+      "reliability_tier": "C",
+      "confidence_floor": 0.65,
+      "community_name": "Gonial angle",
+      "plain": "The angle at the back corner of your jaw.",
+      "note": "Skeletal norms (≈120–130°) are not directly comparable to the soft-tissue estimate; ramus tangent is often obscured by hair and ear. Qualitative only until the harness says otherwise.",
+      "modifiable": false
+    },
+    {
+      "id": "ramus_to_mandible_ratio",
+      "name": "Ramus length",
+      "short": "Ramus",
+      "unit": "ratio",
+      "pose": "profile",
+      "inputs": [
+        "tragus",
+        "gonion",
+        "menton"
+      ],
+      "definition": "Soft-tissue tragus-to-gonion divided by gonion-to-menton.",
+      "reference": {
+        "male": {
+          "mean": 0.72,
+          "sd": 0.08
+        },
+        "female": {
+          "mean": 0.7,
+          "sd": 0.08
+        },
+        "pooled": false,
+        "source": "community_convention"
+      },
+      "direction": "none",
+      "evidence_grade": "community",
+      "reliability_tier": "C",
+      "confidence_floor": 0.65,
+      "community_name": "Ramus length",
+      "plain": "The height of the back of your jaw relative to its length.",
+      "modifiable": false
+    },
+    {
+      "id": "forehead_slope_deg",
+      "name": "Forehead slope",
+      "short": "Forehead slope",
+      "unit": "deg",
+      "pose": "profile",
+      "inputs": [
+        "trichion",
+        "glabella",
+        "frankfort_horizontal"
+      ],
+      "definition": "Angle of the trichion–glabella line from the vertical (perpendicular to Frankfort horizontal).",
+      "reference": {
+        "male": {
+          "mean": 10.0,
+          "sd": 5.0
+        },
+        "female": {
+          "mean": 8.0,
+          "sd": 5.0
+        },
+        "pooled": false,
+        "source": "community_convention"
+      },
+      "direction": "none",
+      "evidence_grade": "weak",
+      "reliability_tier": "C",
+      "confidence_floor": 0.65,
+      "plain": "How much your forehead slopes back.",
+      "modifiable": false
+    },
+    {
+      "id": "skin_evenness",
+      "name": "Skin evenness",
+      "short": "Skin evenness",
+      "unit": "index",
+      "pose": "frontal",
+      "inputs": [
+        "appearance_head_skin"
+      ],
+      "definition": "Appearance-head output in [0, 1]: 1 = uniform tone and texture across the face region after lighting normalisation. Categorised as high / moderate / low.",
+      "reference": {
+        "male": {
+          "mean": 0.7,
+          "sd": 0.12
+        },
+        "female": {
+          "mean": 0.72,
+          "sd": 0.12
+        },
+        "pooled": false,
+        "source": "fink2006"
+      },
+      "direction": "higher_better",
+      "evidence_grade": "strong",
+      "reliability_tier": "B",
+      "confidence_floor": 0.7,
+      "plain": "How even your skin tone and texture are.",
+      "note": "Fink, Grammer & Matts 2006 and related work: skin colour homogeneity is among the stronger, fastest-changing predictors of rated attractiveness. Requires the stricter skin lighting gate.",
+      "modifiable": true
+    },
+    {
+      "id": "facial_adiposity",
+      "name": "Facial adiposity",
+      "short": "Facial fat",
+      "unit": "index",
+      "pose": "frontal",
+      "inputs": [
+        "appearance_head_adiposity",
+        "bigonial_to_bizygomatic",
+        "cervicomental_angle_deg"
+      ],
+      "definition": "Appearance-head output in [0, 1] estimating perceived facial adiposity, fused with soft-tissue jaw width and cervicomental angle when available. Categorised as low / moderate / high.",
+      "reference": {
+        "male": {
+          "mean": 0.45,
+          "sd": 0.15
+        },
+        "female": {
+          "mean": 0.45,
+          "sd": 0.15
+        },
+        "pooled": true,
+        "source": "coetzee2009"
+      },
+      "direction": "lower_better",
+      "evidence_grade": "strong",
+      "reliability_tier": "B",
+      "confidence_floor": 0.7,
+      "plain": "How much soft tissue sits over your facial structure.",
+      "note": "Coetzee et al. 2009 and Re & Rule: perceived facial adiposity is a reliable predictor of rated attractiveness and health. Lower-better is applied only down to the reference mean minus 1 SD; below that the term is flat, so the engine never rewards very low adiposity.",
+      "modifiable": true
+    },
+    {
+      "id": "hairline_stage",
+      "name": "Hairline",
+      "short": "Hairline",
+      "unit": "category",
+      "pose": "frontal",
+      "inputs": [
+        "appearance_head_hairline"
+      ],
+      "definition": "Norwood-Hamilton stage estimate (1–7) from the frontal view; shown as a category only.",
+      "reference": {
+        "male": {
+          "mean": 2.0,
+          "sd": 1.0
+        },
+        "female": {
+          "mean": 1.0,
+          "sd": 0.5
+        },
+        "pooled": false,
+        "source": "norwood1975"
+      },
+      "direction": "none",
+      "evidence_grade": "moderate",
+      "reliability_tier": "C",
+      "confidence_floor": 0.65,
+      "plain": "Where your hairline sits and whether it is receding.",
+      "note": "Never scored. Exists to trigger the tier-3 referral rule (minoxidil/finasteride named, never dosed).",
+      "modifiable": false
+    },
+    {
+      "id": "beard_presence",
+      "name": "Facial hair",
+      "short": "Facial hair",
+      "unit": "category",
+      "pose": "frontal",
+      "inputs": [
+        "appearance_head_beard"
+      ],
+      "definition": "Category: clean-shaven / stubble / short beard / full beard. Covariate for jaw and chin metrics; never scored.",
+      "reference": {
+        "male": {
+          "mean": 0.0,
+          "sd": 1.0
+        },
+        "female": {
+          "mean": 0.0,
+          "sd": 1.0
+        },
+        "pooled": true,
+        "source": "n/a"
+      },
+      "direction": "none",
+      "evidence_grade": "weak",
+      "reliability_tier": "A",
+      "confidence_floor": 0.7,
+      "plain": "Whether facial hair is covering your jaw and chin lines.",
+      "note": "When beard is present, jaw/chin soft-tissue metrics have their confidence multiplied by 0.8 and the card says so.",
+      "modifiable": false
+    }
+  ]
+}

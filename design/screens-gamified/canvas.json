@@ -1,0 +1,95 @@
+{
+  "v": 3,
+  "attachments": {},
+  "createdOnFiles": {
+    "at": "2026-11-12T01:30:00Z",
+    "v": 1
+  },
+  "title": "Mog — Gamified Direction",
+  "launch": {
+    "view": "canvas"
+  },
+  "pages": [],
+  "boards": {
+    "OnboardingStart.dc.html": { "h": 844, "is_interactive": true, "title": "Start", "w": 390, "x": 0, "y": 0 },
+    "OnboardingGoals.dc.html": { "h": 844, "is_interactive": true, "title": "Onboarding 1 — goals", "w": 390, "x": 470, "y": 0 },
+    "OnboardingAbout.dc.html": { "h": 844, "is_interactive": true, "title": "Onboarding 2 — about you", "w": 390, "x": 940, "y": 0 },
+    "OnboardingTime.dc.html": { "h": 844, "is_interactive": true, "title": "Onboarding 3 — time", "w": 390, "x": 1410, "y": 0 },
+    "Consent.dc.html": { "h": 844, "is_interactive": true, "title": "Consent", "w": 390, "x": 1880, "y": 0 },
+
+    "Capture.dc.html": { "h": 844, "title": "Capture — front, gate failing", "w": 390, "x": 0, "y": 1244 },
+    "CaptureProfile.dc.html": { "h": 844, "title": "Capture — profile, rear camera", "w": 390, "x": 470, "y": 1244 },
+    "Processing.dc.html": { "h": 844, "title": "Processing", "w": 390, "x": 940, "y": 1244 },
+    "Reveal.dc.html": { "h": 844, "is_interactive": true, "title": "Baseline reveal", "w": 390, "x": 1410, "y": 1244 },
+
+    "ResultsOverview.dc.html": { "h": 844, "is_interactive": true, "title": "Results — all 35 by region", "w": 390, "x": 0, "y": 2488 },
+    "MetricSwipe.dc.html": { "h": 844, "is_interactive": true, "title": "Metrics — one at a time", "w": 390, "x": 470, "y": 2488 },
+    "MetricDetail.dc.html": { "h": 844, "is_interactive": true, "title": "Metric detail — method and source", "w": 390, "x": 940, "y": 2488 },
+    "Paywall.dc.html": { "h": 844, "title": "Paywall", "w": 390, "x": 1410, "y": 2488 },
+    "ResultsFree.dc.html": { "h": 844, "is_interactive": true, "title": "Results — free user", "w": 390, "x": 1880, "y": 2488 },
+    "ModelUpdated.dc.html": { "h": 844, "is_interactive": true, "title": "Results — the model changed", "w": 390, "x": 2350, "y": 2488 },
+
+    "Main.dc.html": { "h": 844, "is_interactive": true, "title": "Today", "w": 390, "x": 0, "y": 3732 },
+    "TaskDetail.dc.html": { "h": 844, "is_interactive": true, "title": "Task detail — the why", "w": 390, "x": 470, "y": 3732 },
+    "DayComplete.dc.html": { "h": 844, "is_interactive": true, "title": "Day complete", "w": 390, "x": 940, "y": 3732 },
+    "StreakSave.dc.html": { "h": 844, "is_interactive": true, "title": "Missed a day", "w": 390, "x": 1410, "y": 3732 },
+    "TodayScanDay.dc.html": { "h": 844, "is_interactive": true, "title": "Today — scan day", "w": 390, "x": 1880, "y": 3732 },
+    "TodayEmpty.dc.html": { "h": 844, "is_interactive": true, "title": "Today — no scan yet", "w": 390, "x": 2350, "y": 3732 },
+    "DistressCard.dc.html": { "h": 844, "is_interactive": true, "title": "Today — the quiet check-in", "w": 390, "x": 2820, "y": 3732 },
+
+    "Plan.dc.html": { "h": 844, "is_interactive": true, "title": "The plan — four habits", "w": 390, "x": 0, "y": 4976 },
+    "Journey.dc.html": { "h": 844, "is_interactive": true, "title": "The path — eight weeks", "w": 390, "x": 470, "y": 4976 },
+    "Progress.dc.html": { "h": 844, "is_interactive": true, "title": "Progress — what moved", "w": 390, "x": 940, "y": 4976 },
+    "ShareCard.dc.html": { "h": 844, "title": "Share", "w": 390, "x": 1410, "y": 4976 },
+
+    "Methodology.dc.html": { "h": 844, "is_interactive": true, "title": "How the score works", "w": 390, "x": 0, "y": 6220 },
+    "Settings.dc.html": { "h": 844, "is_interactive": true, "title": "You — data, consent, subscription", "w": 390, "x": 470, "y": 6220 }
+  },
+  "order": [
+    "OnboardingStart.dc.html",
+    "OnboardingGoals.dc.html",
+    "OnboardingAbout.dc.html",
+    "OnboardingTime.dc.html",
+    "Consent.dc.html",
+    "Capture.dc.html",
+    "CaptureProfile.dc.html",
+    "Processing.dc.html",
+    "Reveal.dc.html",
+    "ResultsOverview.dc.html",
+    "MetricSwipe.dc.html",
+    "MetricDetail.dc.html",
+    "Paywall.dc.html",
+    "ResultsFree.dc.html",
+    "ModelUpdated.dc.html",
+    "Main.dc.html",
+    "TaskDetail.dc.html",
+    "DayComplete.dc.html",
+    "StreakSave.dc.html",
+    "TodayScanDay.dc.html",
+    "TodayEmpty.dc.html",
+    "DistressCard.dc.html",
+    "Plan.dc.html",
+    "Journey.dc.html",
+    "Progress.dc.html",
+    "ShareCard.dc.html",
+    "Methodology.dc.html",
+    "Settings.dc.html"
+  ],
+  "notes": {
+    "g1": { "kind": "title1", "maxW": 2270, "text": "Getting in — three questions, then consent", "w": 240, "x": 0, "y": -300 },
+    "g2": { "kind": "title1", "maxW": 1800, "text": "Scan — front, profile, measure, baseline", "w": 240, "x": 0, "y": 964 },
+    "g3": { "kind": "title1", "maxW": 2740, "text": "Results — overview, one at a time, the source, free, model changed", "w": 240, "x": 0, "y": 2208 },
+    "g4": { "kind": "title1", "maxW": 3210, "text": "The daily loop — one mechanic, the streak", "w": 240, "x": 0, "y": 3452 },
+    "g5": { "kind": "title1", "maxW": 1800, "text": "Plan, path, payoff", "w": 240, "x": 0, "y": 4696 },
+    "g6": { "kind": "title1", "maxW": 860, "text": "Trust", "w": 240, "x": 0, "y": 5940 }
+  },
+  "designSystems": [
+    {
+      "artifact": "https://claude.ai/artifact/Ud39Qbn4PiDgu5m1HJTLec",
+      "copiedAt": "2026-11-12T01:30:00Z",
+      "namespace": "mog",
+      "title": "Mog",
+      "version": "1794446518-255d"
+    }
+  ]
+}

@@ -1,0 +1,1151 @@
+{
+  "$schema_version": 1,
+  "$notes": [
+    "Human-authored, versioned rules table. A model never decides what to recommend — only how to word it. Every rule ships with static copy so the product works with no LLM.",
+    "Triggers: {metric, op, value} compares the raw metric value; {metric, category} compares the engine-derived z-category ('low' z<-1, 'typical', 'high' z>1) or an appearance category ('low'/'moderate'/'high', or a Norwood stage bucket). All triggers in a rule must fire (AND). min_confidence defaults to the metric's confidence_floor.",
+    "safety_tier: 1 self-directed, 2 OTC with irritation profile, 3 clinician territory (named, never dosed), 4 surgical/procedural (named, no links). Tier 3/4 never enter the ranked plan; they render in the 'To discuss with a professional' section.",
+    "cadence: 'daily' tasks define day completion; 'weekly' tasks have a target count per week; 'once' tasks are one-off setup. opens_week staggers tasks so week 1 is never overwhelming.",
+    "excludes: rule ids suppressed when this rule fires. always_on: fires regardless of findings when goal matches (foundational habits).",
+    "Copy must pass copy/voice.md: no comparative language, no 'mog', no 'subhuman', no degrading tiers, no dosing, no caloric figures."
+  ],
+  "goals": [
+    {
+      "id": "sharper_jawline",
+      "label": "A sharper jawline"
+    },
+    {
+      "id": "better_skin",
+      "label": "Clearer, more even skin"
+    },
+    {
+      "id": "look_leaner",
+      "label": "A leaner face"
+    },
+    {
+      "id": "hair",
+      "label": "Better hair and hairline"
+    },
+    {
+      "id": "eye_area",
+      "label": "A fresher eye area"
+    },
+    {
+      "id": "better_photos",
+      "label": "Looking better in photos"
+    },
+    {
+      "id": "general",
+      "label": "Just see where I stand"
+    }
+  ],
+  "rules": [
+    {
+      "id": "adiposity_high_cervicomental_obtuse",
+      "version": 2,
+      "triggers": [
+        {
+          "metric": "facial_adiposity",
+          "category": "high",
+          "min_confidence": 0.75
+        },
+        {
+          "metric": "cervicomental_angle_deg",
+          "op": ">",
+          "value": 126,
+          "min_confidence": 0.7
+        }
+      ],
+      "goal_match": [
+        "sharper_jawline",
+        "look_leaner",
+        "general"
+      ],
+      "safety_tier": 1,
+      "evidence_grade": "strong",
+      "expected_timeline_weeks": [
+        8,
+        24
+      ],
+      "effort": "high",
+      "impact_rank": 1,
+      "evidence_refs": [
+        "body_fat_face",
+        "ellenbogen1980",
+        "coetzee2009"
+      ],
+      "overlay": "profile_cervicomental",
+      "excludes": [
+        "jaw_exercise_devices",
+        "adiposity_moderate_general"
+      ],
+      "cadence": "daily",
+      "time_cost_min": 10,
+      "opens_week": 1,
+      "task_title": "Hit your protein and movement targets for the day",
+      "copy": {
+        "headline": "Lower body fat gradually",
+        "body": "The soft transition between your jaw and neck is mostly soft tissue, not bone. Reducing body fat at a steady pace sharpens that line more reliably than anything you can do to the jaw itself. Aim for a slow rate — roughly half a percent to one percent of bodyweight per week — with enough protein and resistance training to keep muscle.",
+        "why_this": "Your facial adiposity reads high and your jaw-neck angle is wider than the typical range. Both move together as body fat drops."
+      }
+    },
+    {
+      "id": "adiposity_moderate_general",
+      "version": 1,
+      "triggers": [
+        {
+          "metric": "facial_adiposity",
+          "category": "high",
+          "min_confidence": 0.75
+        }
+      ],
+      "goal_match": [
+        "sharper_jawline",
+        "look_leaner",
+        "general"
+      ],
+      "safety_tier": 1,
+      "evidence_grade": "strong",
+      "expected_timeline_weeks": [
+        8,
+        24
+      ],
+      "effort": "high",
+      "impact_rank": 2,
+      "evidence_refs": [
+        "body_fat_face",
+        "coetzee2009"
+      ],
+      "overlay": "frontal_jaw_width",
+      "excludes": [
+        "jaw_exercise_devices"
+      ],
+      "cadence": "daily",
+      "time_cost_min": 10,
+      "opens_week": 1,
+      "task_title": "Hit your protein and movement targets for the day",
+      "copy": {
+        "headline": "Lean out gradually",
+        "body": "Facial fat is one of the most changeable things about how a face reads, and one of the best-evidenced. A slow, sustainable fat loss — about half a percent to one percent of bodyweight per week, with protein and lifting to protect muscle — will show in the face before it shows anywhere else.",
+        "why_this": "Your facial adiposity reads above the typical range for your group."
+      }
+    },
+    {
+      "id": "resistance_training_weekly",
+      "version": 1,
+      "triggers": [
+        {
+          "metric": "facial_adiposity",
+          "category": "high",
+          "min_confidence": 0.75
+        }
+      ],
+      "goal_match": [
+        "sharper_jawline",
+        "look_leaner"
+      ],
+      "safety_tier": 1,
+      "evidence_grade": "strong",
+      "expected_timeline_weeks": [
+        8,
+        24
+      ],
+      "effort": "high",
+      "impact_rank": 3,
+      "evidence_refs": [
+        "body_fat_face"
+      ],
+      "overlay": null,
+      "excludes": [],
+      "cadence": "weekly",
+      "weekly_target": 3,
+      "time_cost_min": 45,
+      "opens_week": 1,
+      "task_title": "Resistance training session",
+      "copy": {
+        "headline": "Lift three times a week",
+        "body": "Resistance training is what keeps fat loss showing up as definition rather than as a drawn look. Three full-body sessions a week is enough; more is optional.",
+        "why_this": "Supports the fat-loss recommendation above — muscle retention is what makes the result look sharp rather than gaunt."
+      }
+    },
+    {
+      "id": "jaw_exercise_devices",
+      "version": 1,
+      "triggers": [
+        {
+          "metric": "bigonial_to_bizygomatic",
+          "category": "low",
+          "min_confidence": 0.68
+        }
+      ],
+      "goal_match": [],
+      "safety_tier": "X",
+      "evidence_grade": "contradicted",
+      "expected_timeline_weeks": [
+        0,
+        0
+      ],
+      "effort": "low",
+      "impact_rank": 99,
+      "evidence_refs": [],
+      "overlay": null,
+      "excludes": [],
+      "cadence": "once",
+      "time_cost_min": 0,
+      "opens_week": 99,
+      "task_title": null,
+      "copy": {
+        "headline": "Jaw exercisers",
+        "body": "Placeholder entry so the exclusion graph has a target. Tier X: never emitted.",
+        "why_this": ""
+      }
+    },
+    {
+      "id": "spf_daily",
+      "version": 2,
+      "triggers": [],
+      "always_on": true,
+      "goal_match": [
+        "better_skin",
+        "general",
+        "better_photos",
+        "eye_area"
+      ],
+      "safety_tier": 1,
+      "evidence_grade": "strong",
+      "expected_timeline_weeks": [
+        4,
+        52
+      ],
+      "effort": "low",
+      "impact_rank": 2,
+      "evidence_refs": [
+        "aad_sunscreen",
+        "fink2006"
+      ],
+      "overlay": null,
+      "excludes": [],
+      "cadence": "daily",
+      "time_cost_min": 1,
+      "opens_week": 1,
+      "task_title": "Broad-spectrum SPF 30+ on face and neck",
+      "copy": {
+        "headline": "Daily broad-spectrum SPF",
+        "body": "Skin evenness is one of the strongest and fastest-moving contributors to how a face is rated, and sun exposure is the main driver of unevenness over time. A broad-spectrum SPF 30 or higher every morning, including cloudy days, is the single highest-return skin habit there is.",
+        "why_this": "Foundational for every skin goal. If your skin evenness already reads high, this is how it stays that way."
+      }
+    },
+    {
+      "id": "skin_evenness_low_cleanse_moisturise",
+      "version": 1,
+      "triggers": [
+        {
+          "metric": "skin_evenness",
+          "category": "low",
+          "min_confidence": 0.7
+        }
+      ],
+      "goal_match": [
+        "better_skin",
+        "general",
+        "better_photos"
+      ],
+      "safety_tier": 1,
+      "evidence_grade": "strong",
+      "expected_timeline_weeks": [
+        2,
+        8
+      ],
+      "effort": "low",
+      "impact_rank": 3,
+      "evidence_refs": [
+        "fink2006",
+        "aad_acne"
+      ],
+      "overlay": "frontal_skin_regions",
+      "excludes": [],
+      "cadence": "daily",
+      "time_cost_min": 3,
+      "opens_week": 1,
+      "task_title": "Gentle cleanse and moisturise, morning and night",
+      "copy": {
+        "headline": "A two-step routine, twice a day",
+        "body": "Before any active ingredient, the basics: a gentle, fragrance-free cleanser and a plain moisturiser, morning and night. Most visible unevenness is barrier irritation and dryness, and this fixes a surprising share of it within a few weeks.",
+        "why_this": "Your skin evenness reads below the typical range. The basics come first; actives are added once the barrier is settled."
+      }
+    },
+    {
+      "id": "skin_evenness_low_otc_actives",
+      "version": 1,
+      "triggers": [
+        {
+          "metric": "skin_evenness",
+          "category": "low",
+          "min_confidence": 0.7
+        }
+      ],
+      "goal_match": [
+        "better_skin",
+        "general"
+      ],
+      "safety_tier": 2,
+      "evidence_grade": "strong",
+      "expected_timeline_weeks": [
+        6,
+        16
+      ],
+      "effort": "low",
+      "impact_rank": 4,
+      "evidence_refs": [
+        "aad_acne",
+        "otc_retinoid_azelaic"
+      ],
+      "overlay": "frontal_skin_regions",
+      "excludes": [],
+      "cadence": "daily",
+      "time_cost_min": 1,
+      "opens_week": 3,
+      "task_title": "Evening active (start 2–3 nights a week)",
+      "copy": {
+        "headline": "Add one over-the-counter active, slowly",
+        "body": "Once the basics are steady, one evening active can do real work on texture and tone: an adapalene gel for texture and breakouts, or a low-strength azelaic acid for redness and uneven tone. Start two or three nights a week and build up. Expect some dryness or flaking in the first weeks — that is normal, and it is why this opens in week three, not week one. Stop and see a pharmacist or dermatologist if irritation is more than mild.",
+        "why_this": "Your skin evenness reads low. Over-the-counter retinoids and azelaic acid have the best evidence of anything you can buy without a prescription."
+      }
+    },
+    {
+      "id": "sleep_regular",
+      "version": 1,
+      "triggers": [],
+      "always_on": true,
+      "goal_match": [
+        "eye_area",
+        "better_skin",
+        "general",
+        "better_photos",
+        "sharper_jawline",
+        "look_leaner"
+      ],
+      "safety_tier": 1,
+      "evidence_grade": "moderate",
+      "expected_timeline_weeks": [
+        1,
+        4
+      ],
+      "effort": "medium",
+      "impact_rank": 5,
+      "evidence_refs": [
+        "sleep_attractiveness"
+      ],
+      "overlay": null,
+      "excludes": [],
+      "cadence": "daily",
+      "time_cost_min": 0,
+      "opens_week": 1,
+      "task_title": "In bed by your target time",
+      "copy": {
+        "headline": "Protect your sleep",
+        "body": "Sleep-deprived faces are rated as less healthy and less attractive in controlled studies, and the eye area carries most of the difference. A consistent bedtime does more for how you look in the morning than any product does.",
+        "why_this": "Fast-acting and free. Shows up in the eye area first."
+      }
+    },
+    {
+      "id": "eye_area_puffiness",
+      "version": 1,
+      "triggers": [
+        {
+          "metric": "skin_evenness",
+          "category": "low",
+          "min_confidence": 0.7
+        }
+      ],
+      "goal_match": [
+        "eye_area"
+      ],
+      "safety_tier": 1,
+      "evidence_grade": "weak",
+      "expected_timeline_weeks": [
+        1,
+        4
+      ],
+      "effort": "low",
+      "impact_rank": 8,
+      "evidence_refs": [
+        "sleep_attractiveness"
+      ],
+      "overlay": "frontal_eye_region",
+      "excludes": [],
+      "cadence": "daily",
+      "time_cost_min": 1,
+      "opens_week": 2,
+      "task_title": "Hydrate; go easy on sodium and alcohol in the evening",
+      "copy": {
+        "headline": "Reduce morning puffiness",
+        "body": "Evening sodium, alcohol and poor sleep all show up under the eyes the next morning. Water through the day, less salt late, and the sleep habit above are the whole intervention. Eye creams are optional and mostly moisturiser.",
+        "why_this": "You asked about the eye area. This is the low-effort part; sleep is the high-return part."
+      }
+    },
+    {
+      "id": "brow_grooming",
+      "version": 1,
+      "triggers": [],
+      "always_on": true,
+      "goal_match": [
+        "eye_area",
+        "better_photos"
+      ],
+      "safety_tier": 1,
+      "evidence_grade": "weak",
+      "expected_timeline_weeks": [
+        0,
+        1
+      ],
+      "effort": "low",
+      "impact_rank": 9,
+      "evidence_refs": [
+        "grooming_brows"
+      ],
+      "overlay": "frontal_eye_region",
+      "excludes": [],
+      "cadence": "once",
+      "time_cost_min": 15,
+      "opens_week": 1,
+      "task_title": "Tidy brows — remove strays between and below, keep the shape",
+      "copy": {
+        "headline": "Tidy the brows, don't reshape them",
+        "body": "Clean up the strays between the brows and below the arch, and leave the natural shape alone. Over-plucked or thinned brows read as older and more tired; tidy, full brows frame the eyes. Ten minutes, once, then maintenance every couple of weeks.",
+        "why_this": "Immediate, reversible, and it changes how the whole eye area reads."
+      }
+    },
+    {
+      "id": "haircut_face_shape",
+      "version": 1,
+      "triggers": [],
+      "always_on": true,
+      "goal_match": [
+        "hair",
+        "better_photos",
+        "general"
+      ],
+      "safety_tier": 1,
+      "evidence_grade": "weak",
+      "expected_timeline_weeks": [
+        0,
+        2
+      ],
+      "effort": "low",
+      "impact_rank": 7,
+      "evidence_refs": [
+        "grooming_brows"
+      ],
+      "overlay": "frontal_thirds",
+      "excludes": [],
+      "cadence": "once",
+      "time_cost_min": 45,
+      "opens_week": 1,
+      "task_title": "Book a haircut; bring your facial-thirds card",
+      "copy": {
+        "headline": "Get a cut that works with your proportions",
+        "body": "A good barber can shift how your face proportions read more than almost anything else on this list. Bring your facial thirds card: if your upper third reads long, ask for volume at the sides rather than height; if it reads short, a little height on top helps. Avoid anything that hides the hairline if it is receding — covering reads as hiding.",
+        "why_this": "Reversible, fast, and it directly changes your measured thirds."
+      }
+    },
+    {
+      "id": "hair_care_daily",
+      "version": 1,
+      "triggers": [],
+      "always_on": true,
+      "goal_match": [
+        "hair"
+      ],
+      "safety_tier": 1,
+      "evidence_grade": "weak",
+      "expected_timeline_weeks": [
+        2,
+        8
+      ],
+      "effort": "low",
+      "impact_rank": 12,
+      "evidence_refs": [
+        "hair_care_basics"
+      ],
+      "overlay": null,
+      "excludes": [],
+      "cadence": "daily",
+      "time_cost_min": 2,
+      "opens_week": 1,
+      "task_title": "Hair: no heat today, condition if you wash, style without pulling",
+      "copy": {
+        "headline": "Treat the hair you have gently",
+        "body": "None of this regrows hair, and we won't pretend it does. It does make the hair you have look fuller and healthier within a few weeks: wash with a gentle shampoo rather than daily stripping, condition, keep heat styling to a minimum, and avoid tight styles that pull at the hairline.",
+        "why_this": "You asked about hair. Honest grade: limited evidence, zero risk, fast to show."
+      }
+    },
+    {
+      "id": "hairline_recession_referral",
+      "version": 1,
+      "triggers": [
+        {
+          "metric": "hairline_stage",
+          "op": ">=",
+          "value": 3,
+          "min_confidence": 0.65
+        }
+      ],
+      "goal_match": [
+        "hair",
+        "general"
+      ],
+      "safety_tier": 3,
+      "evidence_grade": "strong",
+      "expected_timeline_weeks": [
+        24,
+        52
+      ],
+      "effort": "medium",
+      "impact_rank": 4,
+      "evidence_refs": [
+        "minoxidil_finasteride"
+      ],
+      "overlay": "frontal_hairline",
+      "excludes": [],
+      "cadence": "once",
+      "time_cost_min": 0,
+      "opens_week": 1,
+      "task_title": null,
+      "copy": {
+        "headline": "Hairline recession: treatments exist, and they work best early",
+        "body": "Your hairline reads at a stage where recession is visible. Two treatments have strong evidence for slowing or partly reversing it: topical minoxidil, which is available over the counter, and oral finasteride, which is prescription-only and has side effects worth a real conversation. We don't tell you how much of either to use. A dermatologist or your GP can, in one short appointment, and the earlier the better.",
+        "why_this": "Hairline stage estimated at Norwood 3 or above."
+      }
+    },
+    {
+      "id": "hairline_early_monitor",
+      "version": 1,
+      "triggers": [
+        {
+          "metric": "hairline_stage",
+          "op": "==",
+          "value": 2,
+          "min_confidence": 0.65
+        }
+      ],
+      "goal_match": [
+        "hair"
+      ],
+      "safety_tier": 1,
+      "evidence_grade": "moderate",
+      "expected_timeline_weeks": [
+        0,
+        52
+      ],
+      "effort": "low",
+      "impact_rank": 10,
+      "evidence_refs": [
+        "norwood1975"
+      ],
+      "overlay": "frontal_hairline",
+      "excludes": [],
+      "cadence": "once",
+      "time_cost_min": 2,
+      "opens_week": 4,
+      "task_title": "Take a hairline reference photo in the same light",
+      "copy": {
+        "headline": "Keep an eye on the hairline",
+        "body": "A mature hairline is normal and not recession. The only way to tell the difference is time: your week-4 and week-8 scans will measure it again. If it moves, the treatment conversation is worth having early.",
+        "why_this": "Hairline stage estimated at Norwood 2 — within normal adult variation."
+      }
+    },
+    {
+      "id": "photo_distance_lens",
+      "version": 1,
+      "triggers": [],
+      "always_on": true,
+      "goal_match": [
+        "better_photos"
+      ],
+      "safety_tier": 1,
+      "evidence_grade": "strong",
+      "expected_timeline_weeks": [
+        0,
+        0
+      ],
+      "effort": "low",
+      "impact_rank": 3,
+      "evidence_refs": [
+        "ward2018",
+        "photo_technique"
+      ],
+      "overlay": null,
+      "excludes": [],
+      "cadence": "once",
+      "time_cost_min": 5,
+      "opens_week": 1,
+      "task_title": "Retake your best photo from further back with 2× zoom",
+      "copy": {
+        "headline": "Shoot from further back",
+        "body": "A phone held at arm's length makes the nose read about thirty percent wider than it is and shrinks the ears and jaw. Step back to a metre or more and zoom in, or have someone else take the photo. This single change alters how your proportions photograph more than any filter.",
+        "why_this": "Measured in a 2018 JAMA study. It is also why this app refuses to scan you closer than 45 cm."
+      }
+    },
+    {
+      "id": "photo_lighting",
+      "version": 1,
+      "triggers": [],
+      "always_on": true,
+      "goal_match": [
+        "better_photos"
+      ],
+      "safety_tier": 1,
+      "evidence_grade": "moderate",
+      "expected_timeline_weeks": [
+        0,
+        0
+      ],
+      "effort": "low",
+      "impact_rank": 6,
+      "evidence_refs": [
+        "photo_technique"
+      ],
+      "overlay": null,
+      "excludes": [],
+      "cadence": "once",
+      "time_cost_min": 5,
+      "opens_week": 1,
+      "task_title": "Find your window: soft light from slightly above and to one side",
+      "copy": {
+        "headline": "Use soft, slightly directional light",
+        "body": "Flat frontal light erases structure; hard overhead light exaggerates it. Soft light from a window, slightly above eye level and a little to one side, shows the jaw and cheek lines without carving shadows under the eyes. Face the light; don't put it behind you.",
+        "why_this": "Lighting is the second biggest factor in how structure photographs, after distance."
+      }
+    },
+    {
+      "id": "posture_head_position",
+      "version": 1,
+      "triggers": [],
+      "goal_match": [
+        "sharper_jawline",
+        "better_photos"
+      ],
+      "safety_tier": 1,
+      "evidence_grade": "weak",
+      "expected_timeline_weeks": [
+        0,
+        4
+      ],
+      "effort": "low",
+      "impact_rank": 7,
+      "evidence_refs": [
+        "photo_technique"
+      ],
+      "overlay": "profile_cervicomental",
+      "excludes": [],
+      "cadence": "daily",
+      "time_cost_min": 1,
+      "opens_week": 2,
+      "task_title": "Posture check: ears over shoulders, chin level",
+      "copy": {
+        "headline": "Bring your head back over your shoulders",
+        "body": "Forward head posture softens the jaw-neck line in every photo and every mirror. Ears over shoulders, chin level — not lifted. It changes nothing structurally, but it changes how the structure you have is seen, immediately.",
+        "why_this": "Posture is free and it changes how your jaw-neck line is seen immediately. If your jaw-neck angle reads wide, some of that is posture."
+      },
+      "always_on": true
+    },
+    {
+      "id": "beard_shape_jaw",
+      "version": 1,
+      "triggers": [
+        {
+          "metric": "beard_presence",
+          "op": ">=",
+          "value": 1,
+          "min_confidence": 0.7
+        },
+        {
+          "metric": "bigonial_to_bizygomatic",
+          "category": "low",
+          "min_confidence": 0.68
+        }
+      ],
+      "goal_match": [
+        "sharper_jawline",
+        "better_photos"
+      ],
+      "safety_tier": 1,
+      "evidence_grade": "weak",
+      "expected_timeline_weeks": [
+        0,
+        2
+      ],
+      "effort": "low",
+      "impact_rank": 8,
+      "evidence_refs": [
+        "grooming_brows"
+      ],
+      "overlay": "frontal_jaw_width",
+      "excludes": [],
+      "cadence": "once",
+      "time_cost_min": 15,
+      "opens_week": 1,
+      "task_title": "Shape the beard: keep length along the jaw, fade the cheeks and neck",
+      "copy": {
+        "headline": "Let the beard do the jaw's work",
+        "body": "Facial hair is the one thing that can visibly widen and square the lower face without changing anything underneath. Keep density and a little length along the jawline and chin, fade it on the cheeks, and define the neckline about a finger above the Adam's apple.",
+        "why_this": "You have facial hair and your jaw reads narrower than typical relative to the cheekbones. The beard can carry the line."
+      }
+    },
+    {
+      "id": "cleanshaven_jaw_note",
+      "version": 1,
+      "triggers": [
+        {
+          "metric": "beard_presence",
+          "op": "==",
+          "value": 0,
+          "min_confidence": 0.7
+        },
+        {
+          "metric": "bigonial_to_bizygomatic",
+          "category": "low",
+          "min_confidence": 0.68
+        }
+      ],
+      "goal_match": [
+        "sharper_jawline"
+      ],
+      "safety_tier": 1,
+      "evidence_grade": "weak",
+      "expected_timeline_weeks": [
+        2,
+        6
+      ],
+      "effort": "low",
+      "impact_rank": 9,
+      "evidence_refs": [
+        "grooming_brows"
+      ],
+      "overlay": "frontal_jaw_width",
+      "excludes": [],
+      "cadence": "once",
+      "time_cost_min": 0,
+      "opens_week": 2,
+      "task_title": "Try growing stubble along the jaw for two weeks",
+      "copy": {
+        "headline": "Consider stubble along the jaw",
+        "body": "If you can grow it, even stubble along the jawline and chin adds visual width where your measurements say the face is narrowest. Two weeks is enough to see whether it suits you; it is entirely reversible.",
+        "why_this": "Jaw width reads narrow relative to cheekbones, and you are clean-shaven."
+      }
+    },
+    {
+      "id": "mewing_myth",
+      "version": 1,
+      "triggers": [
+        {
+          "metric": "facial_convexity_deg",
+          "category": "low",
+          "min_confidence": 0.68
+        }
+      ],
+      "goal_match": [
+        "sharper_jawline",
+        "general"
+      ],
+      "safety_tier": 1,
+      "evidence_grade": "contradicted",
+      "expected_timeline_weeks": [
+        0,
+        0
+      ],
+      "effort": "low",
+      "impact_rank": 20,
+      "evidence_refs": [
+        "bos2025_mewing"
+      ],
+      "overlay": null,
+      "excludes": [],
+      "cadence": "once",
+      "time_cost_min": 0,
+      "opens_week": 1,
+      "task_title": null,
+      "is_info_card": true,
+      "copy": {
+        "headline": "About mewing",
+        "body": "You will see tongue-posture routines promoted for a profile like yours. The British Orthodontic Society and the American Association of Orthodontists have both said in 2025 that there is no scientific evidence it changes adult facial shape. Good head posture is worth having; expecting bone to move is not. This card is here so you don't spend months on it.",
+        "why_this": "Your profile convexity reads outside the typical range, which is exactly the finding these routines are marketed to."
+      }
+    },
+    {
+      "id": "convexity_orthodontic_referral",
+      "version": 1,
+      "triggers": [
+        {
+          "metric": "facial_convexity_deg",
+          "op": "<",
+          "value": 160,
+          "min_confidence": 0.68
+        }
+      ],
+      "goal_match": [
+        "sharper_jawline",
+        "general"
+      ],
+      "safety_tier": 3,
+      "evidence_grade": "moderate",
+      "expected_timeline_weeks": [
+        52,
+        156
+      ],
+      "effort": "high",
+      "impact_rank": 5,
+      "evidence_refs": [
+        "orthodontic_referral",
+        "legan_burstone1980"
+      ],
+      "overlay": "profile_convexity",
+      "excludes": [],
+      "cadence": "once",
+      "time_cost_min": 0,
+      "opens_week": 1,
+      "task_title": null,
+      "copy": {
+        "headline": "Profile convexity: an orthodontist can tell you what it is",
+        "body": "Your profile reads markedly convex. That can be the jaw position, the teeth, or simply soft tissue — and only a clinical assessment can tell which. An orthodontic consultation is often free or inexpensive, and it is the honest next step if this matters to you. We don't recommend a treatment, and we have no relationship with any provider.",
+        "why_this": "Soft-tissue facial convexity measured well below the typical range."
+      }
+    },
+    {
+      "id": "chin_retruded_surgical_note",
+      "version": 1,
+      "triggers": [
+        {
+          "metric": "chin_projection_eline_mm",
+          "op": "<",
+          "value": -6,
+          "min_confidence": 0.65
+        }
+      ],
+      "goal_match": [
+        "sharper_jawline",
+        "general"
+      ],
+      "safety_tier": 4,
+      "evidence_grade": "moderate",
+      "expected_timeline_weeks": [
+        0,
+        0
+      ],
+      "effort": "high",
+      "impact_rank": 6,
+      "evidence_refs": [
+        "ricketts1968"
+      ],
+      "overlay": "profile_eline",
+      "excludes": [],
+      "cadence": "once",
+      "time_cost_min": 0,
+      "opens_week": 1,
+      "task_title": null,
+      "copy": {
+        "headline": "Chin projection",
+        "body": "Your chin sits well behind the nose-to-chin reference line. Procedures exist for this and they are the kind of thing a board-certified facial plastic surgeon or maxillofacial surgeon could assess. We don't recommend procedures, we don't link to anyone who performs them, and we have no financial relationship with any provider. Posture and facial hair (above) change how this reads without changing anything.",
+        "why_this": "Soft-tissue chin measured more than 6 mm behind the E-line."
+      }
+    },
+    {
+      "id": "nasolabial_acute_info",
+      "version": 1,
+      "triggers": [
+        {
+          "metric": "nasolabial_angle_deg",
+          "category": "low",
+          "min_confidence": 0.68
+        }
+      ],
+      "goal_match": [
+        "general",
+        "better_photos"
+      ],
+      "safety_tier": 1,
+      "evidence_grade": "moderate",
+      "expected_timeline_weeks": [
+        0,
+        0
+      ],
+      "effort": "low",
+      "impact_rank": 15,
+      "evidence_refs": [
+        "armijo2012",
+        "photo_technique"
+      ],
+      "overlay": "profile_nasolabial",
+      "excludes": [],
+      "cadence": "once",
+      "time_cost_min": 0,
+      "opens_week": 1,
+      "task_title": null,
+      "is_info_card": true,
+      "copy": {
+        "headline": "Nose-lip angle: a camera note",
+        "body": "Your nose-lip angle reads more acute than typical. Nothing self-directed changes this — it is structure. What does change is how it photographs: avoid shooting from below, and keep the camera at or slightly above eye level.",
+        "why_this": "Nasolabial angle below the typical range. Shown because the camera advice follows directly from it."
+      }
+    },
+    {
+      "id": "nose_width_photo_note",
+      "version": 1,
+      "triggers": [
+        {
+          "metric": "nasal_width_to_intercanthal",
+          "category": "high",
+          "min_confidence": 0.72
+        }
+      ],
+      "goal_match": [
+        "better_photos",
+        "general"
+      ],
+      "safety_tier": 1,
+      "evidence_grade": "strong",
+      "expected_timeline_weeks": [
+        0,
+        0
+      ],
+      "effort": "low",
+      "impact_rank": 12,
+      "evidence_refs": [
+        "ward2018"
+      ],
+      "overlay": "frontal_nose_width",
+      "excludes": [],
+      "cadence": "once",
+      "time_cost_min": 0,
+      "opens_week": 1,
+      "task_title": null,
+      "is_info_card": true,
+      "copy": {
+        "headline": "Nose width and camera distance",
+        "body": "Your nose base reads wider than typical relative to your eye spacing. This is the measurement most distorted by close-up phones — about thirty percent at arm's length — so photos taken from further back will read noticeably different from your selfies. This measurement was taken at a gated distance, so it is not the selfie effect.",
+        "why_this": "Nasal base width above the typical range; the distance note is the actionable part."
+      }
+    },
+    {
+      "id": "symmetry_lighting_note",
+      "version": 1,
+      "triggers": [
+        {
+          "metric": "symmetry_index",
+          "category": "low",
+          "min_confidence": 0.72
+        }
+      ],
+      "goal_match": [
+        "better_photos",
+        "general"
+      ],
+      "safety_tier": 1,
+      "evidence_grade": "moderate",
+      "expected_timeline_weeks": [
+        0,
+        0
+      ],
+      "effort": "low",
+      "impact_rank": 11,
+      "evidence_refs": [
+        "farkas1994_asym",
+        "photo_technique"
+      ],
+      "overlay": "frontal_symmetry",
+      "excludes": [],
+      "cadence": "once",
+      "time_cost_min": 5,
+      "opens_week": 2,
+      "task_title": "Find your better side in soft, even light",
+      "copy": {
+        "headline": "Everyone is asymmetric; light decides how much it shows",
+        "body": "Your symmetry reads a little below typical. Every face is asymmetric, and uneven lighting exaggerates it far more than the underlying difference does. Even frontal light minimises it; strong side light maximises it. Most people also have a side that photographs better — find yours.",
+        "why_this": "Symmetry index below the typical range at this capture. The lighting gate passed, so this is not a capture artefact."
+      }
+    },
+    {
+      "id": "lip_care",
+      "version": 1,
+      "triggers": [
+        {
+          "metric": "skin_evenness",
+          "category": "low",
+          "min_confidence": 0.7
+        }
+      ],
+      "goal_match": [
+        "better_skin",
+        "better_photos"
+      ],
+      "safety_tier": 1,
+      "evidence_grade": "weak",
+      "expected_timeline_weeks": [
+        1,
+        2
+      ],
+      "effort": "low",
+      "impact_rank": 14,
+      "evidence_refs": [
+        "aad_sunscreen"
+      ],
+      "overlay": null,
+      "excludes": [],
+      "cadence": "daily",
+      "time_cost_min": 0,
+      "opens_week": 2,
+      "task_title": "Lip balm with SPF",
+      "copy": {
+        "headline": "Don't forget the lips",
+        "body": "Chapped lips read as unhealthy in every photo and are the easiest thing on this list to fix. A plain balm with SPF, applied when you apply your sunscreen.",
+        "why_this": "Low-effort addition to the skin routine."
+      }
+    },
+    {
+      "id": "hydration_general",
+      "version": 1,
+      "triggers": [],
+      "always_on": true,
+      "goal_match": [
+        "better_skin",
+        "look_leaner",
+        "general"
+      ],
+      "safety_tier": 1,
+      "evidence_grade": "weak",
+      "expected_timeline_weeks": [
+        1,
+        2
+      ],
+      "effort": "low",
+      "impact_rank": 16,
+      "evidence_refs": [],
+      "overlay": null,
+      "excludes": [],
+      "cadence": "daily",
+      "time_cost_min": 0,
+      "opens_week": 2,
+      "task_title": "Water with every meal",
+      "copy": {
+        "headline": "Drink water with meals",
+        "body": "The evidence that hydration changes skin appearance is weaker than the internet says, but mild dehydration does show in the face by evening and it costs nothing to rule out.",
+        "why_this": "Supporting habit. Honest grade: limited evidence."
+      }
+    },
+    {
+      "id": "alcohol_evening",
+      "version": 1,
+      "triggers": [
+        {
+          "metric": "facial_adiposity",
+          "category": "high",
+          "min_confidence": 0.75
+        }
+      ],
+      "goal_match": [
+        "look_leaner",
+        "sharper_jawline",
+        "eye_area"
+      ],
+      "safety_tier": 1,
+      "evidence_grade": "moderate",
+      "expected_timeline_weeks": [
+        1,
+        8
+      ],
+      "effort": "medium",
+      "impact_rank": 6,
+      "evidence_refs": [
+        "body_fat_face",
+        "sleep_attractiveness"
+      ],
+      "overlay": null,
+      "excludes": [],
+      "cadence": "daily",
+      "time_cost_min": 0,
+      "opens_week": 2,
+      "task_title": "No alcohol tonight",
+      "copy": {
+        "headline": "Cut back on alcohol",
+        "body": "Alcohol works against every goal on this list at once: it adds calories, disrupts sleep, and causes next-day facial puffiness. Fewer drinking days is the version of this that people actually keep.",
+        "why_this": "Facial adiposity reads high; alcohol is the most common hidden contributor to both fat and puffiness."
+      }
+    },
+    {
+      "id": "tretinoin_referral",
+      "version": 1,
+      "triggers": [
+        {
+          "metric": "skin_evenness",
+          "op": "<",
+          "value": 0.5,
+          "min_confidence": 0.7
+        }
+      ],
+      "goal_match": [
+        "better_skin"
+      ],
+      "safety_tier": 3,
+      "evidence_grade": "strong",
+      "expected_timeline_weeks": [
+        12,
+        52
+      ],
+      "effort": "medium",
+      "impact_rank": 5,
+      "evidence_refs": [
+        "tretinoin",
+        "aad_acne"
+      ],
+      "overlay": "frontal_skin_regions",
+      "excludes": [],
+      "cadence": "once",
+      "time_cost_min": 0,
+      "opens_week": 1,
+      "task_title": null,
+      "copy": {
+        "headline": "Prescription retinoids: worth asking about",
+        "body": "Your skin evenness reads well below typical. Over-the-counter options help, but the best-evidenced treatment for texture and tone is prescription tretinoin, and persistent breakouts have prescription options too. A dermatologist or GP visit — often available by telehealth — is the step that unlocks them. We don't tell you how to use any of it; they will.",
+        "why_this": "Skin evenness index below 0.50."
+      }
+    },
+    {
+      "id": "weekly_progress_photo",
+      "version": 1,
+      "triggers": [],
+      "always_on": true,
+      "goal_match": [
+        "sharper_jawline",
+        "better_skin",
+        "look_leaner",
+        "hair",
+        "eye_area",
+        "better_photos",
+        "general"
+      ],
+      "safety_tier": 1,
+      "evidence_grade": "moderate",
+      "expected_timeline_weeks": [
+        1,
+        8
+      ],
+      "effort": "low",
+      "impact_rank": 18,
+      "evidence_refs": [
+        "photo_technique"
+      ],
+      "overlay": null,
+      "excludes": [],
+      "cadence": "weekly",
+      "weekly_target": 1,
+      "time_cost_min": 2,
+      "opens_week": 1,
+      "task_title": "Reference photo: same spot, same light, same distance",
+      "copy": {
+        "headline": "One reference photo a week",
+        "body": "Not a scan — scans are at weeks four and eight, when enough has changed to measure. A plain reference photo in the same spot, same light, same distance each week is for you, stays on your phone, and is never analysed.",
+        "why_this": "Keeps the eight weeks honest without encouraging daily re-scanning."
+      }
+    }
+  ]
+}

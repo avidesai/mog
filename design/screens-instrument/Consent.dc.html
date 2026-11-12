@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Consent — how your face data is handled</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&display=swap');
+body{margin:0;font-family:"Inter Tight",system-ui,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+a{color:#2E5BFF}a:hover{color:#1F44CC}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #FAFAF8; display: flex; flex-direction: column; padding: 0 20px 24px">
+
+  <div style="height: 56px"></div>
+
+  <h1 style="margin: 8px 0 0; font-size: 28px; line-height: 34px; font-weight: 600; letter-spacing: -0.022em; color: #111112">Before we scan</h1>
+
+  <div style="margin-top: 20px; background: #FFFFFF; border: 1px solid #111112; border-radius: 8px; padding: 20px">
+
+    <p style="margin: 0; font-size: 15px; line-height: 22px; letter-spacing: -0.012em; color: #111112">To measure your face, the app reads its geometry from the camera.</p>
+
+    <div style="margin-top: 18px; display: flex; flex-direction: column; gap: 14px">
+      <div>
+        <div style="font-size: 12px; font-weight: 500; letter-spacing: 0.01em; color: #6E6E73">Where it happens</div>
+        <p style="margin: 3px 0 0; font-size: 13px; line-height: 19px; letter-spacing: -0.01em; color: #3A3A3D">Entirely on this iPhone. Your photos, the face mesh and the landmark positions never leave the device.</p>
+      </div>
+      <div>
+        <div style="font-size: 12px; font-weight: 500; letter-spacing: 0.01em; color: #6E6E73">What is kept</div>
+        <p style="margin: 3px 0 0; font-size: 13px; line-height: 19px; letter-spacing: -0.01em; color: #3A3A3D">The photos are deleted as soon as your measurements are computed. The measurements themselves — numbers like "128°" — stay on the device.</p>
+      </div>
+      <div>
+        <div style="font-size: 12px; font-weight: 500; letter-spacing: 0.01em; color: #6E6E73">For how long</div>
+        <p style="margin: 3px 0 0; font-size: 13px; line-height: 19px; letter-spacing: -0.01em; color: #3A3A3D">Until you delete them. One tap in Settings erases everything, and nothing is recoverable afterwards.</p>
+      </div>
+      <div>
+        <div style="font-size: 12px; font-weight: 500; letter-spacing: 0.01em; color: #6E6E73">Who else sees it</div>
+        <p style="margin: 3px 0 0; font-size: 13px; line-height: 19px; letter-spacing: -0.01em; color: #3A3A3D">Nobody. We don't sell it, share it, or send it to advertisers or analytics.</p>
+      </div>
+    </div>
+
+    <a href="#policy" style="display: inline-block; margin-top: 18px; font-size: 13px; line-height: 19px; letter-spacing: -0.01em; text-decoration: underline">Read the full biometric data policy</a>
+
+  </div>
+
+  <div style="flex-grow: 1"></div>
+
+  <button type="button" style="height: 48px; border-radius: 8px; border: none; background: #2E5BFF; color: #FFFFFF; font-family: inherit; font-size: 15px; font-weight: 600; letter-spacing: -0.012em; cursor: pointer; width: 100%">I agree to face scanning on this device</button>
+
+  <a href="Capture.dc.html" style="display: flex; align-items: center; justify-content: center; height: 44px; margin-top: 4px; font-size: 15px; font-weight: 500; letter-spacing: -0.012em; color: #6E6E73; text-decoration: none">Not now</a>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

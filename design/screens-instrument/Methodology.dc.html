@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Methodology — how the score works</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&display=swap');
+body{margin:0;font-family:"Inter Tight",system-ui,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+a{color:#2E5BFF}a:hover{color:#1F44CC}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #FAFAF8; display: flex; flex-direction: column; overflow: hidden">
+
+  <div style="height: 56px; display: flex; align-items: center; padding: 0 20px">
+    <a href="Results.dc.html" aria-label="Back" style="width: 44px; height: 44px; margin-left: -12px; display: flex; align-items: center; justify-content: center; text-decoration: none">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 2.5L4.5 8l5.5 5.5" stroke="#111112" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+
+  <div style="flex-grow: 1; overflow: hidden; padding: 0 20px">
+
+    <h1 style="margin: 0; font-size: 28px; line-height: 34px; font-weight: 600; letter-spacing: -0.022em; color: #111112">How this works</h1>
+
+    <p style="margin: 14px 0 0; font-size: 15px; line-height: 22px; letter-spacing: -0.012em; color: #3A3A3D">Your score estimates how an average rater would score this capture, as a percentile against a reference distribution matched to your sex and age band. It is not a measure of how attractive you are.</p>
+
+    <div style="margin-top: 20px; background: #FFFFFF; border: 1px solid #E3E3DF; border-radius: 8px; padding: 16px">
+      <div style="display: flex; justify-content: space-between; align-items: baseline">
+        <span style="font-size: 13px; line-height: 19px; letter-spacing: -0.01em; color: #3A3A3D">Same face, re-scanned</span>
+        <span style="font-size: 17px; font-weight: 500; letter-spacing: -0.01em; color: #111112">± 0.18</span>
+      </div>
+      <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #E3E3DF; display: flex; justify-content: space-between; align-items: baseline">
+        <span style="font-size: 13px; line-height: 19px; letter-spacing: -0.01em; color: #3A3A3D">Measurements shown</span>
+        <span style="font-size: 17px; font-weight: 500; letter-spacing: -0.01em; color: #111112">35</span>
+      </div>
+      <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #E3E3DF; display: flex; justify-content: space-between; align-items: baseline">
+        <span style="font-size: 13px; line-height: 19px; letter-spacing: -0.01em; color: #3A3A3D">Frames per capture</span>
+        <span style="font-size: 17px; font-weight: 500; letter-spacing: -0.01em; color: #111112">10</span>
+      </div>
+      <p style="margin: 12px 0 0; font-size: 11px; line-height: 15px; letter-spacing: 0.01em; color: #6E6E73">Re-scan spread measured across 20 people, 10 sessions each, on separate days.</p>
+    </div>
+
+    <div style="margin-top: 24px">
+      <div style="font-size: 12px; font-weight: 500; letter-spacing: 0.01em; color: #6E6E73">What we don't claim</div>
+      <p style="margin: 6px 0 0; font-size: 15px; line-height: 22px; letter-spacing: -0.012em; color: #3A3A3D">Roughly half of what makes a face appealing to any specific person is their own taste, and no model can measure that. Research puts rater agreement high in aggregate and individual preference at about the same size. We predict the average, with a stated range.</p>
+    </div>
+
+    <div style="margin-top: 20px">
+      <div style="font-size: 12px; font-weight: 500; letter-spacing: 0.01em; color: #6E6E73">Where the ranges come from</div>
+      <p style="margin: 6px 0 0; font-size: 15px; line-height: 22px; letter-spacing: -0.012em; color: #3A3A3D">Published anthropometric and cephalometric norms, stratified by sex and ancestry where the literature supports it. Anything that comes from community convention rather than published data is labelled as such on the measurement itself.</p>
+    </div>
+
+    <div style="margin-top: 20px">
+      <div style="font-size: 12px; font-weight: 500; letter-spacing: 0.01em; color: #6E6E73">If your score changes</div>
+      <p style="margin: 6px 0 0; font-size: 15px; line-height: 22px; letter-spacing: -0.012em; color: #3A3A3D">It changes because your measurements changed, or because we updated the model — and if it's the model, we tell you, show the old number and the new one, and explain what moved.</p>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!-- @dsCard group="Capture" height=440 -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:20px;background:var(--paper,#FAFAF8);font-family:"Inter Tight",system-ui,sans-serif;font-feature-settings:"tnum" 1;-webkit-font-smoothing:antialiased}
+.card{background:var(--surface-50,#fff);border:1px solid var(--line-200,#E3E3DF);border-radius:16px;padding:16px}
+.t3{font-size:17px;line-height:24px;font-weight:600;letter-spacing:-.016em;color:var(--ink-900,#111112);margin:0}
+.body{font-size:15px;line-height:22px;letter-spacing:-.012em;color:var(--ink-700,#3A3A3D);margin:0}
+.bodysm{font-size:13px;line-height:19px;letter-spacing:-.010em;color:var(--ink-700,#3A3A3D);margin:0}
+.label{font-size:12px;line-height:16px;font-weight:500;letter-spacing:.01em;color:var(--ink-500,#6E6E73)}
+.cap{font-size:11px;line-height:15px;letter-spacing:.01em;color:var(--ink-500,#6E6E73)}
+.val{font-size:24px;line-height:28px;font-weight:500;letter-spacing:-.015em;color:var(--ink-900,#111112);font-variant-numeric:tabular-nums}
+.unit{font-size:15px;font-weight:400;color:var(--ink-500,#6E6E73)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.badge{font-size:12px;line-height:16px;font-weight:500;letter-spacing:.01em;padding:2px 6px;border-radius:4px;border:1px solid var(--line-200,#E3E3DF);color:var(--ink-500,#6E6E73);white-space:nowrap}
+.track{position:relative;height:4px;border-radius:2px;background:var(--line-200,#E3E3DF);margin:12px 0 4px}
+.band{position:absolute;top:0;bottom:0;background:var(--accent-wash,#EBEFFF);border-radius:2px}
+.mark{position:absolute;top:-3px;width:2px;height:10px;background:var(--accent,#2E5BFF);border-radius:1px}
+.stack{display:flex;flex-direction:column;gap:12px;max-width:380px}
+</style>
+<div style="max-width:300px;background:#221F1A;border-radius:20px;padding:16px;position:relative;overflow:hidden">
+  <div style="display:flex;gap:6px;flex-wrap:wrap">
+    <span style="font-size:12px;font-weight:500;padding:3px 8px;border-radius:4px;border:1px solid var(--accent,#2E5BFF);color:var(--accent,#7D9BFF)">Angle ✓</span>
+    <span style="font-size:12px;font-weight:500;padding:3px 8px;border-radius:4px;border:1px solid var(--accent,#2E5BFF);color:var(--accent,#7D9BFF)">Lighting ✓</span>
+    <span style="font-size:12px;font-weight:500;padding:3px 8px;border-radius:4px;border:1px solid #E0A355;color:#E0A355">Distance</span>
+  </div>
+
+  <div style="height:200px;display:flex;align-items:center;justify-content:center">
+    <div style="width:118px;height:160px;border:1px solid #3A3A3D;border-radius:60px 60px 48px 48px"></div>
+  </div>
+
+  <div style="text-align:center;font-size:13px;line-height:19px;letter-spacing:-.01em;color:#F4F4F2;margin-bottom:14px">Move a little further away</div>
+
+  <div style="display:flex;justify-content:center">
+    <div style="position:relative;width:64px;height:64px">
+      <svg width="64" height="64" viewBox="0 0 64 64" style="position:absolute;inset:0" aria-hidden="true">
+        <circle cx="32" cy="32" r="30" fill="none" stroke="#2C2C2A" stroke-width="3"/>
+        <circle cx="32" cy="32" r="30" fill="none" stroke="#2E5BFF" stroke-width="3" stroke-linecap="round" stroke-dasharray="188" stroke-dashoffset="63" transform="rotate(-90 32 32)"/>
+      </svg>
+      <div style="position:absolute;inset:9px;border-radius:999px;background:#3A3A3D;box-shadow:0 1px 2px rgba(0,0,0,.08)"></div>
+    </div>
+  </div>
+  <div style="text-align:center;font-size:11px;color:#6A6A64;margin-top:10px">Shutter stays disabled until every gate passes</div>
+</div>

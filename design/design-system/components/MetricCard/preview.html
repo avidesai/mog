@@ -1,0 +1,56 @@
+<!-- @dsCard group="Results" height=620 -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:20px;background:var(--paper,#FAFAF8);font-family:"Inter Tight",system-ui,sans-serif;font-feature-settings:"tnum" 1;-webkit-font-smoothing:antialiased}
+.card{background:var(--surface-50,#fff);border:1px solid var(--line-200,#E3E3DF);border-radius:16px;padding:16px}
+.t3{font-size:17px;line-height:24px;font-weight:600;letter-spacing:-.016em;color:var(--ink-900,#111112);margin:0}
+.body{font-size:15px;line-height:22px;letter-spacing:-.012em;color:var(--ink-700,#3A3A3D);margin:0}
+.bodysm{font-size:13px;line-height:19px;letter-spacing:-.010em;color:var(--ink-700,#3A3A3D);margin:0}
+.label{font-size:12px;line-height:16px;font-weight:500;letter-spacing:.01em;color:var(--ink-500,#6E6E73)}
+.cap{font-size:11px;line-height:15px;letter-spacing:.01em;color:var(--ink-500,#6E6E73)}
+.val{font-size:24px;line-height:28px;font-weight:500;letter-spacing:-.015em;color:var(--ink-900,#111112);font-variant-numeric:tabular-nums}
+.unit{font-size:15px;font-weight:400;color:var(--ink-500,#6E6E73)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.badge{font-size:12px;line-height:16px;font-weight:500;letter-spacing:.01em;padding:2px 6px;border-radius:4px;border:1px solid var(--line-200,#E3E3DF);color:var(--ink-500,#6E6E73);white-space:nowrap}
+.track{position:relative;height:4px;border-radius:2px;background:var(--line-200,#E3E3DF);margin:12px 0 4px}
+.band{position:absolute;top:0;bottom:0;background:var(--accent-wash,#EBEFFF);border-radius:2px}
+.mark{position:absolute;top:-3px;width:2px;height:10px;background:var(--accent,#2E5BFF);border-radius:1px}
+.stack{display:flex;flex-direction:column;gap:12px;max-width:380px}
+</style>
+<div class="stack">
+
+  <div class="card">
+    <div class="row"><h3 class="t3">Gonial angle</h3><span class="badge" style="color:var(--ink-700,#3A3A3D);border-color:var(--line-200,#E3E3DF)">Reasonable support</span></div>
+    <div class="val" style="margin-top:8px">128<span class="unit">°</span></div>
+    <div class="track"><div class="band" style="left:30%;width:40%"></div><div class="mark" style="left:78%"></div></div>
+    <div class="row"><span class="cap">110°</span><span class="cap">typical 115–125°</span><span class="cap">140°</span></div>
+    <p class="bodysm" style="margin-top:12px">Slightly more obtuse than the typical range, which reads as a softer jawline in profile.</p>
+  </div>
+
+  <div class="card">
+    <div class="row"><h3 class="t3">Facial width-to-height</h3><span class="badge" style="color:var(--caution,#B5731A);border-color:var(--caution,#B5731A)">Research points the other way</span></div>
+    <div class="val" style="margin-top:8px">1.94</div>
+    <div class="track"><div class="band" style="left:28%;width:36%"></div><div class="mark" style="left:70%"></div></div>
+    <div class="row"><span class="cap">1.70</span><span class="cap">population 1.82–1.93</span><span class="cap">2.10</span></div>
+    <p class="bodysm" style="margin-top:12px">The community treats a higher ratio as desirable. Meta-analytic evidence associates it with slightly lower rated attractiveness.</p>
+  </div>
+
+  <div class="card">
+    <div class="row"><h3 class="t3">Canthal tilt</h3><span class="badge" style="border-style:dashed">Community metric, little evidence</span></div>
+    <div style="margin-top:8px;display:flex;align-items:center;gap:10px">
+      <div style="width:82px;height:30px;border-radius:4px;background:var(--line-200,#E3E3DF);filter:blur(6px)"></div>
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M3 5V3.5a3 3 0 016 0V5" stroke="var(--ink-300,#A8A8AD)" stroke-width="1.2"/><rect x="2.4" y="5" width="7.2" height="5.4" rx="1" stroke="var(--ink-300,#A8A8AD)" stroke-width="1.2"/></svg>
+      <span class="label">measured, locked</span>
+    </div>
+    <div class="track" style="opacity:.45"><div class="band" style="left:34%;width:32%"></div></div>
+    <div class="row"><span class="cap">−4°</span><span class="cap">typical +2 to +8°</span><span class="cap">+12°</span></div>
+  </div>
+
+  <div class="card">
+    <div class="row"><h3 class="t3">Skin evenness</h3></div>
+    <p class="bodysm" style="margin-top:8px;color:var(--caution,#B5731A)">Lighting was uneven on the left side, so this was not measured.</p>
+    <button style="margin-top:12px;height:36px;padding:0 14px;border-radius:8px;border:1px solid var(--line-200,#E3E3DF);background:transparent;font-family:inherit;font-size:13px;font-weight:500;letter-spacing:-.01em;color:var(--ink-900,#111112)">Retake front photo</button>
+  </div>
+
+</div>

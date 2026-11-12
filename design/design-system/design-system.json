@@ -1,0 +1,25 @@
+{
+  "v": 3,
+  "assetGroups": {},
+  "blobs": {},
+  "createdOnFiles": {
+    "at": "2026-11-11T18:40:00Z",
+    "v": 1
+  },
+  "docs": {
+    "readme": "project/README.md",
+    "sections": []
+  },
+  "groups": [],
+  "lastChange": {
+    "at": "2026-11-12T03:20:00Z",
+    "by": "Avi",
+    "note": "Synced to the decided direction: warm radii, chunky controls, habit-layer colours (positive, flame, finish), streak/task/path components. XP, levels and badges removed.",
+    "via": "Claude"
+  },
+  "layout": "files",
+  "libraries": [],
+  "namespace": "Mog",
+  "sections": {},
+  "title": "Mog"
+}

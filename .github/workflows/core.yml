@@ -1,0 +1,19 @@
+name: core
+on: [push, pull_request]
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install pytest
+      - run: cd core && python -m pytest -q
+      - name: data files unchanged by regeneration
+        run: |
+          cd core && python tools/build_reference.py >/dev/null && git diff --exit-code data/composite_reference.json
+  swift:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - run: cd core/swift/MogCore && ./sync-data.sh && swift build && swift test
