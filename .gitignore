@@ -22,3 +22,4 @@ ios/Mog/Config/Secrets.xcconfig
 tools/captures/
 # OS
 .DS_Store
+site/dist/
