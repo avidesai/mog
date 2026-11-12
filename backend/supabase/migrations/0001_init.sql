@@ -27,9 +27,13 @@ create table public.users (
 );
 
 -- ------------------------------------------------------------- consents
+-- user_id is nullable with ON DELETE SET NULL on purpose: consent records outlive the account (3 years,
+-- as evidence that consent was obtained) while every other table cascades away. subject_hash lets a
+-- record still be tied to a deleted account if a dispute names the Apple user identifier.
 create table public.consents (
   id              uuid primary key default gen_random_uuid(),
-  user_id         uuid not null references public.users (id) on delete cascade,
+  user_id         uuid references public.users (id) on delete set null,
+  subject_hash    text generated always as (encode(sha256(coalesce(user_id::text, '')::bytea), 'hex')) stored,
   kind            text not null check (kind in ('measurement','sync','calibration')),
   policy_version  text not null,
   granted_at      timestamptz not null default now(),

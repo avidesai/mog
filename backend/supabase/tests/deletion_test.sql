@@ -89,6 +89,19 @@ end $$;
 
 -- the queue got the request (service-role view)
 reset role;
+-- simulate process-deletions: removing the auth user cascades everything EXCEPT consents
+delete from auth.users where id = '00000000-0000-0000-0000-000000000001';
+do $$ begin
+  if exists (select 1 from public.users where id = '00000000-0000-0000-0000-000000000001') then
+    raise exception 'DELETION FAILED: profile survived auth user removal';
+  end if;
+  if (select count(*) from public.consents where id in ('10000000-0000-0000-0000-000000000001','10000000-0000-0000-0000-000000000002')) <> 2 then
+    raise exception 'RETENTION FAILED: consent records did not survive account deletion';
+  end if;
+  if exists (select 1 from public.consents where id = '10000000-0000-0000-0000-000000000001' and user_id is not null) then
+    raise exception 'RETENTION FAILED: consent still points at a deleted user';
+  end if;
+end $$;
 do $$ begin
   if not exists (select 1 from public.deletion_queue where user_id = '00000000-0000-0000-0000-000000000001') then
     raise exception 'DELETION FAILED: not queued for auth removal';

@@ -14,13 +14,15 @@ supabase/tests/run_local.sh         migrations + tests against any Postgres ≥ 
 
 **What the server can never hold:** there is no column for an image, landmark, mesh, embedding or depth map, and `scans.metrics_json` is constrained to a flat map of numbers under 8 KB.
 
-## Edge Functions (to write)
+## Edge Functions
+
+Written; pure logic in each `logic.ts` is tested with Node (`node --experimental-strip-types --test tests/functions.test.mjs`); the Deno `index.ts` wrappers are deployed with `supabase functions deploy <name>`.
 
 | Function | Trigger | Does |
 |---|---|---|
 | `revenuecat-webhook` | RevenueCat → HTTP | Upserts `entitlements` (service role, verifies the webhook secret) |
 | `process-deletions` | cron, hourly | For each `deletion_queue` row older than 24 h: delete `auth.users` (cascades the tombstoned profile), mark processed. Purge `consents` older than 3 years past user deletion. |
-| `phrase` | app → HTTP (only if on-device Foundation Models fail) | Receives `{findings: [...categories], goals: [...]}` — never a score, value, image or coordinate; calls the LLM with the fixed schema at temperature 0; runs the denylist; returns text or 204 (client falls back to static copy) |
+| `phrase` | app → HTTP (only if on-device Foundation Models fail) | Receives goal ids, rule ids, static copy and finding *categories* — the validator refuses any value, score, landmark or coordinate; calls the model at temperature 0 with a fixed system prompt; enforces same-ids-same-order, length caps, no exclamation marks, no dose/weight/calorie figures, then the denylist; returns text or **204** (client falls back to static copy) |
 
 ## Apply to a real project
 
@@ -29,3 +31,8 @@ supabase link --project-ref <ref>
 supabase db push          # applies migrations/
 ```
 Then set the Sign in with Apple provider in Auth settings. No other auth method.
+
+
+Secrets per function: `ANTHROPIC_API_KEY`, `PHRASE_MODEL` (phrase); `CRON_SECRET` (process-deletions); `REVENUECAT_WEBHOOK_SECRET` (webhook). `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are injected by the platform.
+
+**Consent retention:** `consents.user_id` is `ON DELETE SET NULL` so the records survive account deletion for the 3-year evidence window while everything else cascades. The test simulates the auth-user removal and checks exactly that.
