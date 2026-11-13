@@ -40,7 +40,7 @@ def main() -> None:
         sums = {m.id: 0.0 for m in scorable}
         sqs = {m.id: 0.0 for m in scorable}
         comps: list[float] = []
-        total_w = sum(m.weight for m in scorable)
+        total_w = sum(m.weight_for(sex) for m in scorable)
         for _ in range(N):
             c = 0.0
             for m in scorable:
@@ -48,7 +48,7 @@ def main() -> None:
                 q = quality_from_z(z, m.direction)
                 sums[m.id] += q
                 sqs[m.id] += q * q
-                c += m.weight * q
+                c += m.weight_for(sex) * q
             comps.append(c / total_w)
         moments = {}
         for m in scorable:
@@ -57,8 +57,8 @@ def main() -> None:
             moments[m.id] = {"mean": round(mean, 6), "sd": round(math.sqrt(max(var, 0.0)), 6)}
         out["q_moments"][sex] = moments
         # analytic standardisation under independence, mirroring the scorer
-        ref_mean = sum(m.weight * moments[m.id]["mean"] for m in scorable) / total_w
-        ref_sd = math.sqrt(sum((m.weight * moments[m.id]["sd"]) ** 2 for m in scorable)) / total_w
+        ref_mean = sum(m.weight_for(sex) * moments[m.id]["mean"] for m in scorable) / total_w
+        ref_sd = math.sqrt(sum((m.weight_for(sex) * moments[m.id]["sd"]) ** 2 for m in scorable)) / total_w
         std = sorted((c - ref_mean) / ref_sd for c in comps)
         table = [round(std[min(int(i * (N - 1) / 1000), N - 1)], 6) for i in range(1001)]
         out["quantiles_std"][sex] = table

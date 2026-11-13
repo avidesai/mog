@@ -57,7 +57,7 @@ TIERS: tuple[tuple[float, str, str], ...] = (
     (100.1, "Chad", "Chad"),
 )
 
-SCORING_MODEL_VERSION = "rules-1.0.0"
+SCORING_MODEL_VERSION = "rules-1.1.0"
 
 
 def tier_for_percentile(p: float) -> tuple[str, str]:
@@ -272,14 +272,15 @@ def score(inp: ScoreInput, reg: Registry, reference: dict[str, Any] | None = Non
         w = 0.0
         if m.scorable:
             q = quality_from_z(z, m.direction)
-            w = m.weight
+            w = m.weight_for(sex)
             mo = moments[mid]
             sum_w += w
             sum_wq += w * q
             sum_w_mu += w * mo["mean"]
             var_ref += (w * mo["sd"]) ** 2
-            # capture noise: iqr → sd in metric units → z units → q units via slope
-            z_sd = (r.iqr / IQR_TO_SD) / sd if r.iqr > 0 else 0.0
+            # capture noise: the larger of the cross-frame IQR (this capture) and the between-session
+            # noise_sd (what the harness measured), in z units, through the quality slope
+            z_sd = max((r.iqr / IQR_TO_SD) if r.iqr > 0 else 0.0, m.noise_sd) / sd
             var_cap += (w * z_sd * quality_slope(z, m.direction)) ** 2
         base["weight"] = w
         base["quality"] = q

@@ -1,7 +1,7 @@
 [
  {
   "name": "average_male_full",
-  "model_version": "rules-1.0.0",
+  "model_version": "rules-1.1.0",
   "sex": "male",
   "age_band": "18-24",
   "profile_captured": true,
@@ -224,18 +224,18 @@
    }
   },
   "expected": {
-   "composite_std": -0.068518776,
-   "percentile": 46.2638,
-   "score": 4.63,
-   "score_low": 4.12,
-   "score_high": 5.13,
+   "composite_std": 0.017506192,
+   "percentile": 49.6162,
+   "score": 4.96,
+   "score_low": 3.25,
+   "score_high": 6.71,
    "tier": "MTN",
    "n_scored": 22
   }
  },
  {
   "name": "average_female_full",
-  "model_version": "rules-1.0.0",
+  "model_version": "rules-1.1.0",
   "sex": "female",
   "age_band": "25-34",
   "profile_captured": true,
@@ -458,18 +458,18 @@
    }
   },
   "expected": {
-   "composite_std": -0.678802939,
-   "percentile": 24.4983,
-   "score": 2.45,
-   "score_low": 2.08,
-   "score_high": 2.86,
-   "tier": "LTN",
+   "composite_std": -0.016542207,
+   "percentile": 48.2139,
+   "score": 4.82,
+   "score_low": 3.14,
+   "score_high": 6.59,
+   "tier": "MTN",
    "n_scored": 22
   }
  },
  {
   "name": "average_male_frontal_only",
-  "model_version": "rules-1.0.0",
+  "model_version": "rules-1.1.0",
   "sex": "male",
   "age_band": "18-24",
   "profile_captured": false,
@@ -632,18 +632,18 @@
    }
   },
   "expected": {
-   "composite_std": 0.251511773,
-   "percentile": 58.9026,
-   "score": 5.89,
-   "score_low": 5.37,
-   "score_high": 6.39,
-   "tier": "MTN",
+   "composite_std": 0.998569759,
+   "percentile": 84.0532,
+   "score": 8.41,
+   "score_low": 7.18,
+   "score_high": 9.23,
+   "tier": "HTN",
    "n_scored": 16
   }
  },
  {
   "name": "high_adiposity_soft_neck",
-  "model_version": "rules-1.0.0",
+  "model_version": "rules-1.1.0",
   "sex": "male",
   "age_band": "18-24",
   "profile_captured": true,
@@ -866,18 +866,18 @@
    }
   },
   "expected": {
-   "composite_std": -0.02771388,
-   "percentile": 47.8508,
-   "score": 4.79,
-   "score_low": 4.28,
-   "score_high": 5.29,
-   "tier": "MTN",
+   "composite_std": -0.620159904,
+   "percentile": 26.2541,
+   "score": 2.63,
+   "score_low": 1.45,
+   "score_high": 4.22,
+   "tier": "LTN",
    "n_scored": 22
   }
  },
  {
   "name": "uneven_skin_good_structure",
-  "model_version": "rules-1.0.0",
+  "model_version": "rules-1.1.0",
   "sex": "male",
   "age_band": "25-34",
   "profile_captured": true,
@@ -1100,18 +1100,18 @@
    }
   },
   "expected": {
-   "composite_std": -1.99114069,
-   "percentile": 2.7406,
-   "score": 0.27,
-   "score_low": 0.12,
-   "score_high": 0.42,
+   "composite_std": -2.618914614,
+   "percentile": 0.6071,
+   "score": 0.06,
+   "score_low": 0.0,
+   "score_high": 0.21,
    "tier": "LTN",
    "n_scored": 22
   }
  },
  {
   "name": "lean_sharp_profile",
-  "model_version": "rules-1.0.0",
+  "model_version": "rules-1.1.0",
   "sex": "male",
   "age_band": "18-24",
   "profile_captured": true,
@@ -1334,18 +1334,18 @@
    }
   },
   "expected": {
-   "composite_std": -0.804774896,
-   "percentile": 20.8378,
-   "score": 2.08,
-   "score_low": 1.76,
-   "score_high": 2.44,
+   "composite_std": -0.40394204,
+   "percentile": 33.5194,
+   "score": 3.35,
+   "score_low": 2.03,
+   "score_high": 4.96,
    "tier": "LTN",
    "n_scored": 22
   }
  },
  {
   "name": "retruded_chin_convex",
-  "model_version": "rules-1.0.0",
+  "model_version": "rules-1.1.0",
   "sex": "male",
   "age_band": "18-24",
   "profile_captured": true,
@@ -1568,18 +1568,18 @@
    }
   },
   "expected": {
-   "composite_std": 0.105506802,
-   "percentile": 53.0619,
-   "score": 5.31,
-   "score_low": 4.81,
-   "score_high": 5.82,
+   "composite_std": 0.363864676,
+   "percentile": 63.1515,
+   "score": 6.32,
+   "score_low": 4.58,
+   "score_high": 7.86,
    "tier": "MTN",
    "n_scored": 22
   }
  },
  {
   "name": "female_wide_set_eyes_full_lips",
-  "model_version": "rules-1.0.0",
+  "model_version": "rules-1.1.0",
   "sex": "female",
   "age_band": "18-24",
   "profile_captured": true,
@@ -1802,18 +1802,18 @@
    }
   },
   "expected": {
-   "composite_std": 0.313083031,
-   "percentile": 61.2921,
-   "score": 6.13,
-   "score_low": 5.63,
-   "score_high": 6.63,
+   "composite_std": -0.015443995,
+   "percentile": 48.2537,
+   "score": 4.83,
+   "score_low": 3.14,
+   "score_high": 6.59,
    "tier": "MTN",
    "n_scored": 22
   }
  },
  {
   "name": "extreme_everything_bad",
-  "model_version": "rules-1.0.0",
+  "model_version": "rules-1.1.0",
   "sex": "male",
   "age_band": "35-44",
   "profile_captured": true,
@@ -2036,7 +2036,7 @@
    }
   },
   "expected": {
-   "composite_std": -5.748942224,
+   "composite_std": -5.20200676,
    "percentile": 0.0,
    "score": 0.0,
    "score_low": 0.0,
@@ -2047,7 +2047,7 @@
  },
  {
   "name": "bearded_low_conf",
-  "model_version": "rules-1.0.0",
+  "model_version": "rules-1.1.0",
   "sex": "male",
   "age_band": "25-34",
   "profile_captured": true,
@@ -2270,11 +2270,11 @@
    }
   },
   "expected": {
-   "composite_std": -0.373679088,
-   "percentile": 34.6274,
-   "score": 3.46,
-   "score_low": 3.0,
-   "score_high": 3.95,
+   "composite_std": -0.265362801,
+   "percentile": 38.6383,
+   "score": 3.86,
+   "score_low": 2.34,
+   "score_high": 5.62,
    "tier": "LTN",
    "n_scored": 22
   }

@@ -37,6 +37,7 @@ class Metric:
     note: str = ""
     community_name: str | None = None
     modifiable: bool = False
+    noise_sd: float = 0.0
 
     @property
     def weight_cap(self) -> float:
@@ -44,7 +45,17 @@ class Metric:
 
     @property
     def nominal_weight(self) -> float:
-        return TIER_WEIGHT[self.reliability_tier]
+        """Tier gate only: A/B are eligible, C/D are not. The magnitude comes from `reliability()`."""
+        return 1.0 if TIER_WEIGHT[self.reliability_tier] > 0 else 0.0
+
+    def reliability(self, sex: str) -> float:
+        """Attenuation factor r = var_true / (var_true + var_noise) = 1 / (1 + (noise_sd / pop_sd)^2).
+        A metric measured to 2% CV but whose population spread is only 1.5% (symmetry) gets r ≈ 0.1;
+        one measured to 2% with a 7% spread gets r ≈ 0.9. This is what 'reliable enough to score' means."""
+        _, sd = self.ref(sex)
+        if self.noise_sd <= 0:
+            return 1.0
+        return 1.0 / (1.0 + (self.noise_sd / sd) ** 2)
 
     @property
     def scorable(self) -> bool:
@@ -57,7 +68,11 @@ class Metric:
 
     @property
     def weight(self) -> float:
+        """Sex-independent part of the weight (evidence cap × tier gate). The scorer multiplies by reliability(sex)."""
         return self.nominal_weight * self.weight_cap if self.scorable else 0.0
+
+    def weight_for(self, sex: str) -> float:
+        return self.weight * self.reliability(sex)
 
     def ref(self, sex: str) -> tuple[float, float]:
         r = self.reference[sex]
@@ -194,6 +209,7 @@ def load_registry(data_dir: Path | None = None) -> Registry:
             reliability_tier=m["reliability_tier"], confidence_floor=float(m["confidence_floor"]),
             reference=m["reference"], plain=m["plain"], note=m.get("note", ""),
             community_name=m.get("community_name"), modifiable=bool(m.get("modifiable", False)),
+            noise_sd=float(m.get("noise_sd", 0.0)),
         )
 
     rules: dict[str, Rule] = {}

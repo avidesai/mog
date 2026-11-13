@@ -16,7 +16,7 @@ public enum ScoringConstants {
         "bigonial_to_bizygomatic", "chin_width_to_mouth", "gonial_angle_deg", "ramus_to_mandible_ratio",
         "cervicomental_angle_deg", "chin_projection_eline_mm", "mentolabial_angle_deg",
     ]
-    public static let modelVersion = "rules-1.0.0"
+    public static let modelVersion = "rules-1.1.0"
     /// (upper percentile bound, short, long). Nothing below LTN by design.
     public static let tiers: [(Double, String, String)] = [
         (45.0, "LTN", "Low-tier normie"), (65.0, "MTN", "Mid-tier normie"), (85.0, "HTN", "High-tier normie"),
@@ -164,13 +164,13 @@ public func score(_ inp: ScoreInput, _ reg: Registry) throws -> ScoreResult {
         if m.scorable {
             let qq = qualityFromZ(z, m.direction)
             q = qq
-            w = m.weight
+            w = m.weightFor(inp.sex)
             let mo = moments[mid]!
             sumW += w
             sumWQ += w * qq
             sumWMu += w * mo.mean
             varRef += (w * mo.sd) * (w * mo.sd)
-            let zSD = r.iqr > 0 ? (r.iqr / ScoringConstants.iqrToSD) / norm.sd : 0.0
+            let zSD = max(r.iqr > 0 ? r.iqr / ScoringConstants.iqrToSD : 0.0, m.noise_sd ?? 0) / norm.sd
             let t = w * zSD * qualitySlope(z, m.direction)
             varCap += t * t
         }

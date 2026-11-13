@@ -22,7 +22,7 @@ mogcore/
   cli.py        python -m mogcore.cli {score|plan|check|catalog}
 tests/          the suite, including the authoring gates (run: python -m pytest -q)
 fixtures/       scoring_cases.json — golden cases the Swift port must reproduce
-tools/          build_reference.py, make_fixtures.py
+tools/          build_reference.py, make_fixtures.py, cv_analysis.py (spike 1), harness.py (week 9: per-person test–retest + fairness smoke)
 ```
 
 ## Run
@@ -43,8 +43,11 @@ python -m mogcore.cli check "any generated sentence"
 Each scorable metric gets a z-score against its published norm, a signed
 quality term from its direction (`toward_mean` → −|z|; `higher_better` → z;
 `lower_better` → −z, flat below −1 SD so very low adiposity is never rewarded),
-clamped at ±3. Weight = reliability nominal (A 1.0, B 0.6, C/D 0) × evidence cap
-(strong 1.0, moderate 0.6, weak 0.1, community 0.02, contradicted 0). The
+clamped at ±3. Weight = tier gate (A/B in, C/D out) × evidence cap (strong 1.0,
+moderate 0.6, weak 0.1, community 0.02, contradicted 0) × **reliability**
+r = 1/(1+(noise_sd/pop_sd)²), the attenuation factor from the metric's
+between-session noise relative to the population spread (`noise_sd` in
+metrics.json, provisional until the harness measures it). The
 weighted mean is standardised against its analytic reference moments (so a
 scan with suppressed metrics is still comparable) and mapped through a
 quantile table built from the norms themselves.
@@ -58,12 +61,26 @@ Properties the tests enforce:
 - fWHR (contradicted) and community metrics **cannot move** the score
 - tier-C metrics display as a category and carry **zero** weight
 - low confidence / occlusion / missing pose → **suppressed with a reason**, never a guess
-- band = capture noise (cross-frame IQR, propagated) ⊕ a fixed model-uncertainty
-  term; typical ±0.4–0.5 points; **never narrower than ±0.15**
+- band = max(cross-frame IQR, between-session noise_sd) per metric, propagated,
+  ⊕ a fixed model-uncertainty term; **calibrated**: a synthetic test–retest shows a
+  person's mean inside a single capture's band ~68% of the time; never narrower than ±0.15
 
 A face at exactly the mean on every metric scores ~10. That is a mathematical
 corner (it maximises every toward-mean term at once), not a real face, and the
 Methodology screen should say so if asked.
+
+## The noise finding (12 Nov) — read this before trusting any band or gate
+
+Simulating test–retest with tier-realistic noise (2% CV tier A, 5% tier B) under the
+original fixed tier weights gave a median per-person score SD of **~1.9 points** — ten
+times the 0.2 gate the eng doc had set. The cause: CV is the wrong reliability measure
+for metrics whose population spread is itself small (symmetry index: 5% CV on a value
+near 1.0 against a 1.5% spread is pure noise). Fix shipped as rules-1.1.0: weights
+are attenuated by r = 1/(1+(noise/spread)²), and the band includes between-session
+noise. Result under the same provisional noise: median SD **~1.1**, band ±1.4,
+coverage ~70%. Under half that noise: SD ~0.55. The gate is now **median SD ≤ 0.6
+on measured noise** (test asserts ≤ 1.2 under the provisional table). The week-1
+captures decide which world we are in; `tools/harness.py` computes it.
 
 ## Known simplifications (v1.1 replaces them)
 

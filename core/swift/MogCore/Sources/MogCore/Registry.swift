@@ -68,10 +68,20 @@ public struct Metric: Codable, Identifiable {
     public let plain: String
     public let note: String?
     public let modifiable: Bool?
+    public let noise_sd: Double?
 
     public var isModifiable: Bool { modifiable ?? false }
     public var weightCap: Double { evidence_grade.cap }
-    public var nominalWeight: Double { reliability_tier.nominalWeight }
+    /// Tier gate only (A/B eligible); magnitude comes from reliability(_:).
+    public var nominalWeight: Double { reliability_tier.nominalWeight > 0 ? 1.0 : 0.0 }
+    /// Attenuation r = 1 / (1 + (noise_sd / pop_sd)^2). Mirrors Metric.reliability in registry.py.
+    public func reliability(_ sex: Sex) -> Double {
+        let n = noise_sd ?? 0
+        if n <= 0 { return 1.0 }
+        let sd = ref(sex).sd
+        return 1.0 / (1.0 + (n / sd) * (n / sd))
+    }
+    public func weightFor(_ sex: Sex) -> Double { weight * reliability(sex) }
     public var scorable: Bool { direction != .none && weightCap > 0 && nominalWeight > 0 && unit != "category" }
     public var weight: Double { scorable ? nominalWeight * weightCap : 0.0 }
     public func ref(_ sex: Sex) -> ReferenceNorm { sex == .male ? reference.male : reference.female }

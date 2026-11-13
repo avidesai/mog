@@ -43,12 +43,59 @@ def test_reference_population_is_calibrated_to_its_own_median(reg):
     assert 0.01 <= tiers.get("Chad", 0) / n <= 0.05
 
 
-def test_typical_band_half_width_is_honest(reg):
-    pop = _sampled_population(reg, n=600)
-    halves = sorted((r.score_high - r.score_low) / 2 for r in pop)
-    median_half = halves[len(halves) // 2]
-    assert 0.3 <= median_half <= 0.6, median_half
-    assert min(r.score_high - r.score_low for r in pop) >= 0.15 - 1e-9  # the floor (clamped at the scale ends)
+def _repeat_captures(reg, people=25, captures=10, seed=11, noise_scale=1.0):
+    """Synthetic test–retest: each person has fixed true metrics; each capture adds the metric's
+    provisional between-session noise_sd. Returns (per-person score SDs, band half-widths, coverage)."""
+    import random
+    rng = random.Random(seed)
+    sds, halves, covered, total = [], [], 0, 0
+    for _ in range(people):
+        base = {m.id: rng.gauss(0, 1) for m in reg.metrics.values() if m.unit != "category"}
+        results = []
+        for _ in range(captures):
+            rd = {}
+            for m in reg.metrics.values():
+                if m.unit == "category":
+                    rd[m.id] = MetricReading(1.0 if m.id == "hairline_stage" else 0.0, 0.9, 0.0); continue
+                mean, sd = m.ref("male")
+                rd[m.id] = MetricReading(mean + base[m.id] * sd + rng.gauss(0, m.noise_sd * noise_scale), 0.9, 0.05 * sd)
+            results.append(score(ScoreInput("male", "18-24", rd), reg))
+        scores = [r.score for r in results]
+        mu = sum(scores) / len(scores)
+        sds.append((sum((x - mu) ** 2 for x in scores) / len(scores)) ** 0.5)
+        for r in results:
+            halves.append((r.score_high - r.score_low) / 2)
+            total += 1
+            covered += 1 if r.score_low <= mu <= r.score_high else 0
+    sds.sort(); halves.sort()
+    return sds, halves, covered / total
+
+
+def test_band_is_calibrated_to_test_retest_noise(reg):
+    """The band must mean something: a person's long-run mean score should fall inside the band of a
+    single capture about 68% of the time (±1σ), and the band's width should track the actual
+    test–retest SD rather than a number we liked. Both are checked against the provisional noise_sd
+    values; the harness replaces those with measured ones and this test keeps holding them honest."""
+    sds, halves, coverage = _repeat_captures(reg)
+    med_sd = sds[len(sds) // 2]
+    med_half = halves[len(halves) // 2]
+    assert 0.55 <= coverage <= 0.90, coverage
+    assert 0.7 * med_sd <= med_half <= 1.8 * med_sd, (med_sd, med_half)
+
+
+def test_provisional_test_retest_sd_is_within_the_release_gate(reg):
+    """Release gate (revised 12 Nov, see docs): median per-person score SD ≤ 1.2 points under the
+    PROVISIONAL noise table, ≤ 0.6 under measured noise before launch. This test guards the provisional
+    figure so a weighting change that quietly doubles the noise cannot land."""
+    sds, _, _ = _repeat_captures(reg, people=20, captures=8)
+    assert sds[len(sds) // 2] <= 1.2, sds[len(sds) // 2]
+
+
+def test_attenuation_weighting_downweights_noisy_metrics(reg):
+    """symmetry_index: ~5% CV on a value near 1 with a 1.5% population spread → reliability ≈ 0.1.
+    intercanthal ratio: 2% CV on a 7% spread → reliability ≈ 0.9."""
+    assert reg.metrics["symmetry_index"].reliability("male") < 0.2
+    assert reg.metrics["intercanthal_to_width_ratio"].reliability("male") > 0.85
 
 
 def test_perfectly_average_face_is_an_outlier_by_design(reg, mk_input):

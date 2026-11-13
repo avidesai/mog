@@ -6,7 +6,8 @@
     "`direction` says which way a deviation is scored: 'toward_mean' (both tails penalised), 'higher_better', 'lower_better', or 'none' (displayed only, never scored).",
     "reliability_tier is PROVISIONAL until the test-retest harness (eng doc, Telemetry) measures it. Provisional tiers were set from the landmark source's known precision. The harness overrides this file.",
     "score_weight_cap is derived from evidence_grade per the eng doc table and is recomputed by the engine; it is stored here only so the file is self-describing.",
-    "`modifiable` marks metrics a tier-1/2 rule can actually move (soft tissue, skin). 'Most improvable' is chosen only among these; bone metrics are never called improvable."
+    "`modifiable` marks metrics a tier-1/2 rule can actually move (soft tissue, skin). 'Most improvable' is chosen only among these; bone metrics are never called improvable.",
+    "`noise_sd` is the between-session standard deviation of the metric in its own units (PROVISIONAL: derived from the provisional tier as 2%/5%/10% CV of the mean, or 1°/2.5°/5° for angles and mm). The week-9 harness overwrites it. The scorer turns it into an attenuation weight r = 1/(1+(noise_sd/pop_sd)²) — a metric whose capture noise is large relative to the population spread cannot move the score much, however 'precise' its CV looks. This replaced the fixed tier weights (1.0/0.6) in rules-1.1.0 after simulation showed tier-realistic noise producing ~2-point score SDs under the old weighting."
   ],
   "metrics": [
     {
@@ -41,7 +42,8 @@
       "community_name": "fWHR",
       "plain": "How wide your face is relative to its height between brow and lip.",
       "note": "Geniole et al. 2015 meta-analysis: higher fWHR associated with LOWER rated attractiveness (r = -0.26). Shown with the 'Research points the other way' badge. Zero score weight.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 0.038
     },
     {
       "id": "canthal_tilt_deg",
@@ -75,7 +77,8 @@
       "community_name": "Canthal tilt / 'hunter eyes'",
       "plain": "The upward angle of your eyes from the inner corner to the outer corner.",
       "note": "Population variation is documented by ancestry; pooled reference used with a wider band when ancestry is unknown. Roll gate ±2° matters: a 2° roll error is a full SD.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 2.5
     },
     {
       "id": "intercanthal_to_width_ratio",
@@ -108,7 +111,8 @@
       "confidence_floor": 0.72,
       "community_name": "IPD / eye spacing",
       "plain": "How far apart your eyes sit relative to the width of your face.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 0.00456
     },
     {
       "id": "eye_aspect_ratio",
@@ -146,7 +150,8 @@
       "community_name": "Eye shape / 'almond eyes'",
       "plain": "How tall your eye opening is relative to its width.",
       "note": "Highly expression-dependent; neutral-expression gate is required. Displayed only.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 0.0165
     },
     {
       "id": "eye_width_to_intercanthal",
@@ -178,7 +183,8 @@
       "reliability_tier": "A",
       "confidence_floor": 0.72,
       "plain": "Whether the gap between your eyes is about one eye wide.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 0.0194
     },
     {
       "id": "facial_thirds_upper",
@@ -211,7 +217,8 @@
       "confidence_floor": 0.65,
       "plain": "Forehead height as a share of your whole face.",
       "note": "Trichion is unreliable with hairstyle and hairline recession; provisional tier C, qualitative only.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 0.0333
     },
     {
       "id": "facial_thirds_middle",
@@ -243,7 +250,8 @@
       "reliability_tier": "C",
       "confidence_floor": 0.65,
       "plain": "Nose-length region as a share of your whole face.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 0.0333
     },
     {
       "id": "facial_thirds_lower",
@@ -274,7 +282,8 @@
       "reliability_tier": "C",
       "confidence_floor": 0.65,
       "plain": "Nose-base-to-chin as a share of your whole face.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 0.0333
     },
     {
       "id": "lower_third_split",
@@ -305,7 +314,8 @@
       "reliability_tier": "A",
       "confidence_floor": 0.72,
       "plain": "Where your mouth sits between nose and chin.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 0.0068
     },
     {
       "id": "midface_ratio",
@@ -338,7 +348,8 @@
       "community_name": "Midface ratio / 'compact midface'",
       "plain": "Eye spacing relative to the height of your midface.",
       "note": "Community convention; no clinical norm located. Displayed with the community badge, weight cap 0.02.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 0.02
     },
     {
       "id": "nasal_width_to_intercanthal",
@@ -371,7 +382,8 @@
       "confidence_floor": 0.72,
       "plain": "How wide your nose base is relative to your eye spacing.",
       "note": "Most distance-sensitive metric in the set (Ward et al. 2018: ~30% wider at 12 in than 5 ft). The distance gate exists for this.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 0.0216
     },
     {
       "id": "nose_length_to_face_height",
@@ -403,7 +415,8 @@
       "reliability_tier": "B",
       "confidence_floor": 0.7,
       "plain": "How long your nose is relative to your face.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 0.0135
     },
     {
       "id": "mouth_width_to_nose",
@@ -435,7 +448,8 @@
       "reliability_tier": "B",
       "confidence_floor": 0.7,
       "plain": "How wide your mouth is relative to your nose.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 0.0775
     },
     {
       "id": "mouth_width_to_interpupillary",
@@ -467,7 +481,8 @@
       "reliability_tier": "B",
       "confidence_floor": 0.7,
       "plain": "Whether your mouth corners line up under your pupils.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 0.041
     },
     {
       "id": "lip_ratio_upper_lower",
@@ -499,7 +514,8 @@
       "confidence_floor": 0.7,
       "plain": "The fullness of your upper lip relative to your lower lip.",
       "note": "Popenko et al. 2017 (JAMA Facial Plast Surg): 1:2 ratio rated most attractive in women. Male norm less studied; shown with wider band.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 0.035
     },
     {
       "id": "bigonial_to_bizygomatic",
@@ -533,7 +549,8 @@
       "community_name": "Jaw width / 'wide jaw'",
       "plain": "How wide your jaw is relative to your cheekbones.",
       "note": "Gonion is a soft-tissue estimate from the frontal view and is adiposity-sensitive; the adiposity head is a covariate.",
-      "modifiable": true
+      "modifiable": true,
+      "noise_sd": 0.039
     },
     {
       "id": "chin_width_to_mouth",
@@ -565,7 +582,8 @@
       "reliability_tier": "C",
       "confidence_floor": 0.65,
       "plain": "How wide your chin is relative to your mouth.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 0.09
     },
     {
       "id": "bitemporal_to_bizygomatic",
@@ -597,7 +615,8 @@
       "reliability_tier": "B",
       "confidence_floor": 0.68,
       "plain": "How wide your forehead is relative to your cheekbones.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 0.04
     },
     {
       "id": "face_height_to_width",
@@ -629,7 +648,8 @@
       "reliability_tier": "A",
       "confidence_floor": 0.72,
       "plain": "How long your face is relative to its width.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 0.0176
     },
     {
       "id": "symmetry_index",
@@ -660,7 +680,8 @@
       "confidence_floor": 0.72,
       "plain": "How closely the left and right halves of your face mirror each other.",
       "note": "Reference is provisional pending the harness: lighting asymmetry inflates measured asymmetry, which is why the luma gate exists.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 0.04775
     },
     {
       "id": "brow_to_eye_distance_ratio",
@@ -695,7 +716,8 @@
       "confidence_floor": 0.68,
       "community_name": "Brow position / 'low-set brows'",
       "plain": "How close your brows sit to your eyes.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 0.015
     },
     {
       "id": "philtrum_length_ratio",
@@ -728,7 +750,8 @@
       "confidence_floor": 0.72,
       "community_name": "Philtrum length",
       "plain": "The distance between your nose and upper lip, relative to your lower face.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 0.0044
     },
     {
       "id": "nasofrontal_angle_deg",
@@ -759,7 +782,8 @@
       "reliability_tier": "B",
       "confidence_floor": 0.68,
       "plain": "The angle where your forehead meets your nose bridge.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 2.5
     },
     {
       "id": "nasolabial_angle_deg",
@@ -791,7 +815,8 @@
       "confidence_floor": 0.68,
       "plain": "The angle between the base of your nose and your upper lip.",
       "note": "Armijo et al. 2012 (Arch Facial Plast Surg): ideal 93.4–98.5° men, 95.5–100.1° women by rater survey.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 2.5
     },
     {
       "id": "nasal_tip_projection_goode",
@@ -822,7 +847,8 @@
       "reliability_tier": "B",
       "confidence_floor": 0.68,
       "plain": "How far your nose tip projects from your face.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 0.029
     },
     {
       "id": "facial_convexity_deg",
@@ -855,7 +881,8 @@
       "community_name": "Profile / 'recessed' vs 'forward grown'",
       "plain": "Whether your profile is straight, convex or concave from forehead to chin.",
       "note": "Legan & Burstone 1980: 12° ± 4° angle of convexity, expressed here as 168° ± 4–5°.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 2.5
     },
     {
       "id": "mentolabial_angle_deg",
@@ -886,7 +913,8 @@
       "reliability_tier": "B",
       "confidence_floor": 0.68,
       "plain": "The angle of the fold between your lower lip and chin.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 2.5
     },
     {
       "id": "cervicomental_angle_deg",
@@ -919,7 +947,8 @@
       "community_name": "Jaw-neck definition / 'submental fat'",
       "plain": "How sharply your jaw turns into your neck.",
       "note": "Ellenbogen & Karlin 1980: aesthetically ideal 105–120°. Strongly adiposity-driven, hence the strongest evidence for a modifiable metric.",
-      "modifiable": true
+      "modifiable": true,
+      "noise_sd": 2.5
     },
     {
       "id": "chin_projection_eline_mm",
@@ -951,7 +980,8 @@
       "confidence_floor": 0.65,
       "plain": "Where your chin sits relative to a line from nose tip to chin.",
       "note": "Requires metric scale; on a rear-camera profile capture, iris-based scale is the fallback. Provisional tier C until spike 4.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 5.0
     },
     {
       "id": "gonial_angle_deg",
@@ -984,7 +1014,8 @@
       "community_name": "Gonial angle",
       "plain": "The angle at the back corner of your jaw.",
       "note": "Skeletal norms (≈120–130°) are not directly comparable to the soft-tissue estimate; ramus tangent is often obscured by hair and ear. Qualitative only until the harness says otherwise.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 5.0
     },
     {
       "id": "ramus_to_mandible_ratio",
@@ -1016,7 +1047,8 @@
       "confidence_floor": 0.65,
       "community_name": "Ramus length",
       "plain": "The height of the back of your jaw relative to its length.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 0.072
     },
     {
       "id": "forehead_slope_deg",
@@ -1047,7 +1079,8 @@
       "reliability_tier": "C",
       "confidence_floor": 0.65,
       "plain": "How much your forehead slopes back.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 5.0
     },
     {
       "id": "skin_evenness",
@@ -1076,8 +1109,9 @@
       "reliability_tier": "B",
       "confidence_floor": 0.7,
       "plain": "How even your skin tone and texture are.",
-      "note": "Fink, Grammer & Matts 2006 and related work: skin colour homogeneity is among the stronger, fastest-changing predictors of rated attractiveness. Requires the stricter skin lighting gate.",
-      "modifiable": true
+      "note": "Fink, Grammer & Matts 2006 and related work: skin colour homogeneity is among the stronger, fastest-changing predictors of rated attractiveness. Requires the stricter skin lighting gate. v1 source: core/appearance/skin.py — illumination-normalised texture + chroma spread inside a cheek/forehead mask; a spread, not a level, so no skin-tone preference by construction. Residual ≈0.05 luma dependence documented; measured in the week-9 fairness smoke.",
+      "modifiable": true,
+      "noise_sd": 0.035
     },
     {
       "id": "facial_adiposity",
@@ -1108,8 +1142,9 @@
       "reliability_tier": "B",
       "confidence_floor": 0.7,
       "plain": "How much soft tissue sits over your facial structure.",
-      "note": "Coetzee et al. 2009 and Re & Rule: perceived facial adiposity is a reliable predictor of rated attractiveness and health. Lower-better is applied only down to the reference mean minus 1 SD; below that the term is flat, so the engine never rewards very low adiposity.",
-      "modifiable": true
+      "note": "Coetzee et al. 2009 and Re & Rule: perceived facial adiposity is a reliable predictor of rated attractiveness and health. Lower-better is applied only down to the reference mean minus 1 SD; below that the term is flat, so the engine never rewards very low adiposity. v1 source: core/appearance/adiposity.py — geometric proxy from the mesh (lower-face width, cheek fullness, submental bulge). Labelled as a proxy in the metric card.",
+      "modifiable": true,
+      "noise_sd": 0.0225
     },
     {
       "id": "hairline_stage",
@@ -1139,7 +1174,8 @@
       "confidence_floor": 0.65,
       "plain": "Where your hairline sits and whether it is receding.",
       "note": "Never scored. Exists to trigger the tier-3 referral rule (minoxidil/finasteride named, never dosed).",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 0.0
     },
     {
       "id": "beard_presence",
@@ -1169,7 +1205,8 @@
       "confidence_floor": 0.7,
       "plain": "Whether facial hair is covering your jaw and chin lines.",
       "note": "When beard is present, jaw/chin soft-tissue metrics have their confidence multiplied by 0.8 and the card says so.",
-      "modifiable": false
+      "modifiable": false,
+      "noise_sd": 0.0
     }
   ]
 }

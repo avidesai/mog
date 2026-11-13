@@ -291,9 +291,9 @@
     "section_metrics": "Measurements",
     "metrics_body": "Each measurement is a pure function of landmark positions, with a published reference range and a citation. Each carries two independent labels: how reliably we can measure it, and how strong the evidence is that it matters. A measurement can be precise and still carry no weight.",
     "section_score": "Score",
-    "score_body": "Measurements that research supports carry weight. Measurements the community cares about but research doesn't support are shown and carry almost none. Facial width-to-height ratio is shown and carries none, because the evidence points the other way. The weighting is a published judgement, not a calibration against human ratings — we say so because no one else in this category does.",
+    "score_body": "Measurements that research supports carry weight. Measurements the community cares about but research doesn't support are shown and carry almost none. Facial width-to-height ratio is shown and carries none, because the evidence points the other way. A measurement also carries less weight the noisier it is relative to how much people actually differ on it — a number we can read to 2% but on which faces only differ by 1.5% cannot tell you much, and the score treats it that way. The weighting is a published judgement, not a calibration against human ratings.",
     "section_band": "The band",
-    "band_body": "'Likely 5.9–6.9' combines two things: how much your measurements moved across the ten frames, and a fixed allowance for the weighting itself. It is never narrower than ±0.15. A score with no band would be lying.",
+    "band_body": "'Likely 5.0–7.8' is the range we expect your score to land in if you scanned again. It combines how much your measurements moved across the ten frames, how much each measurement is known to move between sessions, and a fixed allowance for the weighting itself. A wide band is the honest state of the measurement, not a fault; it narrows as our session-to-session data improves. It is never narrower than ±0.15.",
     "section_tiers": "Tiers",
     "tiers_body": "LTN below the 45th percentile · MTN 45–65 · HTN 65–85 · Chadlite 85–97 · Chad 97 and above. There is no tier below LTN.",
     "section_reference": "Reference ranges",
@@ -303,7 +303,7 @@
     "section_versions": "Versions",
     "versions_body": "Scoring model {version}. When the model changes, stored measurements are re-scored on your phone and the app tells you your score moved because the model did.",
     "section_reliability_target": "Reliability target",
-    "reliability_target_body": "Our release gate is a score standard deviation of 0.2 points or less across sessions for the same person. This is a target we test against before each release, not a measured guarantee for every face.",
+    "reliability_target_body": "We measure how much the same person's score moves between sessions and publish the figure. Our release gate is a median session-to-session score standard deviation of 0.6 points or less; the band you see is sized to that measured noise, so a re-scan should land inside it about two times in three.",
     "citations_cta": "Citations"
   },
   "settings": {

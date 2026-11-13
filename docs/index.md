@@ -61,5 +61,5 @@ Snapshots in this Project: `mog-foundation-research.md`, `mog-engineering-design
 1. **Week 1 (17–23 Nov):** pay the $99; Xcode project; ARKit + MediaPipe landmark dump; capture yourself 10× over 3 sessions; compute per-metric CV. Go/no-go on the thesis.
 2. **Week 2:** profile spike (go/no-go on profile in v1); compile `MogCore`, pass fixtures.
 3. Weeks 3–8: capture gates → metrics → results/paywall → habit layer → backend/consent/deletion → phrasing.
-4. Week 9: consistency harness (SD ≤ 0.2 gate), MITM audit. Weeks 10–12: TestFlight, review, launch.
+4. Week 9: consistency harness (median per-person score SD ≤ 0.6 — gate revised 12 Nov, see core/README "The noise finding"), fairness smoke, MITM audit. Weeks 10–12: TestFlight, review, launch.
 5. Export canvases as PNG/PDF from the canvas page (Share › Export) when handing to anyone outside Claude.
