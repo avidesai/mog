@@ -6,7 +6,7 @@ Written 13 Nov 2026 for the Claude Code session taking this over. Read it top to
 
 ## 0. Where everything is
 
-**The repo is this folder.** It is a local git repository with 17 commits on `main` and has **not been pushed anywhere yet** — the GitHub repo `avidesai/mog` did not exist at hand-off time. First thing: create it (private) and `git remote add origin git@github.com:avidesai/mog.git && git push -u origin main`. CI (`.github/workflows/`) will run on that push: the Python suite, `swift test` on macOS, the Postgres deletion test, the Node tests for Edge Functions, and the policies-site build when `POLICIES_BASE_URL` is set.
+**The repo is this folder.** It is a local git repository (15 commits on `main` at hand-off) and has **not been pushed anywhere yet** — the GitHub repo `avidesai/mog` did not exist at hand-off time. First thing: create it (private) and `git remote add origin git@github.com:avidesai/mog.git && git push -u origin main`. CI (`.github/workflows/`) will run on that push: the Python suite, `swift test` on macOS, the Postgres deletion test, the Node tests for Edge Functions, and the policies-site build when `POLICIES_BASE_URL` is set.
 
 ```
 HANDOFF.md  AGENTS.md  CLAUDE.md          ← you are here
