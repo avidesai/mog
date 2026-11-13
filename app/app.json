@@ -1,0 +1,20 @@
+{
+  "$schema": "../../ext/exact/scripts/app.schema.json",
+  "name": "Mog",
+  "short_name": "Mog",
+  "id": "com.avidesai.mog",
+  "start_url": "/",
+  "display": "standalone",
+  "app": {
+    "id": "com.avidesai.mog",
+    "name": "Mog"
+  },
+  "host": {
+    "web": {}
+  },
+  "deploy": {
+    "store": {
+      "web": "0"
+    }
+  }
+}
