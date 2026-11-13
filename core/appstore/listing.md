@@ -9,8 +9,8 @@
 `Measured, not guessed.`  (22) — alt: `Same face, same number.` (23)
 
 ## Keywords (100 chars, comma-separated, no spaces, don't repeat name/subtitle words)
-`looksmax,looksmaxxing,facial harmony,face rating,psl,jawline,canthal tilt,glow up,face analysis,symmetry`
-(exactly 100 when the trailing word is trimmed — verify in Connect)
+`looksmax,looksmaxxing,facial harmony,face rating,psl,jawline,canthal tilt,face analysis,symmetry`
+(96 characters)
 
 ## Promotional text (170 chars, editable without review)
 `Guided capture, on-device geometry, published reference ranges — with the evidence behind each one stated plainly. Your face never leaves your phone.`
