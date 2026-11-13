@@ -1,4 +1,4 @@
-// swift-tools-version:5.9
+// swift-tools-version:6.0
 import PackageDescription
 
 // MogCore — Swift port of mog-core. Pure Foundation, no dependencies, no UI.
@@ -14,7 +14,7 @@ let package = Package(
     platforms: [.iOS(.v18), .macOS(.v14)],
     products: [.library(name: "MogCore", targets: ["MogCore"])],
     targets: [
-        .target(name: "MogCore", resources: [.copy("Resources")]),
-        .testTarget(name: "MogCoreTests", dependencies: ["MogCore"]),
+        .target(name: "MogCore", resources: [.copy("Resources")], swiftSettings: [.swiftLanguageMode(.v5)]),
+        .testTarget(name: "MogCoreTests", dependencies: ["MogCore"], swiftSettings: [.swiftLanguageMode(.v5)]),
     ]
 )
