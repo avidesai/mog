@@ -28,6 +28,7 @@ tools/          build_reference.py, make_fixtures.py, cv_analysis.py (spike 1), 
 ## Run
 
 ```
+pip install -r requirements.txt      # pytest, numpy
 python -m pytest -q
 python -m mogcore.cli score fixtures/example_scan.json
 python -m mogcore.cli plan  fixtures/example_scan.json --goals sharper_jawline better_skin --minutes 15

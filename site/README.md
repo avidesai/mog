@@ -3,6 +3,7 @@
 Static build of `core/legal/*.md`. Versioned URLs (`/biometric-data-policy/v1.0/`), a stable alias per policy, and a versions index — prior versions are never removed, which is what the biometric policy promises.
 
 ```
+pip install -r core/requirements-tools.txt  # once
 python site/build.py --app-name Mog --entity "<legal entity>" --email privacy@<domain> \
   --address "<postal>" --effective 2026-12-01 --base-url https://policies.<domain> [--final]
 ```
