@@ -4,7 +4,8 @@
     "Placeholders: {score} {low} {high} {tier} {tier_long} {pct} {n} {metric} {value} {ref_low} {ref_high} {week} {days} {date} {minutes} {price_weekly} {price_annual} {price_lifetime} {streak} {app_name} {app_version} {version} {old} {new} {gate} {sex} {age_band} {sex_plural}.",
     "Register: technician's voice. States what was measured and what follows. No exclamation marks anywhere in the product. No 'your score is'. No softening preamble on low scores. Percentile is against the reference distribution, never against other users.",
     "Rules-only scorer at launch: the score definition below is the smaller, honest claim (published norms), not the calibrated-panel claim in the original bible. Swap `methodology.what_the_score_is` when v1.1 ships the calibrated model.",
-    "The app name is {app_name} everywhere. The working name 'Mog' is itself on the denylist (comparative vocabulary), which is the naming tension the bible flagged — the copy deck stays name-agnostic until that is decided."
+    "The app name is {app_name} everywhere. The working name 'Mog' is itself on the denylist (comparative vocabulary), which is the naming tension the bible flagged — the copy deck stays name-agnostic until that is decided.",
+    "Copy review follows the clean-copy ladder (.agents/skills/clean-copy): first ask whether a string should exist at all. Empty string = the element is not rendered."
   ],
   "common": {
     "continue": "Continue",
@@ -212,7 +213,7 @@
     "empty_body": "The plan is built from what we measure. One capture, a few seconds.",
     "empty_cta": "Scan",
     "all_done_title": "Day {streak} done",
-    "all_done_body": "That's the plan for today. Nothing else to do here.",
+    "all_done_body": "",
     "quiet_checkin_title": "A quiet check-in",
     "quiet_checkin_body": "If you're finding yourself checking this a lot, that's worth paying attention to. Appearance preoccupation is common and treatable. If it's weighing on you, talking to someone helps — 988 connects you to support any time.",
     "quiet_checkin_dismiss": "Okay"
@@ -238,11 +239,11 @@
     "save_unavailable_title": "You missed yesterday",
     "save_unavailable_body": "This month's repair is used. The streak starts again from today; banked weeks stay banked.",
     "save_unavailable_cta": "Okay",
-    "repair_note": "Repairs are never sold and never exceed one a month."
+    "repair_note": "One a month. Never sold."
   },
   "plan": {
     "title": "Plan",
-    "intro": "Built from your measurements and your goals. Nothing here is generic.",
+    "intro": "Built from your measurements and your goals.",
     "section_now": "Now",
     "section_opens_later": "Opens later",
     "section_info": "Worth knowing",

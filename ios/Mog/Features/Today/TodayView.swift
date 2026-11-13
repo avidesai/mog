@@ -81,7 +81,6 @@ struct TodayView: View {
                 Card(padding: Tokens.Space.s5, ground: Tokens.Colors.positiveWash, radius: Tokens.Radius.xl) {
                     VStack(alignment: .leading, spacing: Tokens.Space.s2) {
                         Text(Copy.f("today.all_done_title", ["streak": "\(habit.s.currentDays)"])).style(TypeStyle.title2, color: Tokens.Colors.positive)
-                        Text(Copy.s("today.all_done_body")).style(TypeStyle.body, color: Tokens.Colors.ink700)
                     }
                 }
             }

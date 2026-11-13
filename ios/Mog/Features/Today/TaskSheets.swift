@@ -61,7 +61,6 @@ struct DayCompleteView: View {
                 Image(systemName: "checkmark").font(.system(size: 44, weight: .bold)).foregroundStyle(Tokens.Colors.positiveFill).opacity(drawn ? 1 : 0)
             }
             Text(Copy.f("today.all_done_title", ["streak": "\(days)"])).style(TypeStyle.displayDay)
-            Text(Copy.s("today.all_done_body")).style(TypeStyle.body, color: Tokens.Colors.ink700)
             Spacer()
             Button(Copy.s("common.done")) { dismiss() }.buttonStyle(.chunky).padding(.horizontal, Tokens.Space.s5)
         }
