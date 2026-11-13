@@ -12,7 +12,7 @@ Working name: **Mog** (open question — collisions with Mogged / MogMax and ten
 | **Gamified Direction canvas — the chosen v1 screen set (28 artboards)** | https://claude.ai/artifact/SkhqbXsYoAxQNjT2wJJE19 | v27 — canonical |
 | Original "v1 Screens" canvas (instrument direction, bronze) | https://claude.ai/artifact/RU2rRYx5hzZ9a3xHTbGQ9k | superseded, kept for reference |
 
-## The repo — `mog` (monorepo, 5 commits, ready to push to github.com/avidesai/mog)
+## The repo — `mog` (monorepo, 14 commits, ready to push to github.com/avidesai/mog)
 
 ```
 core/     engines + data + copy + legal + appstore + plan + appearance heads (73 tests)
@@ -26,6 +26,8 @@ Push: create an empty private repo `avidesai/mog` on GitHub, then from the unzip
 CI (`.github/workflows/core.yml`) runs the Python tests on every push and `swift test` on macOS.
 
 **Done since the first push-ready state (12 Nov, early):** backend schema with the deletion test the eng doc demanded (passes for real); policies site ready to host the moment a domain exists; skin-evenness and adiposity proxies prototyped in Python with lighting/tone-invariance tests and ported to Swift (spike 5's cheap path, done before the spike).
+
+**12 Nov, evening — the noise finding (read `core/README.md` › "The noise finding").** Simulated test–retest under tier-realistic noise gave ~1.9-point score SDs with the original weighting. Fixed in scoring rules-1.1.0 (attenuation weighting by noise/spread; band includes between-session noise and is calibration-tested). Provisional median SD now ~1.1 (band ±1.4); ~0.55 at half that noise. Release gate revised to median SD ≤ 0.6 on measured noise. The week-1 captures decide. Also this evening: fonts bundled (OFL), artboards render offline, 7 App Store shots + fastlane metadata, week-9 harness with fairness smoke.
 
 **iOS status:** every v1 screen, the capture gates, the mesh-geometry metric layer, persistence, the habit loop and the spike tools are written. The first Xcode build will surface compiler nits (no toolchain here). Week 1 = `xcodegen generate`, build, run Settings › Debug › Vertex picker and Landmark dump on your own face, then `python core/tools/cv_analysis.py captures/`.
 
