@@ -23,3 +23,4 @@ tools/captures/
 # OS
 .DS_Store
 site/dist/
+design/renders/*.png

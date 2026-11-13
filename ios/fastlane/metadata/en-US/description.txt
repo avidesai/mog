@@ -1,0 +1,21 @@
+Most face-rating apps give you a different number every time you upload the same photo. {app_name} doesn't, because it measures instead of guessing.
+
+**Guided capture.** The shutter stays off until your head is within 3° of straight, you're 45–75 cm from the camera, the light is even and your expression is neutral. Ten frames, then the median. The things that make selfie proportions lie — distance, angle, lighting — are gated out before anything is measured.
+
+**Real measurements.** Canthal tilt. Nasolabial angle. Facial thirds. Jaw-to-cheek width. Cervicomental angle. Around 35 named measurements, each with its published reference range and the citation behind it, each shown on your own capture so you can see exactly what was measured.
+
+**Evidence, stated plainly.** Every measurement carries two labels: how reliably we can measure it, and how strongly research says it matters. Some things the community cares about carry almost no weight in the score, and one — facial width-to-height ratio — carries none, because the evidence points the other way. We show it anyway and say so.
+
+**A score with a band.** 0–10, as a percentile of a sex-matched reference distribution, with the uncertainty shown: "6.4 · likely 5.9–6.9 · HTN". The free score is the real score. Pro doesn't change the number; it opens the rest of the measurement.
+
+**A plan built from your findings.** Not generic tips. Each habit names the measurement it came from and the strength of the evidence behind it. Daily tasks, a streak that counts days the plan was done, and an eight-week path with re-scans at weeks 4 and 8 — when enough has changed to measure. Anything that needs a professional is kept in its own section, named and never recommended, and we have no financial relationship with any provider.
+
+**Your face stays on your phone.** Images, depth data and landmarks are processed on-device and deleted in seconds. Only named numbers are kept, and they sync only if you turn that on. We audit the network before every release.
+
+For adults 18 and over.
+
+**Pro** — weekly, annual with a 3-day free trial, or lifetime. Includes all measurements with values and reference ranges, measurement overlays on your capture, profile analysis, the complete plan, and re-scans with deltas. Subscriptions renew automatically unless cancelled at least 24 hours before the period ends. Manage in Settings › Apple ID › Subscriptions.
+
+Terms: {terms_url}
+Privacy: {privacy_url}
+Biometric data policy: {policy_url}

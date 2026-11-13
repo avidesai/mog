@@ -1,8 +1,9 @@
 # Fonts
 
-Download from Google Fonts (both are SIL Open Font License, free for app embedding) and drop the TTFs here:
+Bundled: Inter Tight (Regular, Medium, SemiBold, Bold) and Instrument Serif (Regular), converted from the
+`@fontsource` woff2 builds (Latin subset) to TTF. Both are under the SIL Open Font License 1.1 — see the
+LICENSE files beside them. `project.yml` lists them under `UIAppFonts`; `Typography.swift` falls back to
+system fonts if any file is missing.
 
-- Inter Tight — Regular, Medium, SemiBold, Bold → `InterTight-Regular.ttf`, `InterTight-Medium.ttf`, `InterTight-SemiBold.ttf`, `InterTight-Bold.ttf`
-- Instrument Serif — Regular → `InstrumentSerif-Regular.ttf`
-
-`Typography.swift` falls back to the system fonts when a file is missing, so the app builds without them; it just won't look right.
+To refresh: `npm i @fontsource/inter-tight @fontsource/instrument-serif`, then convert with fontTools
+(`TTFont(path); f.flavor = None; f.save(...)`).

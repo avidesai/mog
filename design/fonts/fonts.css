@@ -1,0 +1,6 @@
+/* Local fonts for rendering the artboards offline (the artboards @import Google Fonts). */
+@font-face{font-family:"Inter Tight";font-weight:400;src:url("InterTight-Regular.ttf")}
+@font-face{font-family:"Inter Tight";font-weight:500;src:url("InterTight-Medium.ttf")}
+@font-face{font-family:"Inter Tight";font-weight:600;src:url("InterTight-SemiBold.ttf")}
+@font-face{font-family:"Inter Tight";font-weight:700;src:url("InterTight-Bold.ttf")}
+@font-face{font-family:"Instrument Serif";font-weight:400;src:url("InstrumentSerif-Regular.ttf")}
