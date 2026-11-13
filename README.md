@@ -1,11 +1,14 @@
 # mog
 
+**New here? `HANDOFF.md`.** Agents: `AGENTS.md`.
+
 iPhone-first facial-harmony measurement app for the looksmaxxing audience. Working name. Guided capture → on-device geometry → deterministic score against published norms, with a stated band → evidence-graded plan → one habit loop (streak, eight-week path, scans at weeks 4 and 8).
 
 ```
+app/       the expo/exact app (to be created — see app/README.md); the product from here on
 core/      deterministic engines — Python reference (test suite in core/tests) + Swift port (MogCore), shared JSON tables,
            copy deck, legal drafts, App Store assets, 12-week build plan
-ios/       the app: SwiftUI, iOS 18, ARKit mesh capture, depends on core/swift/MogCore
+ios/       SwiftUI reference app (uncompiled) — its Capture/ and Geometry/ seed the Exact native module
 backend/   Supabase schema, RLS, tested delete_everything(); Edge Functions
 site/      public policies site (versioned URLs), GitHub Pages workflow
 design/    design system (tokens, components, brand book) and the 28 v1 artboards as HTML
@@ -34,4 +37,4 @@ python -m mogcore.cli score fixtures/example_scan.json
 - The streak counts days the plan was done, never scans. One repair a month, never purchasable.
 - 18+. No colour ever encodes score quality.
 
-Private. © Avi Desai.
+© Avi Desai. See LICENSE.

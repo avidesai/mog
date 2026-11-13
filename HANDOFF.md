@@ -1,22 +1,23 @@
 # HANDOFF — Mog
 
-Written 13 Nov 2026 for the Claude Code session taking this over. Read it top to bottom once; after that, `AGENTS.md` is the short version and the experts in `.agents/experts/` hold the detail per domain.
+Written 13 Nov 2026 for the Claude Code session taking this over. Paste this file, or just open the repo — `CLAUDE.md` points here. Read it top to bottom once; after that, `AGENTS.md` is the short version and the experts in `.agents/experts/` hold the detail per domain.
 
 ---
 
 ## 0. Where everything is
 
-**The repo is this folder.** It is a local git repository (15 commits on `main` at hand-off) and has **not been pushed anywhere yet** — the GitHub repo `avidesai/mog` did not exist at hand-off time. First thing: create it (private) and `git remote add origin git@github.com:avidesai/mog.git && git push -u origin main`. CI (`.github/workflows/`) will run on that push: the Python suite, `swift test` on macOS, the Postgres deletion test, the Node tests for Edge Functions, and the policies-site build when `POLICIES_BASE_URL` is set.
+**The repo:** https://github.com/avidesai/mog — `main`, pushed 13 Nov 2026 with the full history. CI (`.github/workflows/`) runs on every push: the Python suite + strings-table check, the Postgres deletion test, the Node tests for the Edge Functions, `swift test` on macOS (allowed to fail until MogCore first compiles — then remove `continue-on-error`), and the policies-site deploy once the repository variable `POLICIES_BASE_URL` exists. **The repo was created public.** Nothing in it is secret (`Secrets.xcconfig` is gitignored; no keys anywhere), but the rules table, the copy deck and the legal drafts are the product — make it private unless you mean to open it.
 
 ```
 HANDOFF.md  AGENTS.md  CLAUDE.md          ← you are here
+app/         the Exact app — NOT YET CREATED; app/README.md has the exact commands; app/strings/en.json is generated
 core/        engines (Python = spec, Swift port), data tables, copy deck, legal drafts, App Store assets, 12-week plan, tools
 ios/         SwiftUI reference app (NEVER COMPILED — see §4). Capture + geometry code here is the seed of the Exact native module.
 backend/     Supabase schema + RLS + tested delete_everything(); three Edge Functions (Deno) with Node-tested logic
 site/        policies site builder (versioned URLs) + Pages workflow
 design/      design system (tokens.json, components, brand book), 28 artboards as HTML, offline renders, bundled fonts
 docs/        engineering design doc, design-language bible, foundation research, project index (snapshots of the live docs)
-tools/       token generator, artboard renderer
+tools/       token generator, artboard renderer      scripts/   repo-level: strings.mjs (core copy → app/strings/en.json)
 .agents/     skills (clean-copy, unslop) and four experts (scoring, privacy, capture, exact-ui)
 .claude/     agent stubs that load the experts
 ```
@@ -125,7 +126,7 @@ strings/en.json     generated from core/copy/strings.json (write a 20-line scrip
 
 ## 6. What's next, in order
 
-1. **Push the repo.** Create `avidesai/mog`, push, confirm CI is green (expect `swift test` to fail on the first compile — fix forward; never edit a fixture to pass).
+1. **Check CI on the push** (Actions tab). Python, Postgres and Node jobs should be green; `swift test` is allowed to fail until MogCore first compiles — fix forward, never edit a fixture to pass.
 2. **Set up Exact** (source checkout, `bun scripts/exact.mjs setup`), `exact new mog-app` inside this repo as `app/`, run the `tabs` pattern, get `verify ios` green on the placeholder. Decide fonts.
 3. **Port MogCore to TypeScript** in `app/app.ts` (or `app/core/*.ts` imported locally): registry, scoring, planner, habit, denylist. Gate: `core/fixtures/scoring_cases.json` to 1e-6 and the habit tests' scenarios. Write `scripts/strings.mjs` to generate `strings/en.json` from `core/copy/strings.json`.
 4. **Spike 1 — the go/no-go — on a real iPhone** ($99 developer account). Build `modules/apple/MogCapture.swift` from `ios/Mog/Capture` + `ios/Mog/Geometry` (or run the SwiftUI app's Debug tools first, whichever gets a mesh on screen sooner). Pick the 38 vertex indices with the vertex picker. Ten captures × three sessions. `python core/tools/cv_analysis.py captures/`, then `harness.py --write-tiers`. **≥ 6 frontal metrics at tier A/B → go; < 4 → re-scope around skin/adiposity/grooming.** Also read the mesh-derived profile angles' CV: if good, spike 2 (separate profile capture) is cancelled.
