@@ -2,8 +2,8 @@
 
 Deterministic reference implementation of Mog's three engines — **scoring**,
 **recommendation**, **habit** — plus the data tables they run on. Python is the
-spec; the Swift package in `swift/` is the port the iPhone app uses. Both read
-the same JSON and must pass the same fixtures.
+spec; the Swift package in `swift/` is the port (compiles and passes the golden fixtures in CI). A
+TypeScript port for the Exact app is next and faces the same gate. All read the same JSON.
 
 ```
 data/

@@ -2,7 +2,7 @@
 
 Port of `mog-core` for the iPhone app. Pure Foundation. Same JSON tables, same fixtures.
 
-**Not compiled in the authoring environment** — no Swift toolchain was available where this was written. First thing to do in Xcode:
+Compiles and passes all tests (including the cross-language golden fixtures) on the macOS CI runner. Locally:
 
 ```
 cd swift/MogCore
@@ -11,7 +11,7 @@ swift build
 swift test            # FixtureTests.testGoldenFixtures is the cross-language gate
 ```
 
-Expect a handful of compiler nits (optional unwraps, `Bundle.module` resource lookup paths). Fix the Swift; never edit a fixture to make it pass. If a fixture disagrees after the compiler is happy, the port has a logic drift — diff against the Python module of the same name line by line.
+Never edit a fixture to make it pass. If a fixture disagrees after a change, the port has a logic drift — diff against the Python module of the same name line by line.
 
 Module map:
 

@@ -6,7 +6,7 @@ Written 13 Nov 2026 for the Claude Code session taking this over. Paste this fil
 
 ## 0. Where everything is
 
-**The repo:** https://github.com/avidesai/mog — `main`, pushed 13 Nov 2026 with the full history. CI (`.github/workflows/`) runs on every push: the Python suite + strings-table check, the Postgres deletion test, the Node tests for the Edge Functions, `swift test` on macOS (allowed to fail until MogCore first compiles — then remove `continue-on-error`), and the policies-site deploy once the repository variable `POLICIES_BASE_URL` exists. **The repo was created public.** Nothing in it is secret (`Secrets.xcconfig` is gitignored; no keys anywhere), but the rules table, the copy deck and the legal drafts are the product — make it private unless you mean to open it.
+**The repo:** https://github.com/avidesai/mog — `main`, pushed 13 Nov 2026 with the full history. CI (`.github/workflows/`) is **green on all four jobs** as of the hand-off commit: Python suite + strings-table check, Postgres deletion test, Node tests for the Edge Functions, and `swift test` on macOS — MogCore compiled on the first real attempt and `testGoldenFixtures` passed, so the Swift scorer reproduces the Python reference to 1e-6. The policies-site deploy runs once the repository variable `POLICIES_BASE_URL` exists. **The repo was created public.** Nothing in it is secret (`Secrets.xcconfig` is gitignored; no keys anywhere), but the rules table, the copy deck and the legal drafts are the product — make it private unless you mean to open it.
 
 ```
 HANDOFF.md  AGENTS.md  CLAUDE.md          ← you are here
@@ -61,7 +61,7 @@ Invariants (tests enforce most of them; don't ship a change that breaks one):
 - `legal/` biometric retention/destruction policy, privacy policy, terms — drafts for counsel. `appstore/` listing + review notes. `plan/build-plan.md` 12-week plan.
 - `tools/cv_analysis.py` (spike 1) and `tools/harness.py` (week 9: per-person test–retest, tier/noise writeback, tone/sex fairness smoke). Both self-test.
 - `appearance/` cheap-path skin evenness and adiposity proxies, tested (incl. lighting and tone invariance).
-- `swift/MogCore` — Swift port, same JSON, golden fixtures. **Not compiled** (no toolchain here).
+- `swift/MogCore` — Swift port, same JSON, golden fixtures. **Compiles and passes the fixtures in CI** (macOS runner); only `ios/` remains uncompiled.
 
 ### ios/ — written, never compiled, now **reference**
 SwiftUI app with every v1 screen, 9 capture gates, ARKit-mesh geometry → 24 metrics, SwiftData store, purchases stub, analytics allowlist, measurement overlays, spike tools (vertex picker, landmark dump). Bundled fonts. XcodeGen `project.yml`. Per the owner's 13 Nov direction (§4) the product moves to expo/exact; this code's **capture and geometry layers are kept** as the native module, and the rest is a faithful reference of what every screen should do. Expect compiler nits on first build; `ios/README.md` lists what's wired vs stubbed.
@@ -81,7 +81,7 @@ Tokens, components, brand book; 28 artboards (`screens-gamified/`); `tools/rende
 
 **3.1 The noise finding (12 Nov).** Simulated test–retest under tier-realistic noise gave a ~1.9-point per-person score SD under the original weighting — ten times the gate the eng doc set. Cause: coefficient of variation is the wrong reliability measure when a metric's population spread is itself small (symmetry index). Fix shipped as scoring **rules-1.1.0**: reliability weight r = 1/(1+(noise_sd/pop_sd)²), band includes between-session noise, calibration test. Now ~1.1 under the provisional noise table, ~0.55 at half that. Gate: median SD ≤ 0.6 on **measured** noise. The product consequence: **the band is the number.** Until week-1 captures measure real noise, do not promise precision anywhere in copy or marketing. `core/README.md` has the full account; the eng doc has the decision record.
 
-**3.2 Nothing has run on a device.** All Swift was written without a compiler. Spike 1 (§6) is the first time any of it meets reality, and three things specifically need verifying on an iPhone: the Euler-angle sign conventions in `CaptureSession.pose`, the `.landscapeRight` buffer projection in `LumaStats`/`SkinEvenness`, and the `Heuristics` anatomical-point estimates on a real mesh.
+**3.2 Nothing has run on a device.** `core/swift/MogCore` now compiles and passes its tests in CI, but the app in `ios/` has never been built and no capture code has touched a camera. Spike 1 (§6) is the first time any of it meets reality, and three things specifically need verifying on an iPhone: the Euler-angle sign conventions in `CaptureSession.pose`, the `.landscapeRight` buffer projection in `LumaStats`/`SkinEvenness`, and the `Heuristics` anatomical-point estimates on a real mesh.
 
 **3.3 Everything downstream of `landmark_map.json` is provisional.** All 38 ARKit vertex indices are `null`; heuristics fill in at reduced confidence. The vertex picker exists to fill them. Reliability tiers and `noise_sd` are guesses until `harness.py --write-tiers` runs on real captures.
 
@@ -127,7 +127,7 @@ strings/en.json     generated from core/copy/strings.json (write a 20-line scrip
 
 ## 6. What's next, in order
 
-1. **CI is already green for Python, Postgres and Node** on `main`. `swift test` is `continue-on-error` until MogCore compiles clean on the macOS runner (the Actions log of the latest `core` run shows the compiler's first opinion of code written without a toolchain) — fix forward, never edit a fixture to pass, then remove `continue-on-error`.
+1. **CI is green on `main`** (Python, Postgres, Node, Swift). Keep it that way: never edit a fixture to make a port pass.
 2. **Set up Exact** (source checkout, `bun scripts/exact.mjs setup`), `exact new mog-app` inside this repo as `app/`, run the `tabs` pattern, get `verify ios` green on the placeholder. Decide fonts.
 3. **Port MogCore to TypeScript** in `app/app.ts` (or `app/core/*.ts` imported locally): registry, scoring, planner, habit, denylist. Gate: `core/fixtures/scoring_cases.json` to 1e-6 and the habit tests' scenarios. Write `scripts/strings.mjs` to generate `strings/en.json` from `core/copy/strings.json`.
 4. **Spike 1 — the go/no-go — on a real iPhone** ($99 developer account). Build `modules/apple/MogCapture.swift` from `ios/Mog/Capture` + `ios/Mog/Geometry` (or run the SwiftUI app's Debug tools first, whichever gets a mesh on screen sooner). Pick the 38 vertex indices with the vertex picker. Ten captures × three sessions. `python core/tools/cv_analysis.py captures/`, then `harness.py --write-tiers`. **≥ 6 frontal metrics at tier A/B → go; < 4 → re-scope around skin/adiposity/grooming.** Also read the mesh-derived profile angles' CV: if good, spike 2 (separate profile capture) is cancelled.
