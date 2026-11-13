@@ -127,7 +127,7 @@ strings/en.json     generated from core/copy/strings.json (write a 20-line scrip
 
 ## 6. What's next, in order
 
-1. **Check CI on the push** (Actions tab). Python, Postgres and Node jobs should be green; `swift test` is allowed to fail until MogCore first compiles — fix forward, never edit a fixture to pass.
+1. **CI is already green for Python, Postgres and Node** on `main`. `swift test` is `continue-on-error` until MogCore compiles clean on the macOS runner (the Actions log of the latest `core` run shows the compiler's first opinion of code written without a toolchain) — fix forward, never edit a fixture to pass, then remove `continue-on-error`.
 2. **Set up Exact** (source checkout, `bun scripts/exact.mjs setup`), `exact new mog-app` inside this repo as `app/`, run the `tabs` pattern, get `verify ios` green on the placeholder. Decide fonts.
 3. **Port MogCore to TypeScript** in `app/app.ts` (or `app/core/*.ts` imported locally): registry, scoring, planner, habit, denylist. Gate: `core/fixtures/scoring_cases.json` to 1e-6 and the habit tests' scenarios. Write `scripts/strings.mjs` to generate `strings/en.json` from `core/copy/strings.json`.
 4. **Spike 1 — the go/no-go — on a real iPhone** ($99 developer account). Build `modules/apple/MogCapture.swift` from `ios/Mog/Capture` + `ios/Mog/Geometry` (or run the SwiftUI app's Debug tools first, whichever gets a mesh on screen sooner). Pick the 38 vertex indices with the vertex picker. Ten captures × three sessions. `python core/tools/cv_analysis.py captures/`, then `harness.py --write-tiers`. **≥ 6 frontal metrics at tier A/B → go; < 4 → re-scope around skin/adiposity/grooming.** Also read the mesh-derived profile angles' CV: if good, spike 2 (separate profile capture) is cancelled.

@@ -152,7 +152,9 @@ public final class Registry {
     public let denylist: Denylist
     public let compositeReference: CompositeReference
 
-    public static func load(bundle: Bundle = .module) throws -> Registry {
+    public static func load() throws -> Registry { try load(bundle: .module) }
+
+    public static func load(bundle: Bundle) throws -> Registry {
         func data(_ name: String) throws -> Data {
             guard let url = bundle.url(forResource: name, withExtension: "json", subdirectory: "Resources")
                     ?? bundle.url(forResource: name, withExtension: "json") else { throw RegistryError.missingResource(name) }
