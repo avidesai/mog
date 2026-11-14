@@ -25,6 +25,7 @@ public enum ScoringConstants {
 }
 
 public func tierForPercentile(_ p: Double) -> (short: String, long: String) {
+    precondition(p.isFinite, "percentile must be finite")
     for (upper, s, l) in ScoringConstants.tiers where p < upper { return (s, l) }
     let last = ScoringConstants.tiers.last!
     return (last.1, last.2)
@@ -153,7 +154,7 @@ public func score(_ inp: ScoreInput, _ reg: Registry) throws -> ScoreResult {
         var conf = r.confidence
         if beardPresent && ScoringConstants.beardAffected.contains(mid) { conf *= ScoringConstants.beardConfidenceFactor }
         if r.occluded { results.append(suppressed("occluded", conf: conf)); continue }
-        if conf < m.confidence_floor { results.append(suppressed("low_confidence", conf: conf)); continue }
+        if !(conf >= m.confidence_floor) || !r.value.isFinite { results.append(suppressed("low_confidence", conf: conf)); continue }
         if m.reliability_tier == .D { results.append(suppressed("not_shipped", conf: conf)); continue }
 
         let z = (r.value - norm.mean) / norm.sd

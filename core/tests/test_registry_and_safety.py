@@ -102,3 +102,8 @@ def test_denylist_character_class_patterns_work(denylist):
     assert not denylist.is_clean("leg lengthening surgery")
     assert not denylist.is_clean("try bpc157")
     assert not denylist.is_clean("try BPC-157")
+
+
+def test_denylist_normalises_unicode_lookalikes(denylist):
+    for text in ("take ５０ mg", "ſteroid cycle", "1500 Kcal a day"):
+        assert not denylist.is_clean(text), text

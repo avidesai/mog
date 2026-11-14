@@ -11,3 +11,6 @@
 - Most-improvable is chosen only among `modifiable` metrics (skin, adiposity, cervicomental, bigonial). Bone is never called improvable.
 - Model version lives in `SCORING_MODEL_VERSION` / `ScoringConstants.modelVersion`; bump on any change that moves a score, regenerate reference + fixtures, and the app shows the "model changed" card.
 - `references.json` entries marked `verify: true` have not had their figure checked against the paper.
+- Three engines: Python `core/mogcore` (spec), Swift `core/swift/MogCore`, TypeScript `app/core` (`bun test app/tools`). The TS gate checks composite_std to 1e-6, percentile, the band (`score_low`/`score_high`), tier, n_scored and `model_version` against `scoring_cases.json`; `SCORING_MODEL_VERSION` in `app/core/scoring.ts` must follow a Python bump.
+- A non-finite value or confidence is suppressed as `low_confidence` in all three engines, and the floor is written `not (conf >= floor)` so NaN fails it. Before 14 Nov a NaN reading scored as the best possible quality and the face came out "Chad". `tier_for_percentile` throws on a non-finite percentile.
+- The denylist normalises text to NFKC in all three engines. The TS port also rewrites `\d` as `\p{Nd}` and `\b` as a Unicode boundary, because JavaScript's are ASCII-only. A differential run over every UI string and every rule's copy matched Python with 0 differences.

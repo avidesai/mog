@@ -28,6 +28,7 @@ public final class Denylist {
 
     public func scan(_ text: String, infoCard: Bool = false) -> [DenyHit] {
         var hits: [DenyHit] = []
+        let text = text.precomposedStringWithCompatibilityMapping  // NFKC, as the Python spec
         let ns = text as NSString
         for (rx, label, reason, allowInfo) in compiled {
             if infoCard && allowInfo { continue }
