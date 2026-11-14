@@ -55,7 +55,7 @@ function triggerFires(t: Trigger, metrics: Map<string, MetricResult>, reg: Regis
   const m = metrics.get(t.metric);
   if (m === undefined || m.value === null || m.z === null) return false;
   const floor = t.minConfidence ?? reg.metrics.get(t.metric)!.confidenceFloor;
-  if (m.confidence === null || m.confidence < floor) return false;
+  if (m.confidence === null || !(m.confidence >= floor)) return false;
   if (t.category !== null) return m.category === t.category;
   const v = m.value;
   const x = Number(t.value);

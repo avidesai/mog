@@ -5,7 +5,7 @@ import { describe, expect, test } from 'bun:test';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { loadRegistry, type Registry, type Sex } from '../core/registry.ts';
-import { score, tierForPercentile, type CompositeReference, type MetricReading } from '../core/scoring.ts';
+import { SCORING_MODEL_VERSION, score, tierForPercentile, type CompositeReference, type MetricReading } from '../core/scoring.ts';
 import { buildPlan } from '../core/planner.ts';
 import { HabitEngine, PATH_WEEKS, addDays, daysBetween, newHabitState, type TaskDef } from '../core/habit.ts';
 import { Denylist } from '../core/denylist.ts';
@@ -39,13 +39,17 @@ const plan = (goals: string[], minutes = 15, overrides: Record<string, number> =
   buildPlan({ goals, timeBudgetMin: minutes, score: score({ sex: 'male', ageBand: '18-24', readings: typical('male', overrides) }, reg, ref) }, reg);
 
 describe('scoring', () => {
-  test('golden fixtures: composite_std to 1e-6, score, tier and n_scored exactly', () => {
+  test('golden fixtures: composite_std to 1e-6; percentile, band, tier and n_scored as recorded', () => {
     const cases = json('fixtures/scoring_cases.json');
     expect(cases.length).toBeGreaterThan(0);
     for (const c of cases) {
       const r = score({ sex: c.sex, ageBand: c.age_band, readings: c.readings, profileCaptured: c.profile_captured }, reg, ref);
+      expect(c.model_version, c.name).toBe(SCORING_MODEL_VERSION);
       expect(Math.abs(r.compositeStd - c.expected.composite_std), c.name).toBeLessThanOrEqual(1e-6);
-      expect(Math.abs(Math.round(r.score * 100) / 100 - c.expected.score), c.name).toBeLessThan(0.005 + 1e-9);
+      expect(Math.abs(r.percentile - c.expected.percentile), c.name).toBeLessThanOrEqual(5e-5);
+      for (const [got, want] of [[r.score, c.expected.score], [r.scoreLow, c.expected.score_low], [r.scoreHigh, c.expected.score_high]]) {
+        expect(Math.abs(got - want), c.name).toBeLessThanOrEqual(0.005 + 1e-9);
+      }
       expect(r.tier, c.name).toBe(c.expected.tier);
       expect(r.nScored, c.name).toBe(c.expected.n_scored);
     }
@@ -59,6 +63,30 @@ describe('scoring', () => {
 
   test('no scorable metrics throws', () => {
     expect(() => score({ sex: 'male', ageBand: '18-24', readings: { fwhr: { value: 1.9, confidence: 0.9 } } }, reg, ref)).toThrow();
+  });
+
+  test('bone is never most improvable', () => {
+    const r = score({ sex: 'male', ageBand: '18-24', readings: typical('male', { lower_third_split: 2.5, skin_evenness: -1.2 }) }, reg, ref);
+    expect(r.mostImprovable).toBe('skin_evenness');
+    expect(score({ sex: 'male', ageBand: '18-24', readings: typical('male', { lower_third_split: 2.5 }) }, reg, ref).mostImprovable).toBeNull();
+  });
+
+  test('a non-finite or missing value or confidence is suppressed, a null reading is not measured', () => {
+    const baseline = score({ sex: 'male', ageBand: '18-24', readings: typical() }, reg, ref);
+    const broken: Partial<MetricReading>[] = [{ value: NaN }, { confidence: NaN }, { value: Infinity }, { confidence: undefined }];
+    for (const patch of broken) {
+      const readings = typical();
+      readings.facial_adiposity = { ...readings.facial_adiposity, ...patch } as MetricReading;
+      const r = score({ sex: 'male', ageBand: '18-24', readings }, reg, ref);
+      expect(r.metrics.find((m) => m.id === 'facial_adiposity')!.suppressedReason, JSON.stringify(patch)).toBe('low_confidence');
+      expect(r.nScored).toBe(baseline.nScored - 1);
+      expect(Number.isFinite(r.score)).toBe(true);
+    }
+    const readings: Record<string, MetricReading | null> = typical();
+    readings.facial_adiposity = null;
+    const r = score({ sex: 'male', ageBand: '18-24', readings: readings as Record<string, MetricReading> }, reg, ref);
+    expect(r.metrics.find((m) => m.id === 'facial_adiposity')!.suppressedReason).toBe('not_measured');
+    expect(() => tierForPercentile(NaN)).toThrow();
   });
 
   test('tier bands', () => {
@@ -148,7 +176,9 @@ describe('habit', () => {
   const day = (n: number) => addDays(START, n - 1);
   const completeDay = (e: HabitEngine, d: string) => { for (const t of e.dailyDue(e.weekIndex(d))) e.completeTask(t, d); };
 
-  test('date arithmetic', () => {
+  test('date arithmetic, strict about what a local date is', () => {
+    for (const bad of ['2026-11-14T09:00', '2026-02-30', '2026-1-5', 'garbage']) expect(() => addDays(bad, 0), bad).toThrow();
+    expect(() => eng().completeTask('spf', '2026-11-16T09:00')).toThrow();
     expect(addDays('2026-11-30', 1)).toBe('2026-12-01');
     expect(addDays('2028-02-28', 1)).toBe('2028-02-29');
     expect(daysBetween('2027-01-01', '2026-11-16')).toBe(46);
@@ -320,6 +350,10 @@ describe('denylist', () => {
     }
     expect(deny.isClean('Reduce body fat at roughly half a percent of bodyweight per week.')).toBe(true);
     expect(deny.isClean('Daily broad-spectrum SPF 30 or higher.')).toBe(true);
+  });
+
+  test('unicode look-alikes are caught as Python catches them', () => {
+    for (const bad of ['take ５０ mg', 'take ٥٠ mg', '1٠٠ lbs', 'ſteroid cycle', 'ſarms', '1500 Kcal a day']) expect(deny.isClean(bad), bad).toBe(false);
   });
 
   test('mewing is allowed only in info cards', () => {

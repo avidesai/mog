@@ -25,6 +25,7 @@ const TIERS: [number, string, string][] = [
 export const SCORING_MODEL_VERSION = 'rules-1.1.0';
 
 export function tierForPercentile(p: number): { short: string; long: string } {
+  if (!Number.isFinite(p)) throw new Error(`percentile must be finite, got ${p}`);
   for (const [upper, short, long] of TIERS) if (p < upper) return { short, long };
   const last = TIERS[TIERS.length - 1];
   return { short: last[1], long: last[2] };
@@ -136,7 +137,7 @@ export function score(inp: ScoreInput, reg: Registry, ref: CompositeReference): 
   const profileCaptured = inp.profileCaptured ?? true;
 
   const beard = inp.readings.beard_presence;
-  const beardPresent = beard !== undefined && beard.value >= 1;
+  const beardPresent = beard != null && beard.value >= 1;
 
   const results: MetricResult[] = [];
   let sumW = 0.0;
@@ -156,14 +157,15 @@ export function score(inp: ScoreInput, reg: Registry, ref: CompositeReference): 
     const suppressed = (reason: SuppressedReason, confidence: number | null): MetricResult =>
       ({ ...base, value: null, z: null, category: null, display: 'suppressed', suppressedReason: reason, confidence });
 
-    if (r === undefined) {
+    if (r == null) {
       results.push(suppressed(m.pose === 'profile' && !profileCaptured ? 'pose_missing' : 'not_measured', null));
       continue;
     }
     let conf = r.confidence;
     if (beardPresent && BEARD_AFFECTED.has(mid)) conf *= BEARD_CONFIDENCE_FACTOR;
     if (r.occluded) { results.push(suppressed('occluded', conf)); continue; }
-    if (conf < m.confidenceFloor) { results.push(suppressed('low_confidence', conf)); continue; }
+    // `!(>=)` so a NaN or missing confidence fails the floor; a non-finite value is a failed measurement.
+    if (!(conf >= m.confidenceFloor) || !Number.isFinite(r.value)) { results.push(suppressed('low_confidence', conf)); continue; }
     if (m.reliabilityTier === 'D') { results.push(suppressed('not_shipped', conf)); continue; }
 
     const z = (r.value - mean) / sd;

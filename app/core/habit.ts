@@ -10,11 +10,14 @@ const DISTRESS_RESCAN_ATTEMPTS = 3;
 const DISTRESS_COOLDOWN_DAYS = 14;
 
 const DAY_MS = 86_400_000;
+const fromDay = (n: number): string => new Date(n * DAY_MS).toISOString().slice(0, 10);
+// Strict, as Python's date.fromisoformat: a timestamp or 2026-02-30 throws rather than shifting the streak.
 const toDay = (s: string): number => {
   const [y, m, d] = s.split('-').map(Number);
-  return Date.UTC(y, m - 1, d) / DAY_MS;
+  const n = Date.UTC(y, m - 1, d) / DAY_MS;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s) || fromDay(n) !== s) throw new Error(`not a local date: ${s}`);
+  return n;
 };
-const fromDay = (n: number): string => new Date(n * DAY_MS).toISOString().slice(0, 10);
 export const addDays = (s: string, n: number): string => fromDay(toDay(s) + n);
 export const daysBetween = (later: string, earlier: string): number => toDay(later) - toDay(earlier);
 
