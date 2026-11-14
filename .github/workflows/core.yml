@@ -1,5 +1,7 @@
 name: core
-on: [push, pull_request]
+on:
+  push: { branches: [main] }
+  pull_request:
 jobs:
   python:
     runs-on: ubuntu-latest
@@ -15,6 +17,13 @@ jobs:
       - name: data files unchanged by regeneration
         run: |
           cd core && python tools/build_reference.py >/dev/null && git diff --exit-code data/composite_reference.json
+  ts-port:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with: { bun-version: "1.4.2" }
+      - run: bun test app/tools
   swift:
     runs-on: macos-15
     steps:

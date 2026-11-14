@@ -90,7 +90,7 @@ def _trigger_fires(t: Trigger, metrics: dict[str, MetricResult], reg: Registry) 
     if m is None or m.value is None or m.z is None:
         return False
     floor = t.min_confidence if t.min_confidence is not None else reg.metrics[t.metric].confidence_floor
-    if m.confidence is None or m.confidence < floor:
+    if m.confidence is None or not (m.confidence >= floor):
         return False
     if t.category is not None:
         return m.category == t.category

@@ -1,4 +1,5 @@
 import json
+import math
 from pathlib import Path
 
 import pytest
@@ -226,3 +227,27 @@ def test_golden_fixtures(reg):
         assert r.composite_std == pytest.approx(exp["composite_std"], abs=1e-6), case["name"]
         assert round(r.score, 2) == exp["score"], case["name"]
         assert r.tier == exp["tier"], case["name"]
+
+
+def test_bone_is_never_most_improvable(reg, mk_input):
+    r = score(mk_input(lower_third_split=2.5, skin_evenness=-1.2), reg)
+    assert r.most_improvable == "skin_evenness"
+    assert score(mk_input(lower_third_split=2.5), reg).most_improvable is None
+
+
+def test_non_finite_reading_is_suppressed_not_scored(reg, mk_input):
+    base = score(mk_input(), reg)
+    for field in ("value", "confidence"):
+        inp = mk_input()
+        r = inp.readings["facial_adiposity"]
+        inp.readings["facial_adiposity"] = MetricReading(**{**r.__dict__, field: float("nan")})
+        out = score(inp, reg)
+        m = next(x for x in out.metrics if x.id == "facial_adiposity")
+        assert m.suppressed_reason == "low_confidence", field
+        assert out.n_scored == base.n_scored - 1, field
+        assert math.isfinite(out.score), field
+
+
+def test_tier_for_non_finite_percentile_raises():
+    with pytest.raises(ValueError):
+        tier_for_percentile(float("nan"))

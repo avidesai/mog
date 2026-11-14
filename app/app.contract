@@ -1,0 +1,60 @@
+// Every string is t() over strings/en.json, which scripts/strings.mjs generates from core/copy/strings.json.
+use EmptyState from "exact:content"
+
+routes nav
+  tab today "/"
+  tab plan "/plan"
+  tab path "/path"
+  tab you "/you"
+
+fn tabTitle(name: string): string = name == "today" ? t("today.title") : name == "plan" ? t("plan.title") : name == "path" ? t("journey.title") : t("settings.title")
+fn tabSymbol(name: string): string = name == "today" ? "symbol:home" : name == "plan" ? "symbol:list" : name == "path" ? "symbol:calendar" : "symbol:person"
+
+component App
+  action pick(name: string)
+    nav = select(nav, name)
+  action follow(url: string)
+    nav = go(nav, url)
+  view
+    main navigationKey=`${top(nav).id}`
+      navigationBack="back"
+      navigate=follow
+      testId="app"
+      width="100%"
+      height="100%"
+      display="flex"
+      flex-direction="column"
+      column flex=1 min-height=0 position="relative"
+        for t in nav.tabs key=t.name
+          column role="tabpanel" id=`panel-${t.name}` position="absolute" inset=0
+            for e in t.stack key=e.id
+              column navigationKey=`${e.id}`
+                navigationScroll=`content-${e.id}`
+                position="absolute"
+                inset=0
+                display="flex"
+                flex-direction="column"
+                header
+                  text tabTitle(e.name) role="heading" aria-level=1
+                scroll id=`content-${e.id}` flex=1 min-height=0 testId=`content-${e.name}`
+                  if e.name == "today" or e.name == "plan"
+                    EmptyState(
+                      symbol="symbol:camera",
+                      title=t("today.empty_title"),
+                      message=t("today.empty_body")
+                    )
+                  else if e.name == "path"
+                    text t("journey.intro") padding=16
+                      color="-exact-secondary-label"
+                      testId="path-intro"
+      row role="tablist" testId="tabs"
+        for t in nav.tabs key=t.name
+          button role="tab"
+            aria-controls=`panel-${t.name}`
+            aria-selected=(nav.tab == t.name)
+            press=pick(t.name)
+            testId=`tab-${t.name}`
+            flex=1
+            min-width=0
+            image tabSymbol(t.name)
+            text tabTitle(t.name)
