@@ -12,6 +12,7 @@ from .scoring import ScoreInput, ScoreResult, MetricReading, score
 from .planner import PlanInput, PlanResult, build_plan
 from .habit import HabitState, HabitEngine, DistressSignals
 from .denylist import Denylist
+from .progress import ScanChange, MetricChange, compare
 
 __all__ = [
     "Registry", "load_registry",
@@ -19,6 +20,7 @@ __all__ = [
     "PlanInput", "PlanResult", "build_plan",
     "HabitState", "HabitEngine", "DistressSignals",
     "Denylist",
+    "ScanChange", "MetricChange", "compare",
 ]
 
 __version__ = "0.1.0"

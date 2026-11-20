@@ -17,6 +17,7 @@ routes nav
     card "/plan/:id"
     paywall "/pro"
   tab path "/path"
+    progress "/path/progress"
   tab metrics "/metrics"
     metric "/metric/:id"
   tab you "/you"
@@ -84,6 +85,33 @@ shape Summary
   atRisk: bool
   dayComplete: bool
   finished: bool
+  distress: bool
+  opensToday: number
+
+shape ProgressRow
+  id: string
+  short: string
+  locked: bool
+  delta: string
+  before: string
+  after: string
+  withinNoise: bool
+  better: bool
+  posA: number
+  posB: number
+
+shape Progress
+  comparable: bool
+  delta: string
+  up: bool
+  withinNoise: bool
+  before: string
+  after: string
+  days: number
+  weeks: number
+  sinceDate: string
+  lead: string
+  rows: ProgressRow[]
 
 shape AppView
   hasScan: bool
@@ -110,6 +138,8 @@ shape AppView
   dailyMinutes: number
   tasks: Task[]
   summary: Summary
+  nScans: number
+  progress: Progress
 
 shape Reply
   ok: bool
@@ -174,6 +204,7 @@ component App
   state region = "" persist
   state consentedOn = "" persist
   state streakSeenOn = "" persist
+  state checkinSeenOn = "" persist
   state consentedAt = 0 persist
   state consentPolicy = "" persist
   state adultAt = 0 persist
@@ -213,6 +244,7 @@ component App
   mutation taskSet as shape TaskReply queue refreshes app then afterTask
   mutation repaired as shape Reply refreshes app
   mutation wiped as shape Reply refreshes app then afterWipe
+  mutation opened as shape Reply refreshes app
   resource media = exactViewport() as shape Media
   derive still = media.prefersReducedMotion
   // The band on a 0 to 10 track; before a scan, the example from the old copy.
@@ -235,6 +267,9 @@ component App
     every(450, advance)
   task delivering when due != "" key=due
     after(1, deliver)
+  // Each time Metrics comes to the front, count it once for the check-in card.
+  task countOpen when onboarded and top(nav).name == "metrics"
+    after(1, noteOpen)
 
   action step
     now = performanceNow()
@@ -353,6 +388,16 @@ component App
           nav = push(nav, "/done")
       case none
         declined = declined
+  action noteOpen
+    send opened = noteResultsOpen(today)
+  // Either button puts the card away for today; the data module already started the 14-day cooldown.
+  action dismissCheckin
+    checkinSeenOn = today
+  action callHelp
+    openURL("tel:988")
+    checkinSeenOn = today
+  action seeProgress
+    nav = open(nav, "/path/progress")
   action repair
     send repaired = repairStreak(today)
   action letReset
@@ -396,6 +441,7 @@ component App
     consentedAt = 0
     consentPolicy = ""
     streakSeenOn = ""
+    checkinSeenOn = ""
     resetCapture()
     nav = open(nav, "/")
 
@@ -502,6 +548,25 @@ component App
                           testId="banking"
                       Pips(days=app.summary.thisWeekDays)
                       column gap=10 margin-top=24
+                        // Calm and plain on purpose (voice.md): no accent, no count-up, never an engagement surface.
+                        if app.summary.distress and checkinSeenOn != today
+                          column class=CardBox padding=18 gap=10 testId="checkin"
+                            text t("today.quiet_checkin_title") class=T3
+                              testId="checkin-title"
+                            text t("today.quiet_checkin_body") class=Body color="ink.soft"
+                            row gap=10 flex-wrap="wrap" margin-top=4
+                              view flex="1 1 8rem" min-width=0
+                                Secondary(
+                                  label=t("today.quiet_checkin_call"),
+                                  go=callHelp,
+                                  id="checkin-988"
+                                )
+                              view flex="1 1 8rem" min-width=0
+                                Secondary(
+                                  label=t("today.quiet_checkin_dismiss"),
+                                  go=dismissCheckin,
+                                  id="checkin-dismiss"
+                                )
                         if app.summary.atRisk and streakSeenOn != today
                           column class=CardBox
                             border-color="flame.icon"
@@ -1011,8 +1076,17 @@ component App
                     margin-right="auto"
                     box-sizing="border-box"
                     width="100%"
-                    Primary(label=t("reveal.cta_start"), go=goHome, off=false, id="start-week")
-                    Quiet(label=t("reveal.cta_all", n=`${app.nMetrics}`), go=seeAll, id="see-all")
+                    if app.nScans > 1
+                      Primary(
+                        label=t("reveal.cta_progress"),
+                        go=seeProgress,
+                        off=false,
+                        id="see-progress"
+                      )
+                      Quiet(label=t("reveal.cta_today"), go=goHome, id="back-today")
+                    else
+                      Primary(label=t("reveal.cta_start"), go=goHome, off=false, id="start-week")
+                      Quiet(label=t("reveal.cta_all", n=`${app.nMetrics}`), go=seeAll, id="see-all")
               else if e.name == "task"
                 column navigationKey=`${e.id}`
                   navigationBar="none"
@@ -1463,7 +1537,7 @@ component App
                             else
                               text `${w}` font-size="min(-exact-footnote, 14px)"
                                 font-weight=600
-                                color="ink.mute"
+                                color="ink.soft"
                           if w == app.summary.week or w == 4 or w == 8 or app.summary.banked.includes(w)
                             column position="absolute"
                               top=(nodeY(w) - 18)
@@ -1471,23 +1545,109 @@ component App
                               left=(nodeX(w) > 200 ? "auto" : `calc(${nodeX(w) / 3.5}% + 38px)`)
                               right=(nodeX(w) > 200 ? `calc(${(350 - nodeX(w)) / 3.5}% + 38px)` : "auto")
                               text-align=(nodeX(w) > 200 ? "end" : "start")
-                              text (w == app.summary.week ? t("journey.node_current") : t("journey.node_upcoming", week=`${w}`)) font-size="0.8125rem"
+                              text (w == app.summary.week ? t("journey.node_current") : t("journey.node_upcoming", week=`${w}`)) font-size="min(-exact-footnote, 18px)"
                                 font-weight=(w == app.summary.week ? 700 : 600)
                                 color=(w == app.summary.week ? "accent.main" : "ink.soft")
                               if w == app.summary.week
-                                text t("journey.node_current_sub", days=`${app.summary.thisWeekDays}`) font-size="0.75rem"
+                                text t("journey.node_current_sub", days=`${app.summary.thisWeekDays}`) font-size="min(-exact-caption1, 16px)"
                                   color="ink.soft"
                               else if w == 4
-                                text t("journey.node_scan") font-size="0.75rem" color="ink.mute"
+                                text t("journey.node_scan") font-size="min(-exact-caption1, 16px)" color="ink.mute"
                               else if w == 8
-                                text t("journey.node_final") font-size="0.75rem" color="ink.mute"
+                                text t("journey.node_final") font-size="min(-exact-caption1, 16px)" color="ink.mute"
                               else
-                                text t("journey.node_banked") font-size="0.75rem"
+                                text t("journey.node_banked") font-size="min(-exact-caption1, 16px)"
                                   color="positive.text"
+                      if app.nScans > 1
+                        link href=path("progress")
+                          testId="open-progress"
+                          class=LipBox
+                          display="flex"
+                          align-items="center"
+                          gap=12
+                          padding="14px 16px"
+                          margin-top=12
+                          column flex=1 min-width=0 gap=2
+                            text t("journey.progress_row") class=RowTitle
+                            text t("progress.scans", n=`${app.nScans}`) class=Detail
+                          text app.progress.delta class=Value
+                            font-weight=700
+                            color=(app.progress.up and not app.progress.withinNoise ? "positive.text" : "ink.main")
+                          Chevron()
+                      else if app.hasScan
+                        text t("progress.empty_body") class=Caption
+                          margin-top=12
+                          testId="progress-empty"
                       if app.summary.finished
-                        column class=RaisedBox padding=16 gap=4
+                        column class=RaisedBox padding=16 gap=4 margin-top=12
                           text t("journey.finish_title") class=T3
                           text t("journey.finish_body") class=Body
+              else if e.name == "progress"
+                column navigationKey=`${e.id}`
+                  navigationBar="none"
+                  position="absolute"
+                  inset=0
+                  background-color="bg.paper"
+                  NavBar(
+                    title=t("progress.title"),
+                    trailing=t("progress.scans", n=`${app.nScans}`),
+                    close=false,
+                    back=back,
+                    backLabel=t("common.back")
+                  )
+                  scroll flex=1 min-height=0 testId="progress-list"
+                    column padding="4px 20px 28px"
+                      gap=12
+                      max-width="26.25rem"
+                      margin-left="auto"
+                      margin-right="auto"
+                      box-sizing="border-box"
+                      width="100%"
+                      column padding=20
+                        gap=10
+                        border-radius=20
+                        background-color=(app.progress.up and not app.progress.withinNoise ? "positive.wash" : "bg.raised")
+                        row align-items="center" gap=14 flex-wrap="wrap"
+                          text app.progress.delta class=Display
+                            font-size="3.5rem"
+                            line-height=1.3
+                            -exact-fit="shrink"
+                            color=(app.progress.up and not app.progress.withinNoise ? "positive.text" : "ink.main")
+                            testId="progress-delta"
+                          text (app.progress.weeks >= 2 ? t("progress.span_weeks", before=app.progress.before, after=app.progress.after, weeks=`${app.progress.weeks}`) : t("progress.span_days", before=app.progress.before, after=app.progress.after, days=`${app.progress.days}`)) class=Body
+                            font-weight=600
+                            color="ink.main"
+                            flex="1 1 8rem"
+                            min-width=0
+                        text (not app.progress.comparable ? t("progress.model_note") : app.progress.withinNoise ? t("progress.noise_line") : app.progress.lead != "" ? t("progress.lead", metric=app.progress.lead) : t("progress.noise_line")) class=Detail
+                          color="ink.soft"
+                          testId="progress-line"
+                      view margin-top=6
+                        Label(label=t("progress.moved_label"))
+                      for r in app.progress.rows key=r.id
+                        column class=CardBox padding="14px 16px" gap=8 testId=`progress-row-${r.id}`
+                          row align-items="baseline" gap=12
+                            text r.short class=RowTitle flex=1 min-width=0
+                            if r.locked
+                              Lock()
+                            else
+                              text r.delta class=Value
+                                font-weight=700
+                                color=(r.withinNoise ? "ink.mute" : r.better ? "positive.text" : "ink.main")
+                          view position="relative"
+                            height=8
+                            border-radius=4
+                            background-color="bg.track"
+                            if not r.locked
+                              view position="absolute"
+                                top=0
+                                height=8
+                                border-radius=4
+                                left=`${(r.posA < r.posB ? r.posA : r.posB) * 100}%`
+                                width=`${(r.posA < r.posB ? r.posB - r.posA : r.posA - r.posB) * 100 + 3}%`
+                                background-color=(r.withinNoise ? "ink.faint" : r.better ? "positive.fill" : "ink.soft")
+                          text (r.locked ? (r.withinNoise ? t("progress.delta_within_noise") : r.better ? t("progress.row_better") : t("progress.row_worse")) : `${t("progress.values", before=r.before, after=r.after)} · ${r.withinNoise ? t("progress.delta_within_noise") : r.better ? t("progress.row_better") : t("progress.row_worse")}`) class=Caption
+                      text t("progress.bone_note") class=Caption margin-top=8
               else if e.name == "metrics"
                 column navigationKey=`${e.id}`
                   navigationBar="none"

@@ -156,7 +156,9 @@
     "measured_label": "measurements",
     "movable_label": "you can change",
     "cta_start": "Start week 1",
-    "cta_all": "See all {n} first"
+    "cta_all": "See all {n} first",
+    "cta_progress": "See what changed",
+    "cta_today": "Back to Today"
   },
   "results": {
     "title": "Metrics",
@@ -230,14 +232,15 @@
     "scan_locked_why": "Skin and fat take weeks to change, and bone doesn't change at all.",
     "all_done_body": "",
     "quiet_checkin_title": "A quiet check-in",
-    "quiet_checkin_body": "If you're finding yourself checking this a lot, that's worth paying attention to. Appearance preoccupation is common and treatable. If it's weighing on you, talking to someone helps. 988 connects you to support any time.",
-    "quiet_checkin_dismiss": "Okay",
+    "quiet_checkin_body": "Checking often won't change the numbers. If this is taking up more of your head than you'd like, that's common, and it can be treated. Talking to someone helps. In the US you can call or text 988 at any time.",
+    "quiet_checkin_dismiss": "Not now",
     "day_title": "Day {day}",
     "left_one": "One left today.",
     "left_many": "{n} left today.",
     "all_done": "Done for today.",
     "task_done": "Done",
-    "plan_link": "Your plan"
+    "plan_link": "Your plan",
+    "quiet_checkin_call": "Call 988"
   },
   "task_detail": {
     "why_this": "Why this",
@@ -290,16 +293,23 @@
     "week_of": "Week {week} of 8",
     "node_current_sub": "{days} of 5 days",
     "node_final": "Final scan",
-    "tab": "Path"
+    "tab": "Path",
+    "progress_row": "Progress"
   },
   "progress": {
     "title": "Progress",
-    "scan_label": "Scan {n} · {date}",
-    "delta_up": "+{value}",
-    "delta_down": "−{value}",
-    "delta_flat": "No change",
+    "scans": "{n} scans",
+    "span_weeks": "{before} to {after} over {weeks} weeks",
+    "span_days": "{before} to {after} over {days} days",
+    "lead": "Most of it came from {metric}.",
+    "noise_line": "That's inside the noise. Scores move a little between scans even when nothing changed.",
+    "moved_label": "What changed",
+    "row_better": "Improved since your last scan",
+    "row_worse": "Got worse since your last scan",
     "delta_within_noise": "Within measurement noise",
-    "model_note": "Scores are only comparable across scans on the same model version. A change marked with a version came from a model update.",
+    "values": "{before} to {after}",
+    "bone_note": "Bone measurements aren't listed because they don't change.",
+    "model_note": "These two scans were scored by different model versions, so they can't be compared.",
     "empty_body": "Your first comparison comes with the week-4 scan."
   },
   "share": {

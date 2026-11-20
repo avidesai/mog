@@ -1,5 +1,6 @@
 """Regenerates fixtures/scoring_cases.json from a fixed set of synthetic faces.
-Run only when the scoring model version changes, and bump SCORING_MODEL_VERSION."""
+Run only when the scoring model version changes, and bump SCORING_MODEL_VERSION.
+`--progress` regenerates fixtures/progress_cases.json (pairs of scans for mogcore.progress) instead."""
 
 from __future__ import annotations
 
@@ -70,5 +71,36 @@ def main() -> None:
         json.dump(out, f, indent=1)
 
 
+# (name, sex, z-scores at the first scan, z-scores at the second). Everything else is the same face.
+PROGRESS_CASES = [
+    ("fat_loss_clear", "male", {"facial_adiposity": 1.8, "cervicomental_angle_deg": 2.0}, {"facial_adiposity": 0.6, "cervicomental_angle_deg": 1.0}),
+    ("skin_inside_noise", "male", {"skin_evenness": -1.2}, {"skin_evenness": -1.1}),
+    ("nothing_changed", "female", {}, {}),
+    ("skin_worse", "female", {"skin_evenness": 0.4}, {"skin_evenness": -1.6}),
+]
+
+
+def progress() -> None:
+    from mogcore.progress import compare
+    reg = load_registry()
+    out = []
+    for i, (name, sex, z0, z1) in enumerate(PROGRESS_CASES):
+        scans = []
+        for z in (z0, z1):
+            rd = sampled_readings(reg, sex, seed=2000 + i, **z)
+            scans.append({"sex": sex, "age_band": "18-24", "profile_captured": True,
+                          "readings": {k: {"value": v.value, "confidence": v.confidence, "iqr": v.iqr, "occluded": v.occluded} for k, v in rd.items()}})
+        ins = [ScoreInput(s["sex"], s["age_band"], {k: MetricReading(**v) for k, v in s["readings"].items()}, True) for s in scans]
+        c = compare(ins[0], ins[1], reg)
+        out.append({
+            "name": name, "model_version": SCORING_MODEL_VERSION, "before": scans[0], "after": scans[1],
+            "expected": {"comparable": c.comparable, "score_delta": round(c.score_delta, 6), "score_within_noise": c.score_within_noise,
+                         "metrics": [{"id": m.id, "delta": round(m.delta, 6), "within_noise": m.within_noise, "better": m.better} for m in c.metrics]},
+        })
+        print(f"{name:20s} {c.score_delta:+.2f} noise={c.score_within_noise} " + " ".join(f"{m.id}:{m.delta:+.3f}{'~' if m.within_noise else ''}" for m in c.metrics))
+    with open(ROOT / "fixtures" / "progress_cases.json", "w", encoding="utf-8") as f:
+        json.dump(out, f, indent=1)
+
+
 if __name__ == "__main__":
-    main()
+    progress() if "--progress" in sys.argv else main()

@@ -9,6 +9,7 @@ import { SCORING_MODEL_VERSION, score, tierForPercentile, type CompositeReferenc
 import { buildPlan } from '../core/planner.ts';
 import { HabitEngine, PATH_WEEKS, addDays, daysBetween, newHabitState, type TaskDef } from '../core/habit.ts';
 import { Denylist } from '../core/denylist.ts';
+import { compare } from '../core/progress.ts';
 
 const CORE = join(import.meta.dir, '../../core');
 const json = (p: string) => JSON.parse(readFileSync(join(CORE, p), 'utf8'));
@@ -359,5 +360,29 @@ describe('denylist', () => {
   test('mewing is allowed only in info cards', () => {
     expect(deny.isClean('There is no evidence that mewing changes adult facial shape.')).toBe(false);
     expect(deny.isClean('There is no evidence that mewing changes adult facial shape.', true)).toBe(true);
+  });
+});
+
+describe('progress', () => {
+  const input = (scan: any) => ({ sex: scan.sex, ageBand: scan.age_band, readings: scan.readings, profileCaptured: scan.profile_captured });
+
+  test('golden fixtures: flags and order exactly, deltas to 1e-6', () => {
+    const cases = json('fixtures/progress_cases.json');
+    expect(cases.length).toBeGreaterThan(0);
+    for (const c of cases) {
+      const r = compare(input(c.before), input(c.after), reg, ref);
+      expect(c.model_version, c.name).toBe(SCORING_MODEL_VERSION);
+      expect(r.comparable, c.name).toBe(c.expected.comparable);
+      expect(Math.abs(r.scoreDelta - c.expected.score_delta), c.name).toBeLessThanOrEqual(1e-6);
+      expect(r.scoreWithinNoise, c.name).toBe(c.expected.score_within_noise);
+      expect(r.metrics.map((m) => [m.id, m.withinNoise, m.better]), c.name).toEqual(c.expected.metrics.map((m: any) => [m.id, m.within_noise, m.better]));
+      r.metrics.forEach((m, i) => expect(Math.abs(m.delta - c.expected.metrics[i].delta), c.name).toBeLessThanOrEqual(1e-6));
+    }
+  });
+
+  test('only modifiable metrics are listed, and identical scans report no change', () => {
+    const same = compare({ sex: 'male', ageBand: '18-24', readings: typical() }, { sex: 'male', ageBand: '18-24', readings: typical() }, reg, ref);
+    expect(same.scoreDelta).toBe(0);
+    expect(same.metrics.every((m) => m.withinNoise && reg.metrics.get(m.id)!.modifiable)).toBe(true);
   });
 });
