@@ -1,20 +1,233 @@
-// Every string is t() over strings/en.json, which scripts/strings.mjs generates from core/copy/strings.json.
+// Every string is t() over strings/en.json, which scripts/sync-app.mjs generates from core/copy/strings.json.
+// Capture is a stand-in until the native module lands: it walks the six checks, then saves a sample face's readings.
 use EmptyState from "exact:content"
+use SummaryCard from "exact:content"
+use Badge from "exact:content"
+use RowText from "exact:content"
 
 routes nav
   tab today "/"
+    goals "/start/goals"
+    about "/start/about"
+    time "/start/time"
+    consent "/start/consent"
+    capture "/capture"
+    reveal "/reveal"
+    results "/results"
+    metric "/metric/:id"
+    paywall "/pro"
   tab plan "/plan"
+    card "/plan/:id"
   tab path "/path"
   tab you "/you"
+    methodology "/you/methodology"
+
+shape Time
+  epochAtZero: number
+  utcOffset: number
+
+shape Metric
+  id: string
+  name: string
+  short: string
+  group: string
+  value: string
+  category: string
+  suppressed: string
+  evidence: string
+  reliability: string
+  free: bool
+  plain: string
+  refLow: string
+  refHigh: string
+  contradicted: bool
+  community: bool
+
+shape Card
+  ruleId: string
+  headline: string
+  body: string
+  whyThis: string
+  evidence: string
+  effort: string
+  weeksLow: number
+  weeksHigh: number
+  professional: bool
+
+shape Task
+  id: string
+  title: string
+  cadence: string
+  done: bool
+  weeklyDone: number
+  weeklyTarget: number
+
+shape Summary
+  week: number
+  currentDays: number
+  longestDays: number
+  thisWeekDays: number
+  banked: number[]
+  scanWindow: number
+  daysUntilScan: number
+  repairAvailable: bool
+  atRisk: bool
+  dayComplete: bool
+  finished: bool
+
+shape AppView
+  hasScan: bool
+  scanDate: string
+  nMetrics: number
+  score: string
+  low: string
+  high: string
+  pct: string
+  tier: string
+  modelVersion: string
+  strength: string
+  improvable: string
+  metrics: Metric[]
+  plan: Card[]
+  professional: Card[]
+  info: Card[]
+  dailyMinutes: number
+  tasks: Task[]
+  summary: Summary
+
+shape Reply
+  ok: bool
+  error: string
 
 fn tabTitle(name: string): string = name == "today" ? t("today.title") : name == "plan" ? t("plan.title") : name == "path" ? t("journey.title") : t("settings.title")
 fn tabSymbol(name: string): string = name == "today" ? "symbol:home" : name == "plan" ? "symbol:list" : name == "path" ? "symbol:calendar" : "symbol:person"
+fn goalLabel(g: string): string = g == "sharper_jawline" ? t("onboarding.goal_sharper_jawline") : g == "better_skin" ? t("onboarding.goal_better_skin") : g == "look_leaner" ? t("onboarding.goal_look_leaner") : g == "hair" ? t("onboarding.goal_hair") : g == "eye_area" ? t("onboarding.goal_eye_area") : g == "better_photos" ? t("onboarding.goal_better_photos") : t("onboarding.goal_general")
+fn ageLabel(a: string): string = a == "18-24" ? t("onboarding.about_age_18_24") : a == "25-34" ? t("onboarding.about_age_25_34") : a == "35-44" ? t("onboarding.about_age_35_44") : t("onboarding.about_age_45")
+fn timeLabel(m: number): string = m == 5 ? t("onboarding.time_5") : m == 15 ? t("onboarding.time_15") : t("onboarding.time_30")
+fn evidenceLabel(g: string): string = g == "strong" ? t("common.evidence_strong") : g == "moderate" ? t("common.evidence_moderate") : g == "weak" ? t("common.evidence_weak") : g == "community" ? t("common.evidence_community") : t("common.evidence_contradicted")
+fn categoryLabel(c: string): string = c == "low" ? t("common.category_low") : c == "high" ? t("common.category_high") : t("common.category_typical")
+fn tierLong(tier: string): string = tier == "LTN" ? t("common.tier_LTN") : tier == "MTN" ? t("common.tier_MTN") : tier == "HTN" ? t("common.tier_HTN") : tier == "Chadlite" ? t("common.tier_Chadlite") : t("common.tier_Chad")
+fn groupLabel(g: string): string = g == "eyes" ? t("results.group_eyes") : g == "midface" ? t("results.group_midface") : g == "lower" ? t("results.group_lower") : g == "profile" ? t("results.group_profile") : g == "proportion" ? t("results.group_proportion") : t("results.group_appearance")
+fn suppressedLabel(r: string): string = r == "low_confidence" ? t("common.suppressed_low_confidence") : r == "occluded" ? t("common.suppressed_occluded") : r == "pose_missing" ? t("common.suppressed_pose_missing") : r == "not_shipped" ? t("common.suppressed_not_shipped") : ""
+fn reliabilityLabel(r: string): string = r == "A" ? t("metric_detail.reliability_A") : r == "B" ? t("metric_detail.reliability_B") : t("metric_detail.reliability_C")
+fn effortLabel(e: string): string = e == "low" ? t("task_detail.effort_low") : e == "medium" ? t("task_detail.effort_medium") : t("task_detail.effort_high")
+fn metricLine(m: Metric): string = m.suppressed != "" ? suppressedLabel(m.suppressed) : m.value == "" ? categoryLabel(m.category) : `${m.value} · ${categoryLabel(m.category)}`
+fn gateLabel(i: number): string = i == 0 ? t("capture.gate_angle") : i == 1 ? t("capture.gate_lighting") : i == 2 ? t("capture.gate_distance") : i == 3 ? t("capture.gate_expression") : i == 4 ? t("capture.gate_clear") : t("capture.gate_sharp")
+fn stepLabel(i: number): string = i == 0 ? t("processing.step_landmarks") : i == 1 ? t("processing.step_normalise") : i == 2 ? t("processing.step_metrics") : t("processing.step_reference")
+fn weekStatus(w: number, s: Summary): string = s.banked.includes(w) ? t("journey.node_banked") : w == s.week ? t("journey.node_current") : w == 4 or w == 8 ? t("journey.node_scan") : ""
 
 component App
+  state onboarded = false persist
+  state goals = [] persist
+  state sex = "" persist
+  state ageBand = "" persist
+  state adult = false persist
+  state timeBudget = 15 persist
+  state region = "" persist
+  state consentedOn = "" persist
+  state consentedAt = 0 persist
+  state consentPolicy = "" persist
+  state adultAt = 0 persist
+  state declined = false
+  state capStep = 0
+  state capturing = false
+  state now = 0
+  resource time = exactTime() as shape Time
+  derive today = formatDate(time.epochAtZero + now, time.utcOffset, "iso")
+  resource app = loadApp(today, false) as shape AppView else empty() transient
+  mutation scanned as shape Reply refreshes app then afterScan
+  mutation taskSet as shape Reply queue refreshes app
+  mutation repaired as shape Reply refreshes app
+  mutation wiped as shape Reply refreshes app then afterWipe
+  derive aboutReady = sex != "" and ageBand != "" and adult and region != ""
+  // Consent is per policy version (biometric data policy §5): a new version asks again before the next capture.
+  derive policyVersion = "1.0"
+  derive consentCurrent = consentedOn != "" and consentPolicy == policyVersion
+  derive sexPlural = sex == "female" ? t("common.sex_plural_female") : t("common.sex_plural_male")
+  task tick mount
+    every(60000, step)
+  task scanning when capturing
+    every(450, advance)
+
+  action step
+    now = performanceNow()
   action pick(name: string)
     nav = select(nav, name)
   action follow(url: string)
     nav = go(nav, url)
+  action back
+    nav = back(nav)
+  action visit(url: string)
+    nav = push(nav, url)
+  action toggleGoal(g: string)
+    goals = goals.includes(g) ? goals.filter(x => x != g) : goals.length < 3 ? goals.concat([g]) : goals
+  action setSex(v: string)
+    sex = v
+  action setAge(v: string)
+    ageBand = v
+  action setAdult(on: bool)
+    adult = on
+    adultAt = on ? time.epochAtZero + performanceNow() : 0
+  action setRegion(v: string)
+    region = v
+  action setTime(m: number)
+    timeBudget = m
+  action consent
+    if aboutReady and region != "restricted"
+      consentedOn = today
+      consentedAt = time.epochAtZero + performanceNow()
+      consentPolicy = policyVersion
+      declined = false
+      capStep = 0
+      capturing = true
+      nav = push(nav, "/capture")
+  action decline
+    declined = true
+  action startScan
+    if consentCurrent
+      capStep = 0
+      capturing = true
+      nav = push(nav, "/capture")
+    else
+      nav = push(nav, "/start/consent")
+  action withdraw
+    consentedOn = ""
+    consentedAt = 0
+    consentPolicy = ""
+  action advance
+    if capStep < 10
+      capStep = capStep + 1
+    else
+      capturing = false
+      send scanned = saveSampleScan(today, sex, ageBand, goals.length == 0 ? ["general"] : goals, timeBudget)
+  action afterScan
+    onboarded = true
+    nav = replace(nav, "/reveal")
+  action finish
+    let home = open(nav, "/")
+    nav = open(home, "/plan")
+  action setTask(id: string, done: bool)
+    send taskSet = setTask(id, today, done)
+  action repair
+    send repaired = repairStreak(today)
+  action askWipe
+    showModal("wipe")
+  action wipe
+    send wiped = deleteEverything()
+  action afterWipe
+    onboarded = false
+    goals = []
+    sex = ""
+    ageBand = ""
+    adult = false
+    adultAt = 0
+    timeBudget = 15
+    region = ""
+    consentedOn = ""
+    consentedAt = 0
+    consentPolicy = ""
+    nav = open(nav, "/")
+
   view
     main navigationKey=`${top(nav).id}`
       navigationBack="back"
@@ -28,26 +241,668 @@ component App
         for t in nav.tabs key=t.name
           column role="tabpanel" id=`panel-${t.name}` position="absolute" inset=0
             for e in t.stack key=e.id
-              column navigationKey=`${e.id}`
-                navigationScroll=`content-${e.id}`
-                position="absolute"
-                inset=0
-                display="flex"
-                flex-direction="column"
-                header
-                  text tabTitle(e.name) role="heading" aria-level=1
-                scroll id=`content-${e.id}` flex=1 min-height=0 testId=`content-${e.name}`
-                  if e.name == "today" or e.name == "plan"
+              if e.name == "today" and not onboarded
+                column navigationKey=`${e.id}` navigationBar="none" position="absolute" inset=0
+                  scroll flex=1 min-height=0
+                    column min-height="100%"
+                      box-sizing="border-box"
+                      padding=24
+                      gap=16
+                      justify-content="center"
+                      max-width="30rem"
+                      margin-left="auto"
+                      margin-right="auto"
+                      text t("onboarding.start_title") role="heading"
+                        aria-level=1
+                        font="-exact-large-title"
+                        -exact-fit="shrink"
+                      text t("onboarding.start_body") color="-exact-secondary-label"
+                      text t("onboarding.start_age_note") font="-exact-footnote"
+                        color="-exact-secondary-label"
+                  button press=visit("/start/goals") buttonStyle="filled" margin=24 testId="start"
+                    text t("onboarding.start_cta")
+              else if e.name == "today"
+                column navigationKey=`${e.id}`
+                  navigationScroll=`content-${e.id}`
+                  position="absolute"
+                  inset=0
+                  header
+                    text t("today.title") role="heading" aria-level=1
+                  if not app.hasScan
                     EmptyState(
                       symbol="symbol:camera",
                       title=t("today.empty_title"),
                       message=t("today.empty_body")
                     )
-                  else if e.name == "path"
-                    text t("journey.intro") padding=16
-                      color="-exact-secondary-label"
-                      testId="path-intro"
-      row role="tablist" testId="tabs"
+                      button press=startScan buttonStyle="filled" testId="scan-empty"
+                        text t("today.empty_cta")
+                  else
+                    list id=`content-${e.id}`
+                      appearance="auto"
+                      listStyle="inset-grouped"
+                      flex=1
+                      min-height=0
+                      testId="today-list"
+                      section background-color="transparent"
+                        SummaryCard(
+                          label=t("today.greeting_week", week=`${app.summary.week}`),
+                          value=(app.summary.currentDays == 0 ? t("today.streak_zero") : app.summary.currentDays == 1 ? t("today.streak_single") : t("today.streak_days", streak=`${app.summary.currentDays}`)),
+                          detail=t("today.week_banking", days=`${app.summary.thisWeekDays}`),
+                          progress=some(app.summary.thisWeekDays / 5),
+                          symbol=none
+                        )
+                      if app.summary.atRisk
+                        section testId="streak-save"
+                          header
+                            text t("streak.save_title")
+                          text t("streak.save_body")
+                          button press=repair testId="repair"
+                            text t("streak.save_cta")
+                      section
+                        header
+                          text t("today.tasks_header")
+                        for k in app.tasks key=k.id
+                          row gap=12 align-items="center"
+                            input type="checkbox"
+                              checked=k.done
+                              change=setTask(k.id)
+                              aria-label=k.title
+                              testId=`task-${k.id}`
+                            RowText(
+                              title=k.title,
+                              detail=(k.cadence == "weekly" ? t("task_detail.weekly_progress", done=`${k.weeklyDone}`, target=`${k.weeklyTarget}`) : ""),
+                              value=none
+                            )
+                        footer
+                          text (app.summary.dayComplete ? t("today.all_done_title", streak=`${app.summary.currentDays}`) : "") testId="day-done"
+                      section
+                        if app.summary.scanWindow > 0
+                          text t("today.scan_open_title", week=`${app.summary.scanWindow}`) font="-exact-headline"
+                          text t("today.scan_open_body") color="-exact-secondary-label"
+                          button press=startScan testId="rescan"
+                            text t("today.scan_open_cta")
+                        else if app.summary.daysUntilScan == 1
+                          text t("today.scan_countdown_one")
+                        else if app.summary.daysUntilScan > 1
+                          text t("today.scan_countdown", days=`${app.summary.daysUntilScan}`) testId="countdown"
+                        link href=path("results") testId="open-results"
+                          text t("results.title")
+                          image "symbol:forward-chevron"
+              else if e.name == "goals"
+                column navigationKey=`${e.id}`
+                  navigationScroll=`content-${e.id}`
+                  position="absolute"
+                  inset=0
+                  header
+                    text t("onboarding.goals_title") role="heading" aria-level=2
+                  list id=`content-${e.id}`
+                    appearance="auto"
+                    listStyle="inset-grouped"
+                    flex=1
+                    min-height=0
+                    section
+                      header
+                        text t("onboarding.goals_body")
+                      for g in ["sharper_jawline", "better_skin", "look_leaner", "hair", "eye_area", "better_photos", "general"] key=g
+                        button role="checkbox"
+                          aria-checked=goals.includes(g)
+                          press=toggleGoal(g)
+                          testId=`goal-${g}`
+                          text goalLabel(g) flex=1
+                          if goals.includes(g)
+                            text `${goals.indexOf(g) + 1}` color="-exact-secondary-label"
+                              font-variant-numeric="tabular-nums"
+                            image "symbol:checkmark"
+                  button press=visit("/start/about")
+                    buttonStyle="filled"
+                    margin=16
+                    disabled=(goals.length == 0)
+                    testId="goals-next"
+                    text t("common.continue")
+              else if e.name == "about"
+                column navigationKey=`${e.id}`
+                  navigationScroll=`content-${e.id}`
+                  position="absolute"
+                  inset=0
+                  header
+                    text t("onboarding.about_title") role="heading" aria-level=2
+                  list id=`content-${e.id}`
+                    appearance="auto"
+                    listStyle="inset-grouped"
+                    flex=1
+                    min-height=0
+                    section
+                      header
+                        text t("onboarding.about_sex_label")
+                      for v in ["male", "female"] key=v
+                        button role="radio"
+                          aria-checked=(sex == v)
+                          press=setSex(v)
+                          testId=`sex-${v}`
+                          text (v == "male" ? t("onboarding.about_sex_male") : t("onboarding.about_sex_female")) flex=1
+                          if sex == v
+                            image "symbol:checkmark"
+                      footer
+                        text t("onboarding.about_body")
+                    section
+                      header
+                        text t("onboarding.about_age_label")
+                      for a in ["18-24", "25-34", "35-44", "45+"] key=a
+                        button role="radio"
+                          aria-checked=(ageBand == a)
+                          press=setAge(a)
+                          testId=`age-${a}`
+                          text ageLabel(a) flex=1
+                          if ageBand == a
+                            image "symbol:checkmark"
+                    section
+                      header
+                        text t("onboarding.about_state_label")
+                      for v in ["other", "restricted"] key=v
+                        button role="radio"
+                          aria-checked=(region == v)
+                          press=setRegion(v)
+                          testId=`region-${v}`
+                          text (v == "restricted" ? t("onboarding.about_state_restricted") : t("onboarding.about_state_other")) flex=1
+                          if region == v
+                            image "symbol:checkmark"
+                    section
+                      row
+                        text t("onboarding.about_age_attest") flex=1 min-width=0
+                        input type="checkbox" switch
+                          checked=adult
+                          change=setAdult
+                          aria-label=t("onboarding.about_age_attest")
+                          testId="adult"
+                  button press=visit("/start/time")
+                    buttonStyle="filled"
+                    margin=16
+                    disabled=(not aboutReady)
+                    testId="about-next"
+                    text t("common.continue")
+              else if e.name == "time"
+                column navigationKey=`${e.id}`
+                  navigationScroll=`content-${e.id}`
+                  position="absolute"
+                  inset=0
+                  header
+                    text t("onboarding.time_title") role="heading" aria-level=2
+                  list id=`content-${e.id}`
+                    appearance="auto"
+                    listStyle="inset-grouped"
+                    flex=1
+                    min-height=0
+                    section
+                      header
+                        text t("onboarding.time_body")
+                      for m in [5, 15, 30] key=m
+                        button role="radio"
+                          aria-checked=(timeBudget == m)
+                          press=setTime(m)
+                          testId=`time-${m}`
+                          text timeLabel(m) flex=1
+                          if timeBudget == m
+                            image "symbol:checkmark"
+                  button press=visit("/start/consent")
+                    buttonStyle="filled"
+                    margin=16
+                    testId="time-next"
+                    text t("common.continue")
+              else if e.name == "consent"
+                column navigationKey=`${e.id}`
+                  navigationScroll=`content-${e.id}`
+                  position="absolute"
+                  inset=0
+                  header
+                    text t("consent.title") role="heading" aria-level=2
+                  list id=`content-${e.id}`
+                    appearance="auto"
+                    listStyle="inset-grouped"
+                    flex=1
+                    min-height=0
+                    section
+                      header
+                        text t("consent.body_1")
+                      row padding-top=8 padding-bottom=8
+                        text t("consent.point_captured") flex=1 min-width=0
+                      row padding-top=8 padding-bottom=8
+                        text t("consent.point_processed") flex=1 min-width=0
+                      row padding-top=8 padding-bottom=8
+                        text t("consent.point_retained") flex=1 min-width=0
+                      row padding-top=8 padding-bottom=8
+                        text t("consent.point_cloud") flex=1 min-width=0
+                      row padding-top=8 padding-bottom=8
+                        text t("consent.point_delete") flex=1 min-width=0
+                      row padding-top=8 padding-bottom=8
+                        text t("consent.point_policy") flex=1 min-width=0
+                    if region != "restricted"
+                      section
+                        text t("consent.affirm_label", app_name="Mog")
+                        footer
+                          text (declined ? t("consent.decline_body") : "") testId="declined"
+                  if region == "restricted"
+                    column gap=8 padding=16 testId="state-block"
+                      text t("consent.state_block_title") font="-exact-headline"
+                      text t("consent.state_block_body") color="-exact-secondary-label"
+                  else
+                    column gap=8 padding=16
+                      button press=consent buttonStyle="filled" testId="consent"
+                        text t("consent.affirm_cta")
+                      button press=decline testId="decline"
+                        text t("consent.decline_cta")
+              else if e.name == "capture"
+                column navigationKey=`${e.id}`
+                  navigationBar="none"
+                  position="absolute"
+                  inset=0
+                  color-scheme="dark"
+                  background-color="-exact-background"
+                  scroll flex=1 min-height=0
+                    column padding=24
+                      gap=16
+                      max-width="30rem"
+                      margin-left="auto"
+                      margin-right="auto"
+                      box-sizing="border-box"
+                      text t("capture.front_title") font="-exact-large-title"
+                        color="-exact-label"
+                        testId="capture-title"
+                      text (capStep < 6 ? t("capture.hint_sharp") : t("capture.hint_ready")) color="-exact-secondary-label"
+                        testId="capture-hint"
+                      list appearance="auto" listStyle="inset-grouped"
+                        section
+                          for i in [0, 1, 2, 3, 4, 5] key=i
+                            row
+                              text gateLabel(i) flex=1
+                              if capStep > i
+                                image "symbol:checkmark" aria-label=gateLabel(i)
+                      if capStep >= 6
+                        text t("processing.title") font="-exact-title2"
+                          color="-exact-label"
+                          testId="processing"
+                        list appearance="auto" listStyle="inset-grouped"
+                          section
+                            for i in [0, 1, 2, 3] key=i
+                              row
+                                text stepLabel(i) flex=1
+                                if capStep > 6 + i
+                                  image "symbol:checkmark" aria-label=stepLabel(i)
+                        text t("processing.footnote") font="-exact-footnote"
+                          color="-exact-secondary-label"
+              else if e.name == "reveal"
+                column navigationKey=`${e.id}` navigationBar="none" position="absolute" inset=0
+                  scroll flex=1 min-height=0
+                    column min-height="100%"
+                      box-sizing="border-box"
+                      padding=24
+                      gap=12
+                      justify-content="center"
+                      text-align="center"
+                      max-width="30rem"
+                      margin-left="auto"
+                      margin-right="auto"
+                      text t("reveal.eyebrow") font="-exact-subheadline"
+                        color="-exact-secondary-label"
+                      text t("common.likely_band", low=app.low, high=app.high) font="-exact-large-title"
+                        -exact-fit="shrink"
+                        white-space="nowrap"
+                        font-variant-numeric="tabular-nums"
+                        testId="reveal-band"
+                      text app.score font="-exact-title2"
+                        font-variant-numeric="tabular-nums"
+                        color="-exact-secondary-label"
+                        testId="reveal-score"
+                      text t("common.tier_subline", tier_long=tierLong(app.tier), pct=app.pct) testId="reveal-tier"
+                      text t("reveal.what_it_is") font="-exact-footnote"
+                        color="-exact-secondary-label"
+                      text t("reveal.model_version", version=app.modelVersion) font="-exact-caption1"
+                        color="-exact-secondary-label"
+                  button press=visit("/results") buttonStyle="filled" margin=24 testId="see-results"
+                    text t("reveal.cta_results")
+              else if e.name == "results"
+                column navigationKey=`${e.id}`
+                  navigationScroll=`content-${e.id}`
+                  position="absolute"
+                  inset=0
+                  header
+                    text t("results.title") role="heading" aria-level=2
+                  list id=`content-${e.id}`
+                    appearance="auto"
+                    listStyle="inset-grouped"
+                    flex=1
+                    min-height=0
+                    section background-color="transparent"
+                      column gap=4
+                        text t("reveal.eyebrow") font="-exact-subheadline"
+                          color="-exact-secondary-label"
+                        text t("common.likely_band", low=app.low, high=app.high) font="-exact-title1"
+                          -exact-fit="shrink"
+                          white-space="nowrap"
+                          font-variant-numeric="tabular-nums"
+                          testId="results-band"
+                        text t("common.tier_subline", tier_long=tierLong(app.tier), pct=app.pct) color="-exact-secondary-label"
+                    for pick in app.metrics.filter(m => m.id == app.strength) key=pick.id
+                      section
+                        header
+                          text t("results.section_strength")
+                        link href=path("metric", pick.id) testId="strength"
+                          RowText(title=pick.short, detail=metricLine(pick), value=none)
+                          image "symbol:forward-chevron"
+                    for pick in app.metrics.filter(m => m.id == app.improvable) key=pick.id
+                      section
+                        header
+                          text t("results.section_improvable")
+                        link href=path("metric", pick.id) testId="improvable"
+                          RowText(title=pick.short, detail=metricLine(pick), value=none)
+                          image "symbol:forward-chevron"
+                    for g in ["eyes", "midface", "lower", "proportion", "profile", "appearance"] key=g
+                      section
+                        header
+                          text groupLabel(g)
+                        for m in app.metrics.filter(x => x.group == g) key=m.id
+                          link href=(m.free ? path("metric", m.id) : path("paywall"))
+                            testId=`metric-${m.id}`
+                            RowText(
+                              title=(m.free ? m.short : t("common.measured_locked", metric=m.short)),
+                              detail=(m.free ? metricLine(m) : ""),
+                              value=none
+                            )
+                            if not m.free
+                              image "symbol:lock" aria-label=t("paywall.title")
+                            else
+                              image "symbol:forward-chevron"
+                    section
+                      footer
+                        text t("results.free_locked_note")
+                  button press=finish buttonStyle="filled" margin=16 testId="see-plan"
+                    text t("results.see_plan")
+              else if e.name == "metric"
+                column navigationKey=`${e.id}`
+                  navigationScroll=`content-${e.id}`
+                  position="absolute"
+                  inset=0
+                  for m in app.metrics.filter(x => x.id == e.params.id) key=m.id
+                    header
+                      text m.name role="heading" aria-level=2
+                    list id=`content-${e.id}`
+                      appearance="auto"
+                      listStyle="inset-grouped"
+                      flex=1
+                      min-height=0
+                      section
+                        if m.value != ""
+                          row
+                            text t("metric_detail.measured") flex=1
+                            text m.value font-variant-numeric="tabular-nums" testId="metric-value"
+                        row
+                          text t("metric_detail.reading") flex=1
+                          text categoryLabel(m.category)
+                        footer
+                          text (m.refLow == "" ? "" : t("common.typical_range", sex_plural=sexPlural, ref_low=m.refLow, ref_high=m.refHigh))
+                      section
+                        header
+                          text t("metric_detail.evidence")
+                        row
+                          Badge(label=evidenceLabel(m.evidence), tint=none)
+                        text reliabilityLabel(m.reliability) color="-exact-secondary-label"
+                        if m.contradicted
+                          text t("metric_detail.fwhr_explainer")
+                        else if m.community
+                          text t("metric_detail.community_explainer")
+                      if m.plain != ""
+                        section
+                          text m.plain
+              else if e.name == "paywall"
+                column navigationKey=`${e.id}`
+                  navigationPresentation="modal"
+                  navigationScroll=`content-${e.id}`
+                  position="absolute"
+                  inset=0
+                  header display="flex" align-items="center" justify-content="space-between"
+                    button id="back" press=back aria-label=t("common.close")
+                      image "symbol:close"
+                    text t("paywall.title") role="heading"
+                  list id=`content-${e.id}`
+                    appearance="auto"
+                    listStyle="inset-grouped"
+                    flex=1
+                    min-height=0
+                    section
+                      text t("paywall.intro")
+                    section
+                      text t("paywall.includes_1", n=`${app.nMetrics}`)
+                      text t("paywall.includes_2")
+                      text t("paywall.includes_3")
+                      text t("paywall.includes_4")
+                      text t("paywall.includes_5")
+                    section
+                      text t("paywall.plan_annual_trial", price_annual="$34.99")
+                      text t("paywall.plan_weekly", price_weekly="$4.99")
+                      text t("paywall.plan_lifetime", price_lifetime="$59.99")
+                      footer
+                        text t("paywall.renewal_terms")
+                  button press=back margin=16 testId="keep-free"
+                    text t("paywall.keep_free")
+              else if e.name == "plan"
+                column navigationKey=`${e.id}`
+                  navigationScroll=`content-${e.id}`
+                  position="absolute"
+                  inset=0
+                  header
+                    text t("plan.title") role="heading" aria-level=1
+                  if not app.hasScan
+                    EmptyState(
+                      symbol="symbol:camera",
+                      title=t("today.empty_title"),
+                      message=t("today.empty_body")
+                    )
+                  else
+                    list id=`content-${e.id}`
+                      appearance="auto"
+                      listStyle="inset-grouped"
+                      flex=1
+                      min-height=0
+                      testId="plan-list"
+                      section
+                        header
+                          text t("plan.section_now")
+                        for c in app.plan key=c.ruleId
+                          link href=path("card", c.ruleId) testId=`card-${c.ruleId}`
+                            RowText(title=c.headline, detail=evidenceLabel(c.evidence), value=none)
+                            image "symbol:forward-chevron"
+                        footer
+                          text t("plan.daily_minutes", minutes=`${app.dailyMinutes}`)
+                      if app.info.length > 0
+                        section
+                          header
+                            text t("plan.section_info")
+                          for c in app.info key=c.ruleId
+                            link href=path("card", c.ruleId) testId=`card-${c.ruleId}`
+                              RowText(
+                                title=c.headline,
+                                detail=evidenceLabel(c.evidence),
+                                value=none
+                              )
+                              image "symbol:forward-chevron"
+                      if app.professional.length > 0
+                        section
+                          header
+                            text t("plan.section_professional")
+                          for c in app.professional key=c.ruleId
+                            link href=path("card", c.ruleId) testId=`card-${c.ruleId}`
+                              RowText(
+                                title=c.headline,
+                                detail=evidenceLabel(c.evidence),
+                                value=none
+                              )
+                              image "symbol:forward-chevron"
+                          footer
+                            text t("plan.professional_footer")
+              else if e.name == "card"
+                column navigationKey=`${e.id}`
+                  navigationScroll=`content-${e.id}`
+                  position="absolute"
+                  inset=0
+                  for c in app.plan.concat(app.info).concat(app.professional).filter(x => x.ruleId == e.params.id) key=c.ruleId
+                    header
+                      text c.headline role="heading" aria-level=2
+                    list id=`content-${e.id}`
+                      appearance="auto"
+                      listStyle="inset-grouped"
+                      flex=1
+                      min-height=0
+                      section
+                        text c.body testId="card-body"
+                      section
+                        header
+                          text t("task_detail.why_this")
+                        text c.whyThis
+                      section
+                        row
+                          Badge(label=evidenceLabel(c.evidence), tint=none)
+                        row
+                          text t("task_detail.effort") flex=1
+                          text effortLabel(c.effort)
+                        footer
+                          text t("task_detail.how_long", low=`${c.weeksLow}`, high=`${c.weeksHigh}`)
+              else if e.name == "path"
+                column navigationKey=`${e.id}`
+                  navigationScroll=`content-${e.id}`
+                  position="absolute"
+                  inset=0
+                  header
+                    text t("journey.title") role="heading" aria-level=1
+                  list id=`content-${e.id}`
+                    appearance="auto"
+                    listStyle="inset-grouped"
+                    flex=1
+                    min-height=0
+                    testId="path-list"
+                    section
+                      header
+                        text t("journey.intro") testId="path-intro"
+                      for w in [1, 2, 3, 4, 5, 6, 7, 8] key=w
+                        row gap=12 align-items="center" testId=`week-${w}`
+                          RowText(
+                            title=t("journey.node_upcoming", week=`${w}`),
+                            detail=weekStatus(w, app.summary),
+                            value=none
+                          )
+                          if app.summary.banked.includes(w)
+                            image "symbol:checkmark" color="-exact-system-green"
+                              aria-label=t("journey.node_banked")
+                    if app.summary.finished
+                      section
+                        text t("journey.finish_title") font="-exact-headline"
+                        text t("journey.finish_body")
+              else if e.name == "you"
+                column navigationKey=`${e.id}`
+                  navigationScroll=`content-${e.id}`
+                  position="absolute"
+                  inset=0
+                  header
+                    text t("settings.title") role="heading" aria-level=1
+                  list id=`content-${e.id}`
+                    appearance="auto"
+                    listStyle="inset-grouped"
+                    flex=1
+                    min-height=0
+                    testId="content-you"
+                    if onboarded
+                      section
+                        header
+                          text t("settings.section_account")
+                        RowText(
+                          title=t("settings.reference_table", sex=(sex == "female" ? t("onboarding.about_sex_female") : t("onboarding.about_sex_male")), age_band=ageLabel(ageBand)),
+                          detail="",
+                          value=none
+                        )
+                        RowText(
+                          title=t("settings.goals"),
+                          detail=goals.map(g => goalLabel(g)).join(", "),
+                          value=none
+                        )
+                        RowText(
+                          title=t("settings.time_budget"),
+                          detail=timeLabel(timeBudget),
+                          value=none
+                        )
+                      section
+                        header
+                          text t("settings.section_data")
+                        if consentedOn != ""
+                          RowText(
+                            title=t("settings.consent_status", date=consentedOn),
+                            detail="",
+                            value=none
+                          )
+                          button press=withdraw testId="withdraw"
+                            text t("settings.consent_revoke")
+                        button press=askWipe destructive=true testId="delete"
+                          text t("settings.delete_everything")
+                        footer
+                          text (consentedOn != "" ? t("settings.consent_revoke_body") : "")
+                    section
+                      header
+                        text t("settings.section_about")
+                      link href=path("methodology") testId="open-methodology"
+                        text t("settings.methodology") flex=1
+                        image "symbol:forward-chevron"
+                      footer
+                        text t("settings.version", app_name="Mog", app_version="0.1.0", model_version="rules-1.1.0")
+              else if e.name == "methodology"
+                column navigationKey=`${e.id}`
+                  navigationScroll=`content-${e.id}`
+                  position="absolute"
+                  inset=0
+                  header
+                    text t("methodology.title") role="heading" aria-level=2
+                  list id=`content-${e.id}`
+                    appearance="auto"
+                    listStyle="inset-grouped"
+                    flex=1
+                    min-height=0
+                    testId="methodology-list"
+                    section
+                      text t("methodology.what_the_score_is")
+                      text t("methodology.what_it_is_not")
+                    section
+                      header
+                        text t("methodology.section_band")
+                      text t("methodology.band_body")
+                    section
+                      header
+                        text t("methodology.section_score")
+                      text t("methodology.score_body")
+                    section
+                      header
+                        text t("methodology.section_tiers")
+                      text t("methodology.tiers_body")
+                    section
+                      header
+                        text t("methodology.section_capture")
+                      text t("methodology.capture_body")
+                    section
+                      header
+                        text t("methodology.section_metrics")
+                      text t("methodology.metrics_body")
+                    section
+                      header
+                        text t("methodology.section_reference")
+                      text t("methodology.reference_body")
+                    section
+                      header
+                        text t("methodology.section_reliability_target")
+                      text t("methodology.reliability_target_body")
+                    section
+                      header
+                        text t("methodology.section_privacy")
+                      text t("methodology.privacy_body")
+                    section
+                      header
+                        text t("methodology.section_versions")
+                      text t("methodology.versions_body", version="rules-1.1.0")
+      row role="tablist" testId="tabs" display=(onboarded ? "flex" : "none")
         for t in nav.tabs key=t.name
           button role="tab"
             aria-controls=`panel-${t.name}`
@@ -58,3 +913,9 @@ component App
             min-width=0
             image tabSymbol(t.name)
             text tabTitle(t.name)
+      dialog id="wipe" role="alertdialog" aria-label=t("settings.delete_everything")
+        text t("settings.delete_body")
+        button press=wipe destructive=true commandfor="wipe" command="close" testId="wipe-confirm"
+          text t("settings.delete_confirm")
+        button commandfor="wipe" command="close"
+          text t("common.not_now")

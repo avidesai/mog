@@ -1,0 +1,386 @@
+{
+  "$notes": "Tier-X denylist. Checked at authoring time (test suite scans every rule's copy) and at render time (over any LLM-generated text; a hit discards the generation and falls back to static copy). Matching is case-insensitive, whole-word where `word` is true, substring otherwise. `allow_in_info` lets a term appear only in cards flagged is_info_card (myth-busting), never in a recommendation.",
+  "terms": [
+    {
+      "pattern": "bone ?smash",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "self-inflicted facial trauma"
+    },
+    {
+      "pattern": "bonesmashing",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "self-inflicted facial trauma"
+    },
+    {
+      "pattern": "hammer",
+      "word": true,
+      "allow_in_info": false,
+      "reason": "self-inflicted facial trauma context"
+    },
+    {
+      "pattern": "mewing",
+      "word": true,
+      "allow_in_info": true,
+      "reason": "no evidence as structural fix; allowed only in the myth card"
+    },
+    {
+      "pattern": "mew",
+      "word": true,
+      "allow_in_info": true,
+      "reason": "see mewing"
+    },
+    {
+      "pattern": "hard mewing",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "see mewing"
+    },
+    {
+      "pattern": "thumb ?pull",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "pseudo-orthotropic self-treatment"
+    },
+    {
+      "pattern": "chewing gum for jaw",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "no structural effect; masseter hypertrophy marketing"
+    },
+    {
+      "pattern": "steroid",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "PED"
+    },
+    {
+      "pattern": "sarm",
+      "word": true,
+      "allow_in_info": false,
+      "reason": "PED"
+    },
+    {
+      "pattern": "sarms",
+      "word": true,
+      "allow_in_info": false,
+      "reason": "PED"
+    },
+    {
+      "pattern": "trenbolone",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "PED"
+    },
+    {
+      "pattern": "tren",
+      "word": true,
+      "allow_in_info": false,
+      "reason": "PED"
+    },
+    {
+      "pattern": "testosterone",
+      "word": true,
+      "allow_in_info": false,
+      "reason": "hormone; clinician only, never in-app"
+    },
+    {
+      "pattern": "hgh",
+      "word": true,
+      "allow_in_info": false,
+      "reason": "hormone"
+    },
+    {
+      "pattern": "growth hormone",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "hormone"
+    },
+    {
+      "pattern": "peptide",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "unregulated peptides"
+    },
+    {
+      "pattern": "bpc[- ]?157",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "unregulated peptide",
+      "regex": true
+    },
+    {
+      "pattern": "melanotan",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "unregulated peptide"
+    },
+    {
+      "pattern": "dnp",
+      "word": true,
+      "allow_in_info": false,
+      "reason": "lethal fat-loss drug"
+    },
+    {
+      "pattern": "dinitrophenol",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "lethal fat-loss drug"
+    },
+    {
+      "pattern": "clenbuterol",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "stimulant"
+    },
+    {
+      "pattern": "clen",
+      "word": true,
+      "allow_in_info": false,
+      "reason": "stimulant"
+    },
+    {
+      "pattern": "phentermine",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "stimulant diet pill"
+    },
+    {
+      "pattern": "ozempic",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "Rx; never named for appearance"
+    },
+    {
+      "pattern": "semaglutide",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "Rx"
+    },
+    {
+      "pattern": "tirzepatide",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "Rx"
+    },
+    {
+      "pattern": "leg[- ]lengthening",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "excluded procedure",
+      "regex": true
+    },
+    {
+      "pattern": "limb[- ]lengthening",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "excluded procedure",
+      "regex": true
+    },
+    {
+      "pattern": "\\b\\d+(\\.\\d+)?\\s?(mg|mcg|µg|ml|iu)\\b",
+      "word": false,
+      "allow_in_info": false,
+      "regex": true,
+      "reason": "any drug dose"
+    },
+    {
+      "pattern": "\\b\\d{3,4}\\s?(kcal|calories|cal)\\b",
+      "word": false,
+      "allow_in_info": false,
+      "regex": true,
+      "reason": "caloric figures"
+    },
+    {
+      "pattern": "deficit of",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "caloric deficit figure"
+    },
+    {
+      "pattern": "goal weight",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "goal weight"
+    },
+    {
+      "pattern": "\\b\\d{2,3}\\s?(lbs|lb|kg)\\b",
+      "word": false,
+      "allow_in_info": false,
+      "regex": true,
+      "reason": "weight target"
+    },
+    {
+      "pattern": "starv",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "disordered eating"
+    },
+    {
+      "pattern": "fasting",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "disordered eating risk in this audience"
+    },
+    {
+      "pattern": "purge",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "disordered eating"
+    },
+    {
+      "pattern": "laxative",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "disordered eating"
+    },
+    {
+      "pattern": "mog",
+      "word": true,
+      "allow_in_info": false,
+      "reason": "comparative language (voice rule)"
+    },
+    {
+      "pattern": "mogs",
+      "word": true,
+      "allow_in_info": false,
+      "reason": "comparative"
+    },
+    {
+      "pattern": "mogged",
+      "word": true,
+      "allow_in_info": false,
+      "reason": "comparative"
+    },
+    {
+      "pattern": "mogging",
+      "word": true,
+      "allow_in_info": false,
+      "reason": "comparative"
+    },
+    {
+      "pattern": "subhuman",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "degrading tier"
+    },
+    {
+      "pattern": "sub-?5",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "degrading tier"
+    },
+    {
+      "pattern": "truecel",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "degrading"
+    },
+    {
+      "pattern": "incel",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "degrading"
+    },
+    {
+      "pattern": "it's over",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "hopelessness idiom"
+    },
+    {
+      "pattern": "its over",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "hopelessness idiom"
+    },
+    {
+      "pattern": "rope",
+      "word": true,
+      "allow_in_info": false,
+      "reason": "self-harm idiom in this community"
+    },
+    {
+      "pattern": "ldar",
+      "word": true,
+      "allow_in_info": false,
+      "reason": "hopelessness idiom"
+    },
+    {
+      "pattern": "blackpill",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "ideology"
+    },
+    {
+      "pattern": "black pill",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "ideology"
+    },
+    {
+      "pattern": "than other",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "comparison against other people"
+    },
+    {
+      "pattern": "than most people",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "comparison against other people"
+    },
+    {
+      "pattern": "better than",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "comparison"
+    },
+    {
+      "pattern": "worse than",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "comparison"
+    },
+    {
+      "pattern": "ugly",
+      "word": true,
+      "allow_in_info": false,
+      "reason": "degrading"
+    },
+    {
+      "pattern": "unattractive",
+      "word": true,
+      "allow_in_info": false,
+      "reason": "verdict language"
+    },
+    {
+      "pattern": "filler",
+      "word": true,
+      "allow_in_info": false,
+      "reason": "procedure named outside tier-4 card"
+    },
+    {
+      "pattern": "botox",
+      "word": false,
+      "allow_in_info": false,
+      "reason": "procedure named outside tier-4 card"
+    },
+    {
+      "pattern": "clinic",
+      "word": true,
+      "allow_in_info": false,
+      "reason": "no clinic links (tier-4 copy says 'surgeon', 'provider')"
+    }
+  ],
+  "allowed_in_tier_3_4_copy": [
+    "minoxidil",
+    "finasteride",
+    "tretinoin",
+    "surgeon",
+    "procedure",
+    "orthodontist",
+    "dermatologist"
+  ]
+}

@@ -13,7 +13,7 @@ jobs:
       - run: cd core && python -m pytest -q
       - uses: actions/setup-node@v4
         with: { node-version: "22" }
-      - run: node scripts/strings.mjs --check
+      - run: node scripts/sync-app.mjs --check
       - name: data files unchanged by regeneration
         run: |
           cd core && python tools/build_reference.py >/dev/null && git diff --exit-code data/composite_reference.json
