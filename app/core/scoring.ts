@@ -7,7 +7,7 @@ const FLAT_BELOW_SD = 1.0;
 const MODEL_SIGMA_STD = 0.1;
 const BAND_K = 1.0;
 const MIN_BAND_HALF_PTS = 0.15;
-const IQR_TO_SD = 1.349;
+export const IQR_TO_SD = 1.349;
 const BEARD_CONFIDENCE_FACTOR = 0.8;
 const BEARD_AFFECTED = new Set([
   'bigonial_to_bizygomatic', 'chin_width_to_mouth', 'gonial_angle_deg', 'ramus_to_mandible_ratio',
