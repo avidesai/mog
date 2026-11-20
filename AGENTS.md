@@ -3,7 +3,7 @@
 Start with `HANDOFF.md` once. Then this is the standing guide.
 
 ## What this is
-iPhone-first facial-harmony measurement app. Guided capture → on-device geometry → deterministic score against published norms **with a band** → evidence-graded plan → one habit loop. Budget $300–400. Being rebuilt on **expo/exact** (`app/`, once created); `ios/` is the SwiftUI reference and the seed of the capture native module; `core/` is the spec and the data.
+iPhone-first facial-harmony measurement app. Guided capture → on-device geometry → deterministic score against published norms **with a band** → evidence-graded plan → one habit loop. Budget $300–400. The app is built on **expo/exact** (`app/`); `ios/` keeps the Swift capture and geometry that `app/modules/apple` was ported from and the dev-only spike tools; `core/` is the spec and the data.
 
 ## Rules
 - **Verify by running.** `python -m pytest -q` in `core/`; `bun test app/tools` (the TS port against the fixtures); `swift test` in `core/swift/MogCore`; `node --experimental-strip-types --test backend/supabase/tests/functions.test.mjs`; `backend/supabase/tests/run_local.sh` against Postgres; `bun exact.mjs verify ios` for the app, and look at every screenshot.

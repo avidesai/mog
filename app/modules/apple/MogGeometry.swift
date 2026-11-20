@@ -1,5 +1,5 @@
 // `<mog-capture>`'s geometry: mesh → anatomical points → metrics → readings. Assembled from
-// ios/Mog/Geometry and ios/Mog/Capture/FrameAggregator.swift (the SwiftUI reference); keep them in step.
+// ios/Mog/Geometry and ios/Mog/Capture/FrameAggregator.swift (the spike tools build on those); keep them in step.
 //
 // Privacy invariant: everything here is pure and in memory. Vertices and points are never stored,
 // logged or sent; only `GeometryPipeline.json`'s named scalars leave this file.
@@ -29,7 +29,7 @@ final class Landmarker {
 
     init() {
         var m: [String: Int] = [:]
-        // Exact ships app.json's host.ios.resources under ExactResources/<to>; the root is the SwiftUI app's.
+        // Exact ships app.json's host.ios.resources under ExactResources/<to>; the root is the spike tools app's.
         if let url = Bundle.main.url(forResource: "landmark_map", withExtension: "json", subdirectory: "ExactResources/Resources/geometry")
             ?? Bundle.main.url(forResource: "landmark_map", withExtension: "json"),
            let data = try? Data(contentsOf: url),
