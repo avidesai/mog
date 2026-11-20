@@ -204,6 +204,7 @@ component App
   state region = "" persist
   state consentedOn = "" persist
   state streakSeenOn = "" persist
+  state checkinSeenOn = "" persist
   state consentedAt = 0 persist
   state consentPolicy = "" persist
   state adultAt = 0 persist
@@ -244,7 +245,6 @@ component App
   mutation repaired as shape Reply refreshes app
   mutation wiped as shape Reply refreshes app then afterWipe
   mutation opened as shape Reply refreshes app
-  mutation checkedIn as shape Reply refreshes app
   resource media = exactViewport() as shape Media
   derive still = media.prefersReducedMotion
   // The band on a 0 to 10 track; before a scan, the example from the old copy.
@@ -390,11 +390,12 @@ component App
         declined = declined
   action noteOpen
     send opened = noteResultsOpen(today)
+  // Either button puts the card away for today; the data module already started the 14-day cooldown.
   action dismissCheckin
-    send checkedIn = dismissCheckin(today)
-  action aboutHelp
-    openURL("https://988lifeline.org")
-    send checkedIn = dismissCheckin(today)
+    checkinSeenOn = today
+  action callHelp
+    openURL("tel:988")
+    checkinSeenOn = today
   action seeProgress
     nav = open(nav, "/path/progress")
   action repair
@@ -440,6 +441,7 @@ component App
     consentedAt = 0
     consentPolicy = ""
     streakSeenOn = ""
+    checkinSeenOn = ""
     resetCapture()
     nav = open(nav, "/")
 
@@ -547,16 +549,16 @@ component App
                       Pips(days=app.summary.thisWeekDays)
                       column gap=10 margin-top=24
                         // Calm and plain on purpose (voice.md): no accent, no count-up, never an engagement surface.
-                        if app.summary.distress
+                        if app.summary.distress and checkinSeenOn != today
                           column class=CardBox padding=18 gap=10 testId="checkin"
-                            text t("today.quiet_checkin_title", n=`${app.summary.opensToday}`) class=T3
+                            text t("today.quiet_checkin_title") class=T3
                               testId="checkin-title"
                             text t("today.quiet_checkin_body") class=Body color="ink.soft"
                             row gap=10 flex-wrap="wrap" margin-top=4
                               view flex="1 1 8rem" min-width=0
                                 Secondary(
-                                  label=t("today.quiet_checkin_more"),
-                                  go=aboutHelp,
+                                  label=t("today.quiet_checkin_call"),
+                                  go=callHelp,
                                   id="checkin-988"
                                 )
                               view flex="1 1 8rem" min-width=0
@@ -1535,7 +1537,7 @@ component App
                             else
                               text `${w}` font-size="min(-exact-footnote, 14px)"
                                 font-weight=600
-                                color="ink.mute"
+                                color="ink.soft"
                           if w == app.summary.week or w == 4 or w == 8 or app.summary.banked.includes(w)
                             column position="absolute"
                               top=(nodeY(w) - 18)
@@ -1543,18 +1545,18 @@ component App
                               left=(nodeX(w) > 200 ? "auto" : `calc(${nodeX(w) / 3.5}% + 38px)`)
                               right=(nodeX(w) > 200 ? `calc(${(350 - nodeX(w)) / 3.5}% + 38px)` : "auto")
                               text-align=(nodeX(w) > 200 ? "end" : "start")
-                              text (w == app.summary.week ? t("journey.node_current") : t("journey.node_upcoming", week=`${w}`)) font-size="0.8125rem"
+                              text (w == app.summary.week ? t("journey.node_current") : t("journey.node_upcoming", week=`${w}`)) font-size="min(-exact-footnote, 18px)"
                                 font-weight=(w == app.summary.week ? 700 : 600)
                                 color=(w == app.summary.week ? "accent.main" : "ink.soft")
                               if w == app.summary.week
-                                text t("journey.node_current_sub", days=`${app.summary.thisWeekDays}`) font-size="0.75rem"
+                                text t("journey.node_current_sub", days=`${app.summary.thisWeekDays}`) font-size="min(-exact-caption1, 16px)"
                                   color="ink.soft"
                               else if w == 4
-                                text t("journey.node_scan") font-size="0.75rem" color="ink.mute"
+                                text t("journey.node_scan") font-size="min(-exact-caption1, 16px)" color="ink.mute"
                               else if w == 8
-                                text t("journey.node_final") font-size="0.75rem" color="ink.mute"
+                                text t("journey.node_final") font-size="min(-exact-caption1, 16px)" color="ink.mute"
                               else
-                                text t("journey.node_banked") font-size="0.75rem"
+                                text t("journey.node_banked") font-size="min(-exact-caption1, 16px)"
                                   color="positive.text"
                       if app.nScans > 1
                         link href=path("progress")

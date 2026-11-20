@@ -21,7 +21,8 @@ const reg = loadRegistry({ metrics: metricsJson, rules: rulesJson, references: r
 const ref = compositeJson as unknown as CompositeReference;
 const copyOf = new Map<string, { short: string; plain: string }>((metricsJson as any).metrics.map((m: any) => [m.id, m]));
 
-interface Scan { id: string; date: string; sex: Sex; ageBand: string; profileCaptured: boolean; readings: Record<string, MetricReading> }
+// `sample` marks the web stand-in's scans, so a made-up reading is never stored beside or compared with a real one.
+interface Scan { id: string; date: string; sex: Sex; ageBand: string; profileCaptured: boolean; readings: Record<string, MetricReading>; sample?: boolean }
 // `usage` counts how often Metrics was opened today, for the check-in card (habit.ts, distress). A count only.
 interface Usage { date: string; resultsOpens: number }
 interface Saved { scans: Scan[]; habit: HabitState | null; goals: string[]; timeBudget: number; usage: Usage }
@@ -104,7 +105,8 @@ function view(s: Saved, today: string, isPro: boolean): View {
   });
   const habit = s.habit ? new HabitEngine(s.habit) : null;
   const opens = s.usage?.date === today ? s.usage.resultsOpens : 0;
-  const distress = habit !== null && habit.shouldShowDistress(today, { resultsOpensToday: opens, rescanAttemptsInWindow: 0 });
+  // The card shows on the day it was triggered; noteResultsOpen marks that day, which starts the 14-day cooldown.
+  const distress = habit !== null && habit.s.distressLastShown === today;
   const locked = metrics.filter((m) => !m.free && m.suppressed === '');
   const named = [...locked].sort((x, y) => rank(x.id) - rank(y.id)).slice(0, 3).map((m) => m.short);
   return {
@@ -143,7 +145,7 @@ function progressView(s: Saved, shown: { id: string; free: boolean }[]): View['p
     withinNoise: c.scoreWithinNoise,
     before: c.scoreBefore.toFixed(1), after: c.scoreAfter.toFixed(1),
     days, weeks: Math.round(days / 7), sinceDate: a.date,
-    lead: lead ? copyOf.get(lead.id)!.short : '',
+    lead: lead ? midSentence(copyOf.get(lead.id)!.short) : '',
     rows: c.metrics.map((m) => {
       const unit = reg.metrics.get(m.id)!.unit;
       const open = free.get(m.id) ?? false;
@@ -157,6 +159,9 @@ function progressView(s: Saved, shown: { id: string; free: boolean }[]): View['p
     }),
   };
 }
+
+// A metric name inside a sentence: lower-case first letter, except names that are abbreviations (fWHR).
+const midSentence = (n: string): string => (/^[A-Z][a-z]/.test(n) ? n[0].toLowerCase() + n.slice(1) : n);
 
 function pos(v: number, id: string, sex: Sex): number {
   const { mean, sd } = reg.metrics.get(id)!.ref(sex);
@@ -214,11 +219,12 @@ const emptyView = (): View => ({
 const ok = { ok: true, error: '' };
 
 async function storeScan(storage: Storage, today: string, sex: string, ageBand: string, goals: string[], timeBudget: number,
-  readings: Record<string, MetricReading>, profileCaptured: boolean) {
+  readings: Record<string, MetricReading>, profileCaptured: boolean, sample = false) {
   if (sex !== 'male' && sex !== 'female') return { ok: false, error: 'no reference table' };
   if (ageBand === '') return { ok: false, error: 'no age band' };
   const s = await load(storage);
-  const scan: Scan = { id: `scan-${s.scans.length + 1}`, date: today, sex: sex as Sex, ageBand, profileCaptured, readings };
+  if (sample && s.scans.some((x) => !x.sample)) return { ok: false, error: 'sample after a real scan' };
+  const scan: Scan = { id: `scan-${s.scans.length + 1}`, date: today, sex: sex as Sex, ageBand, profileCaptured, readings, ...(sample ? { sample: true } : {}) };
   let r;
   try { r = score({ sex: scan.sex, ageBand, readings, profileCaptured }, reg, ref); }
   catch { return { ok: false, error: 'nothing scorable' }; } // every reading under its floor: the screen offers a retake
@@ -261,12 +267,13 @@ const sources: Sources = {
   saveSampleScan: async ([today, sex, ageBand, goals, timeBudget], _store, storage) => {
     const sample = (fixtures as any[]).find((c) => c.name === (sex === 'female' ? 'average_female_full' : 'average_male_full'));
     const readings: Record<string, MetricReading> = { ...sample.readings };
-    if ((await load(storage)).scans.length > 0 && (sex === 'male' || sex === 'female')) {
+    const earlier = (await load(storage)).scans;
+    if (earlier.length > 0 && earlier.every((x) => x.sample) && (sex === 'male' || sex === 'female')) {
       for (const id of ['facial_adiposity', 'cervicomental_angle_deg']) {
         readings[id] = { ...readings[id], value: readings[id].value - reg.metrics.get(id)!.ref(sex).sd };
       }
     }
-    return storeScan(storage, today, sex, ageBand, goals, timeBudget, readings, true);
+    return storeScan(storage, today, sex, ageBand, goals, timeBudget, readings, true, true);
   },
 
   // <mog-capture>'s readings. Only known metric ids with finite numbers are kept; anything else in the
@@ -302,16 +309,9 @@ const sources: Sources = {
     const s = await load(storage);
     if (!s.habit) return ok;
     const n = s.usage?.date === today ? s.usage.resultsOpens + 1 : 1;
+    const e = new HabitEngine(s.habit);
+    if (e.shouldShowDistress(today, { resultsOpensToday: n, rescanAttemptsInWindow: 0 })) e.markDistressShown(today);
     await save(storage, { ...s, usage: { date: today, resultsOpens: n } });
-    return ok;
-  },
-
-  // Either button on the check-in card: it stays away for the cooldown (habit.ts).
-  dismissCheckin: async ([today], _store, storage) => {
-    const s = await load(storage);
-    if (!s.habit) return ok;
-    new HabitEngine(s.habit).markDistressShown(today);
-    await save(storage, s);
     return ok;
   },
 
