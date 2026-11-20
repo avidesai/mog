@@ -1,4 +1,4 @@
-# fastlane deliver — uploads metadata + screenshots to App Store Connect. `fastlane deliver` from ios/.
+# fastlane deliver: uploads metadata + screenshots to App Store Connect. `fastlane deliver` from ios/.
 # Fill the placeholders in metadata/en-US (name, URLs) once the app name and domain are decided.
 app_identifier "com.avidesai.mog"
 skip_binary_upload true

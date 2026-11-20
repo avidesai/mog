@@ -8,7 +8,7 @@ import simd
 struct FaceFrame {
     let timestamp: TimeInterval
     /// Face mesh vertices in the FACE anchor's own coordinate space (metres). Pose-invariant by
-    /// construction — this is why the ARKit mesh is the primary geometry source (see Geometry/).
+    /// construction: this is why the ARKit mesh is the primary geometry source (see Geometry/).
     let vertices: [SIMD3<Float>]
     /// Face pose relative to the camera: yaw/pitch/roll in degrees, distance in metres.
     let pose: Pose

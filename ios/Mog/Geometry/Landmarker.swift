@@ -2,7 +2,7 @@ import Foundation
 import simd
 
 /// Anatomical points in the face anchor's coordinate space (metres): +Y up, +Z out of the face
-/// toward the camera, X across the face. Which side is "left" is a display concern only — every
+/// toward the camera, X across the face. Which side is "left" is a display concern only. Every
 /// metric below is either symmetric or uses both sides.
 struct AnatomicalPoints {
     var p: [String: SIMD3<Float>] = [:]
@@ -144,7 +144,7 @@ struct Heuristics {
         let band = v.filter { $0.y < n.y && $0.y > sn.y && $0.x * sign > 0 }
         return band.max { $0.x * sign < $1.x * sign }
     }
-    /// Widest point of the lower face at the height band just above the menton — the soft-tissue jaw angle.
+    /// Widest point of the lower face at the height band just above the menton. The soft-tissue jaw angle.
     func gonion(sign: Float) -> SIMD3<Float>? {
         guard let m = menton, let st = stomion else { return nil }
         let band = v.filter { $0.y > m.y + 0.010 && $0.y < st.y && $0.x * sign > 0 }

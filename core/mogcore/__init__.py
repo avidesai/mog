@@ -1,4 +1,4 @@
-"""mog-core — deterministic reference implementation of the Mog scoring,
+"""mog-core: deterministic reference implementation of the Mog scoring,
 recommendation and habit engines.
 
 This is the specification the iOS app (Swift) follows. Everything here is

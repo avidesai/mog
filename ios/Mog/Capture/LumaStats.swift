@@ -20,7 +20,7 @@ struct LumaStats {
         let w = CVPixelBufferGetWidth(pixelBuffer), h = CVPixelBufferGetHeight(pixelBuffer)
         // Project a subsample of mesh vertices to get the face's bounding box in BUFFER coordinates.
         // capturedImage is in the sensor's native landscape-right orientation, so projecting with
-        // .landscapeRight and the buffer's own size yields pixel coordinates directly — no axis swap.
+        // .landscapeRight and the buffer's own size yields pixel coordinates directly, no axis swap.
         let size = CGSize(width: w, height: h)
         func project(_ p: SIMD3<Float>) -> CGPoint {
             let world = face.transform * SIMD4<Float>(p, 1)
@@ -45,7 +45,7 @@ struct LumaStats {
         var sum = 0.0, sumL = 0.0, sumR = 0.0, n = 0.0, nL = 0.0, nR = 0.0, clipped = 0.0
         var lapSum = 0.0, lapSq = 0.0, lapN = 0.0
         // With the phone held upright, the buffer's x axis runs along the face's vertical axis and
-        // its y axis across the face — so left/right halves split on y.
+        // its y axis across the face, so left/right halves split on y.
         let midY = (y0 + y1) / 2
         var y = y0 + step
         while y < y1 - step {

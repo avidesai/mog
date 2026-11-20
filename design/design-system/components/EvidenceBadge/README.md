@@ -1,6 +1,6 @@
 # EvidenceBadge
 
-States how strong the research behind a metric actually is. This component is the clearest expression of the product's positioning — it is the thing no competitor ships.
+States how strong the research behind a metric actually is. This component is the clearest expression of the product's positioning. It is the thing no competitor ships.
 
 ## The five variants
 

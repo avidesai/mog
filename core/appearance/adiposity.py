@@ -7,7 +7,7 @@ Perceived facial adiposity tracks three things a pose-normalised 3-D mesh shows 
                        relative to bizygomatic width (soft tissue over the mandible)
     cheek_fullness     how far the cheek surface sits in FRONT of the zygion–gonion line
                        (z-prominence of the malar soft tissue), relative to face height
-    jaw_softness       1 − (bigonial / bizygomatic)·k is NOT used — bigonial is already a metric;
+    jaw_softness       1 − (bigonial / bizygomatic)·k is NOT used. Bigonial is already a metric;
                        instead: the chin–neck fold, approximated by how much the submental
                        surface below menton bulges forward relative to pogonion (only when the
                        mesh reaches below menton; otherwise omitted)
@@ -27,7 +27,7 @@ from typing import Mapping, Sequence
 
 Point = Sequence[float]  # (x, y, z) metres in the face anchor frame
 
-# provisional reference (mean, sd) per term, from eyeballing Farkas soft-tissue norms — the harness replaces these
+# provisional reference (mean, sd) per term, from eyeballing Farkas soft-tissue norms. The harness replaces these
 REF = {
     "lower_face_width": (0.68, 0.05),
     "cheek_fullness": (0.055, 0.015),
@@ -75,7 +75,7 @@ def adiposity_proxy(p: Mapping[str, Point], mesh: Sequence[Point] | None = None)
         if vals:
             terms["cheek_fullness"] = sum(vals) / len(vals)
 
-    # submental bulge: vertices below menton (if the mesh has any) — forward of pogonion means a soft chin-neck
+    # submental bulge: vertices below menton (if the mesh has any). Forward of pogonion means a soft chin-neck
     if mesh is not None and "menton" in p and "pogonion" in p:
         below = [v for v in mesh if v[1] < p["menton"][1] - 0.003 and abs(v[0]) < 0.015]
         if len(below) >= 6:

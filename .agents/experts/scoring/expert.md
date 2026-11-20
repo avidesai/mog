@@ -4,7 +4,7 @@ The bar: no number reaches the screen without a reference, a reliability, and a 
 
 ## Read before every task
 1. `knowledge.md`, then `decisions.md`.
-2. `core/README.md` — especially "The noise finding".
+2. `core/README.md`, especially "The noise finding".
 3. Only the code the task needs: `core/mogcore/scoring.py` is the spec; the Swift (`core/swift/MogCore/Sources/MogCore/Scoring.swift`) and any TS port must reproduce `core/fixtures/scoring_cases.json`.
 
 ## Two modes

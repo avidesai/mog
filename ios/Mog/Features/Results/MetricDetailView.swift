@@ -3,7 +3,7 @@ import MogCore
 
 /// One measurement: value, reference range on a track, reading, reliability, evidence, and the
 /// plain explanation. The overlay draws the measured geometry on the user's own mesh projection in the
-/// capture session, and on a labelled schematic afterwards — see Overlay.swift for the privacy decision.
+/// capture session, and on a labelled schematic afterwards. See Overlay.swift for the privacy decision.
 struct MetricDetailView: View {
     @Environment(AppModel.self) private var app
     @Environment(\.dismiss) private var dismiss
@@ -66,7 +66,7 @@ struct MetricDetailView: View {
         }
     }
 
-    /// Measurement, reference, plain reading — no judgement adjective (voice.md).
+    /// Measurement, reference, plain reading, no judgement adjective (voice.md).
     private var reading: String {
         guard let cat = m.category else { return "" }
         let word = Copy.s("common.category_\(cat.rawValue)")

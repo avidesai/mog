@@ -10,7 +10,7 @@
 
 ## 2. What this policy covers
 
-This policy covers biometric identifiers and biometric information as those terms are used in state biometric privacy laws — in our case, data derived from scanning your face geometry — and consumer health data as defined by the Washington My Health My Data Act, which expressly includes biometric data.
+This policy covers biometric identifiers and biometric information as those terms are used in state biometric privacy laws (in our case, data derived from scanning your face geometry) and consumer health data as defined by the Washington My Health My Data Act, which expressly includes biometric data.
 
 ## 3. What we collect, and where it exists
 
@@ -18,12 +18,12 @@ When you choose to take a measurement, and only after you have given the consent
 
 | Data | Where it exists | How long | Leaves your device? |
 |---|---|---|---|
-| Camera frames (ten per capture) | Your phone's memory only | Until measurements are computed — seconds | **Never** |
+| Camera frames (ten per capture) | Your phone's memory only | Until measurements are computed: seconds | **Never** |
 | TrueDepth depth data | Your phone's memory only | Seconds | **Never** |
 | Face landmark coordinates and mesh | Your phone's memory only | Seconds | **Never** |
 | **Measurements** (named scalar values, e.g. "canthal tilt 4.1°") | Encrypted storage on your phone | Until you delete them | Only if you turn on sync (section 4) |
 | Score, tier and plan | Encrypted storage on your phone | Until you delete them | Only if you turn on sync |
-| Your consent record (which policy version, when) | Your phone and our server | Until account deletion + the period in section 7 | Yes — this is how we prove consent |
+| Your consent record (which policy version, when) | Your phone and our server | Until account deletion + the period in section 7 | Yes: this is how we prove consent |
 
 Measurements are numbers. They are not an image, a template, or a descriptor from which a face can be reconstructed or matched. We nonetheless treat them with the care this policy describes, because whether derived scalar measurements constitute "biometric information" under some statutes is unsettled.
 
@@ -37,7 +37,7 @@ Measurements are numbers. They are not an image, a template, or a descriptor fro
 
 ## 5. Consent
 
-Before the first capture, and again whenever this policy's version changes, the app shows you what is captured, where it is processed, what is kept, for how long, and how to delete it, and asks you to take a specific affirmative action — tapping a control labelled "I consent" — that is separate from accepting the Terms, separate from any purchase, and never pre-selected. The time and the policy version are recorded.
+Before the first capture, and again whenever this policy's version changes, the app shows you what is captured, where it is processed, what is kept, for how long, and how to delete it, and asks you to take a specific affirmative action (tapping a control labelled "I consent") that is separate from accepting the Terms, separate from any purchase, and never pre-selected. The time and the policy version are recorded.
 
 Syncing measurements to your account is a second, separate, opt-in consent, off by default and revocable in Settings at any time. Contributing to any future calibration dataset would be a third, separate consent; the app does not currently ask for it.
 
@@ -53,7 +53,7 @@ Withdrawing consent stops all further measurement immediately.
 | Consent records | For the life of the account and **3 years** after deletion, as evidence that consent was obtained | Deleted at the end of that period |
 | Account identifier (Sign in with Apple) | Life of the account | Tombstoned at deletion so a later sign-in creates a new, unlinked account |
 
-In all cases, biometric identifiers and information are permanently destroyed no later than the earlier of (a) the point at which the initial purpose for collecting them has been satisfied, or (b) three years after your last interaction with us. In practice, for the only true biometric data we handle — frames, depth, landmarks — that point is seconds after capture.
+In all cases, biometric identifiers and information are permanently destroyed no later than the earlier of (a) the point at which the initial purpose for collecting them has been satisfied, or (b) three years after your last interaction with us. In practice, for the only true biometric data we handle (frames, depth, landmarks) that point is seconds after capture.
 
 ## 7. How to delete
 

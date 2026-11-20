@@ -7,7 +7,7 @@
     "reliability_tier is PROVISIONAL until the test-retest harness (eng doc, Telemetry) measures it. Provisional tiers were set from the landmark source's known precision. The harness overrides this file.",
     "score_weight_cap is derived from evidence_grade per the eng doc table and is recomputed by the engine; it is stored here only so the file is self-describing.",
     "`modifiable` marks metrics a tier-1/2 rule can actually move (soft tissue, skin). 'Most improvable' is chosen only among these; bone metrics are never called improvable.",
-    "`noise_sd` is the between-session standard deviation of the metric in its own units (PROVISIONAL: derived from the provisional tier as 2%/5%/10% CV of the mean, or 1°/2.5°/5° for angles and mm). The week-9 harness overwrites it. The scorer turns it into an attenuation weight r = 1/(1+(noise_sd/pop_sd)²) — a metric whose capture noise is large relative to the population spread cannot move the score much, however 'precise' its CV looks. This replaced the fixed tier weights (1.0/0.6) in rules-1.1.0 after simulation showed tier-realistic noise producing ~2-point score SDs under the old weighting."
+    "`noise_sd` is the between-session standard deviation of the metric in its own units (PROVISIONAL: derived from the provisional tier as 2%/5%/10% CV of the mean, or 1°/2.5°/5° for angles and mm). The week-9 harness overwrites it. The scorer turns it into an attenuation weight r = 1/(1+(noise_sd/pop_sd)²). A metric whose capture noise is large relative to the population spread cannot move the score much, however 'precise' its CV looks. This replaced the fixed tier weights (1.0/0.6) in rules-1.1.0 after simulation showed tier-realistic noise producing ~2-point score SDs under the old weighting."
   ],
   "metrics": [
     {
@@ -1109,7 +1109,7 @@
       "reliability_tier": "B",
       "confidence_floor": 0.7,
       "plain": "How even your skin tone and texture are.",
-      "note": "Fink, Grammer & Matts 2006 and related work: skin colour homogeneity is among the stronger, fastest-changing predictors of rated attractiveness. Requires the stricter skin lighting gate. v1 source: core/appearance/skin.py — illumination-normalised texture + chroma spread inside a cheek/forehead mask; a spread, not a level, so no skin-tone preference by construction. Residual ≈0.05 luma dependence documented; measured in the week-9 fairness smoke.",
+      "note": "Fink, Grammer & Matts 2006 and related work: skin colour homogeneity is among the stronger, fastest-changing predictors of rated attractiveness. Requires the stricter skin lighting gate. v1 source: core/appearance/skin.py, illumination-normalised texture + chroma spread inside a cheek/forehead mask; a spread, not a level, so no skin-tone preference by construction. Residual ≈0.05 luma dependence documented; measured in the week-9 fairness smoke.",
       "modifiable": true,
       "noise_sd": 0.035
     },
@@ -1142,7 +1142,7 @@
       "reliability_tier": "B",
       "confidence_floor": 0.7,
       "plain": "How much soft tissue sits over your facial structure.",
-      "note": "Coetzee et al. 2009 and Re & Rule: perceived facial adiposity is a reliable predictor of rated attractiveness and health. Lower-better is applied only down to the reference mean minus 1 SD; below that the term is flat, so the engine never rewards very low adiposity. v1 source: core/appearance/adiposity.py — geometric proxy from the mesh (lower-face width, cheek fullness, submental bulge). Labelled as a proxy in the metric card.",
+      "note": "Coetzee et al. 2009 and Re & Rule: perceived facial adiposity is a reliable predictor of rated attractiveness and health. Lower-better is applied only down to the reference mean minus 1 SD; below that the term is flat, so the engine never rewards very low adiposity. v1 source: core/appearance/adiposity.py, geometric proxy from the mesh (lower-face width, cheek fullness, submental bulge). Labelled as a proxy in the metric card.",
       "modifiable": true,
       "noise_sd": 0.0225
     },

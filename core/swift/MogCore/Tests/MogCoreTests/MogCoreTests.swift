@@ -3,7 +3,7 @@ import XCTest
 
 // The cross-language gate: every case in fixtures/scoring_cases.json must reproduce
 // composite_std to 1e-6 and tier exactly. If this fails, the Swift port has drifted
-// from the Python spec — fix the port, never the fixture.
+// from the Python spec: fix the port, never the fixture.
 
 final class FixtureTests: XCTestCase {
     struct Case: Codable {

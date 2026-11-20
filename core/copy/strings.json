@@ -4,7 +4,7 @@
     "Placeholders: {score} {low} {high} {tier} {tier_long} {pct} {n} {metric} {value} {ref_low} {ref_high} {week} {days} {date} {minutes} {price_weekly} {price_annual} {price_lifetime} {streak} {app_name} {app_version} {version} {old} {new} {gate} {sex} {age_band} {sex_plural}.",
     "Register: technician's voice. States what was measured and what follows. No exclamation marks anywhere in the product. No 'your score is'. No softening preamble on low scores. Percentile is against the reference distribution, never against other users.",
     "Rules-only scorer at launch: the score definition below is the smaller, honest claim (published norms), not the calibrated-panel claim in the original bible. Swap `methodology.what_the_score_is` when v1.1 ships the calibrated model.",
-    "The app name is {app_name} everywhere. The working name 'Mog' is itself on the denylist (comparative vocabulary), which is the naming tension the bible flagged — the copy deck stays name-agnostic until that is decided.",
+    "The app name is {app_name} everywhere. The working name 'Mog' is itself on the denylist (comparative vocabulary), which is the naming tension the bible flagged. The copy deck stays name-agnostic until that is decided.",
     "Copy review follows the clean-copy ladder (.agents/skills/clean-copy): first ask whether a string should exist at all. Empty string = the element is not rendered."
   ],
   "common": {
@@ -173,7 +173,7 @@
     "model_changed_title": "Your score moved because the model changed, not because your face did",
     "model_changed_body": "We updated the scoring model from {old} to {new}. Your stored measurements were re-scored on this phone.",
     "model_changed_cta": "Got it",
-    "keep_label": "Yours to keep",
+    "keep_label": "Shown free",
     "locked_label": "Measured, not shown",
     "pro_title": "All {n}, each with its reference range",
     "pro_body": "Your score and streak stay free.",
@@ -220,8 +220,8 @@
   "today": {
     "title": "Today",
     "greeting_week": "Week {week}",
-    "week_banking": "{days} of 5 days to bank it",
-    "week_banked": "Week {week} banked",
+    "week_banking": "{days} of 5 days done this week",
+    "week_banked": "Week {week} complete",
     "scan_countdown": "Next scan in {days} days",
     "scan_countdown_one": "Next scan tomorrow",
     "scan_open_title": "Week {week} scan is open",
@@ -230,7 +230,7 @@
     "scan_locked_why": "Skin and fat take weeks to show. Bone doesn't move.",
     "all_done_body": "",
     "quiet_checkin_title": "A quiet check-in",
-    "quiet_checkin_body": "If you're finding yourself checking this a lot, that's worth paying attention to. Appearance preoccupation is common and treatable. If it's weighing on you, talking to someone helps — 988 connects you to support any time.",
+    "quiet_checkin_body": "If you're finding yourself checking this a lot, that's worth paying attention to. Appearance preoccupation is common and treatable. If it's weighing on you, talking to someone helps. 988 connects you to support any time.",
     "quiet_checkin_dismiss": "Okay",
     "day_title": "Day {day}",
     "left_one": "One left today.",
@@ -259,11 +259,11 @@
   },
   "streak": {
     "save_title": "You missed yesterday",
-    "save_body": "One repair a month bridges a missed day. Banked weeks stay banked either way.",
+    "save_body": "One repair a month covers a missed day. Completed weeks stay complete either way.",
     "save_cta": "Use repair",
     "save_decline": "Let it reset",
     "save_unavailable_title": "You missed yesterday",
-    "save_unavailable_body": "This month's repair is used. The streak restarts today; banked weeks stay banked.",
+    "save_unavailable_body": "This month's repair is used. The streak restarts today. Completed weeks stay complete.",
     "save_unavailable_cta": "Okay",
     "repair_note": "One a month. Never sold."
   },
@@ -279,8 +279,8 @@
   },
   "journey": {
     "title": "The path",
-    "intro": "A week banks at 5 of 7 days. Scans at weeks 4 and 8.",
-    "node_banked": "Banked",
+    "intro": "5 of 7 days completes a week. Scans at weeks 4 and 8.",
+    "node_banked": "Complete",
     "node_current": "You're here",
     "node_open": "Open",
     "node_upcoming": "Week {week}",
@@ -371,7 +371,7 @@
     "sub": "Every task done.",
     "streak_label": "day streak",
     "week_label": "week {week}",
-    "banked_label": "week {week} banked",
+    "banked_label": "week {week} complete",
     "note": "The streak counts the work, never the score."
   }
 }

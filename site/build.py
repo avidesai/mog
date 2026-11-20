@@ -5,7 +5,7 @@
 
 Each policy is published at a versioned path (/biometric-data-policy/v1.0/) AND at a stable
 alias (/biometric-data-policy/) that points at the current version. Prior versions are never
-deleted — the biometric policy says all versions remain available. Deploy dist/ to GitHub Pages
+deleted: the biometric policy says all versions remain available. Deploy dist/ to GitHub Pages
 or Cloudflare Pages; both are free.
 """
 
@@ -92,7 +92,7 @@ def main() -> None:
         manifest[slug] = versions
         vlist = "".join(f'<li><a href="{base}/{slug}/v{v}/">Version {v}</a></li>' for v in versions)
         (DIST / slug / "versions").mkdir(exist_ok=True)
-        (DIST / slug / "versions" / "index.html").write_text(INDEX.format(app=a.app_name, css=CSS, items=vlist, entity=a.entity, email=a.email).replace(f"{a.app_name} policies</h1>", f"{title} — versions</h1>"), encoding="utf-8")
+        (DIST / slug / "versions" / "index.html").write_text(INDEX.format(app=a.app_name, css=CSS, items=vlist, entity=a.entity, email=a.email).replace(f"{a.app_name} policies</h1>", f"{title}: versions</h1>"), encoding="utf-8")
         items.append(f'<li><a href="{base}/{slug}/">{title}</a> <span class="meta">v{version}</span></li>')
     (DIST / "index.html").write_text(INDEX.format(app=a.app_name, css=CSS, items="".join(items), entity=a.entity, email=a.email), encoding="utf-8")
     manifest_path.write_text(json.dumps(manifest, indent=1))

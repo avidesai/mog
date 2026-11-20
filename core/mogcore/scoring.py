@@ -178,7 +178,7 @@ def quality_from_z(z: float, direction: str) -> float:
 
 
 def quality_slope(z: float, direction: str) -> float:
-    """|dq/dz| at z — used to propagate capture noise. Zero in clamped/flat regions."""
+    """|dq/dz| at z: used to propagate capture noise. Zero in clamped/flat regions."""
     if abs(z) >= Q_CLAMP:
         return 0.0
     if direction == "lower_better" and -z >= FLAT_BELOW_SD:
@@ -291,7 +291,7 @@ def score(inp: ScoreInput, reg: Registry, reference: dict[str, Any] | None = Non
                                     suppressed_reason=None, confidence=conf, **base))
 
     if sum_w <= 0:
-        raise ValueError("No scorable metrics available — capture must be retaken")
+        raise ValueError("No scorable metrics available; capture must be retaken")
 
     composite = sum_wq / sum_w
     ref_mean = sum_w_mu / sum_w
@@ -303,7 +303,7 @@ def score(inp: ScoreInput, reg: Registry, reference: dict[str, Any] | None = Non
     pct = percentile_from_std(composite_std, table)
     pct_lo = percentile_from_std(composite_std - BAND_K * sigma_total, table)
     pct_hi = percentile_from_std(composite_std + BAND_K * sigma_total, table)
-    # Percentiles saturate in the tails, which would display a 9.99 with a ±0.00 band —
+    # Percentiles saturate in the tails, which would display a 9.99 with a ±0.00 band: 
     # false precision. Enforce a minimum half-width in score points, clamped to the scale.
     pct_lo = min(pct_lo, pct - MIN_BAND_HALF_PTS * 10.0)
     pct_hi = max(pct_hi, pct + MIN_BAND_HALF_PTS * 10.0)
@@ -312,7 +312,7 @@ def score(inp: ScoreInput, reg: Registry, reference: dict[str, Any] | None = Non
 
     scored = [x for x in results if x.quality is not None and x.weight > 0]
     # strength: best weighted quality. improvable: worst quality among metrics flagged
-    # `modifiable` (soft tissue / skin — things a tier-1/2 rule can move). Bone is never
+    # `modifiable` (soft tissue / skin: things a tier-1/2 rule can move). Bone is never
     # called improvable. None when nothing modifiable reads below typical.
     top_strength = max(scored, key=lambda x: (x.quality * x.weight, x.id)).id if scored else None
     improvable_pool = [x for x in scored if reg.metrics[x.id].modifiable and x.quality < 0]

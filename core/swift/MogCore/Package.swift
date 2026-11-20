@@ -1,7 +1,7 @@
 // swift-tools-version:6.0
 import PackageDescription
 
-// MogCore — Swift port of mog-core. Pure Foundation, no dependencies, no UI.
+// MogCore: Swift port of mog-core. Pure Foundation, no dependencies, no UI.
 // Data files are copied in from ../../data and ../../fixtures by ./sync-data.sh
 // so the package is self-contained inside the Xcode workspace.
 //

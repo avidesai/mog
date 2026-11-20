@@ -2,7 +2,7 @@ import SwiftUI
 import MogCore
 
 /// The eight-week path. Nodes: banked (green), current (accent), open (accent ring), upcoming
-/// (track), scan weeks (viewfinder), and the week-8 finish — the single gold element.
+/// (track), scan weeks (viewfinder), and the week-8 finish. The single gold element.
 struct PathView: View {
     @Environment(AppModel.self) private var app
     private var today: String { LocalDay.today() }

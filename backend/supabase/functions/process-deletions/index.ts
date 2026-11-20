@@ -1,4 +1,4 @@
-// process-deletions — scheduled (hourly). Service role. Completes "Delete everything":
+// process-deletions: scheduled (hourly). Service role. Completes "Delete everything":
 //   1. for every deletion_queue row requested ≥ 24 h ago and not processed: delete the auth user
 //      (cascades the tombstoned profile row and any remaining FK children), mark processed
 //   2. purge consent rows whose user was deleted more than 3 years ago (the retention promise)

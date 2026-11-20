@@ -1,6 +1,6 @@
 # PlanCard
 
-A single recommendation, always tied to the finding that produced it. The "why this" row is the product's core value proposition — generic advice is the most common complaint about every competitor.
+A single recommendation, always tied to the finding that produced it. The "why this" row is the product's core value proposition. Generic advice is the most common complaint about every competitor.
 
 ## Anatomy
 
@@ -8,8 +8,8 @@ Impact rank numeral in `ink-300` · action headline (`title-3`) · body (`body`)
 
 ## Variants
 
-- **action** — safety tiers 1–2, in the main ranked plan. Things the user can safely do alone.
-- **professional** — safety tiers 3–4. Visually distinct: a 3px dashed `line-200` left border, no rank numeral, sitting below a divider in its own section. Never confused with something to act on alone.
+- **action**: safety tiers 1–2, in the main ranked plan. Things the user can safely do alone.
+- **professional**: safety tiers 3–4. Visually distinct: a 3px dashed `line-200` left border, no rank numeral, sitting below a divider in its own section. Never confused with something to act on alone.
 
 ## Rules
 

@@ -1,4 +1,4 @@
-# Spike 1 — the go/no-go, on a device
+# Spike 1: the go/no-go, on a device
 
 Needs: a TrueDepth iPhone (iPhone X or later), the $99 Apple developer account, a Mac with Xcode 27.1+.
 Two apps take part: the Exact app (`app/`, `<mog-capture>`) for the product path, and the SwiftUI

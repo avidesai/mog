@@ -1,7 +1,7 @@
-// phrase — rewords pre-approved plan copy in natural language. Used ONLY when on-device
+// phrase: rewords pre-approved plan copy in natural language. Used ONLY when on-device
 // Foundation Models are unavailable; the app falls back to static copy if this returns 204.
 //
-// Contract (eng doc, "LLM phrasing — text only, schema-constrained"):
+// Contract (eng doc, "LLM phrasing. Text only, schema-constrained"):
 //   * input is structured findings and goals: metric ids + categories, rule ids, the static copy.
 //     NEVER a score, a value, an image, a landmark, a coordinate, or free text from the user.
 //   * the model may reword; it may not add a recommendation, a number, a drug, a dose, a product,

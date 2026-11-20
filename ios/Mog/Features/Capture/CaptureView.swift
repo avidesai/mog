@@ -4,7 +4,7 @@ import SceneKit
 import MogCore
 
 /// The capture flow: dark viewport (the one dark surface in the product), gate chips, a hint
-/// line, and a shutter ring that fills as frames are collected. There is no shutter button —
+/// line, and a shutter ring that fills as frames are collected. There is no shutter button: 
 /// capture starts on its own when every gate has passed for half a second.
 struct CaptureView: View {
     @Environment(AppModel.self) private var app

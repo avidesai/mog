@@ -5,7 +5,7 @@ import MogCore
 /// Pure functions from anatomical points to the metric ids in core/data/metrics.json.
 /// Everything is computed in the face anchor frame, which is already pose-normalised and metric,
 /// so there is no perspective or scale step. Frontal metrics use (x, y); profile angles use the
-/// midline's (y, z) — which means the ARKit mesh yields profile angles from the FRONT capture.
+/// midline's (y, z), which means the ARKit mesh yields profile angles from the FRONT capture.
 /// Whether those are reliable enough to replace a separate profile capture is a spike-2 question.
 enum MetricFunctions {
 
@@ -55,7 +55,7 @@ enum MetricFunctions {
             let w = (dist2(a["canthus_inner_l"]!, a["canthus_outer_l"]!) + dist2(a["canthus_inner_r"]!, a["canthus_outer_r"]!)) / 2
             return w / interc!
         }
-        // facial thirds need trichion (hairline) — not in the ARKit mesh. Suppressed until the appearance layer supplies it.
+        // facial thirds need trichion (hairline), not in the ARKit mesh. Suppressed until the appearance layer supplies it.
         put("lower_third_split", ["subnasale", "stomion", "menton"]) { dy(a["subnasale"]!, a["stomion"]!) / dy(a["subnasale"]!, a["menton"]!) }
         put("midface_ratio", ["pupil_l", "pupil_r", "upper_lip_top"]) {
             let line = mid(a["pupil_l"]!, a["pupil_r"]!)

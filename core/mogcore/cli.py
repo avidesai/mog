@@ -49,7 +49,7 @@ def cmd_score(args: argparse.Namespace) -> None:
     for m in r.metrics:
         meta = reg.metrics[m.id]
         if m.display == "suppressed":
-            print(f"  {meta.short:22s} —  suppressed: {m.suppressed_reason}")
+            print(f"  {meta.short:22s} suppressed: {m.suppressed_reason}")
             continue
         val = f"{m.value:.3g}{'°' if meta.unit == 'deg' else ''}"
         if m.display == "category":

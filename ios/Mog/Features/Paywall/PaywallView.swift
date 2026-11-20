@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Value-first hard paywall. Price, period and renewal terms on the surface; close control
 /// visible from the first frame; restore on every paywall; no scarcity, no social proof.
-/// Superwall will own the layout in week 5 — this is the compliant fallback it must match.
+/// Superwall will own the layout in week 5. This is the compliant fallback it must match.
 struct PaywallView: View {
     @Environment(AppModel.self) private var app
     @Environment(\.dismiss) private var dismiss

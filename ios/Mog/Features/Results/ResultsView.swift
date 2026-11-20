@@ -95,7 +95,7 @@ struct MetricRow: View {
     /// First clause of the suppression copy ("Not measured on this capture").
     private var suppressedShort: String {
         let full = Copy.s("common.suppressed_\(m.suppressedReason ?? "not_measured")")
-        return full.components(separatedBy: CharacterSet(charactersIn: "—.")).first?.trimmingCharacters(in: .whitespaces) ?? full
+        return full.components(separatedBy: CharacterSet(charactersIn: ".")).first?.trimmingCharacters(in: .whitespaces) ?? full
     }
     private var valueText: String {
         guard let v = m.value else { return "" }

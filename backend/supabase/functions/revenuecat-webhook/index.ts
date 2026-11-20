@@ -1,4 +1,4 @@
-// revenuecat-webhook — mirrors entitlement state into public.entitlements (service role).
+// revenuecat-webhook: mirrors entitlement state into public.entitlements (service role).
 // RevenueCat → Project settings → Integrations → Webhooks: URL of this function, Authorization
 // header "Bearer <REVENUECAT_WEBHOOK_SECRET>". The app itself reads entitlements from the
 // RevenueCat SDK; this copy exists for support and aggregate analytics only.

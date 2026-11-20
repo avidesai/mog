@@ -2,7 +2,7 @@ import SwiftUI
 import MogCore
 
 /// The reveal: one number, its band, its tier, the one-line definition. 600 ms deliberate
-/// fade-in — the only place the "deliberate" motion token is used besides the day-complete ring.
+/// fade-in: the only place the "deliberate" motion token is used besides the day-complete ring.
 struct RevealView: View {
     @Environment(AppModel.self) private var app
     let result: ScoreResult

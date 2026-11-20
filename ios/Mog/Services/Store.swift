@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 import MogCore
 
-// Local persistence. Only named measurements and habit state are ever stored — never frames,
+// Local persistence. Only named measurements and habit state are ever stored, never frames,
 // depth, landmarks or anything a face could be reconstructed from. The container uses
 // `completeFileProtection` so the store is unreadable while the device is locked.
 

@@ -190,7 +190,7 @@ export function score(inp: ScoreInput, reg: Registry, ref: CompositeReference): 
     });
   }
 
-  if (sumW <= 0) throw new Error('No scorable metrics available — capture must be retaken');
+  if (sumW <= 0) throw new Error('No scorable metrics available; capture must be retaken');
 
   const composite = sumWq / sumW;
   const refMean = sumWMu / sumW;

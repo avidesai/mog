@@ -1,7 +1,7 @@
 import Foundation
 
 /// All user-facing strings come from core/copy/strings.json (bundled). Nothing is hard-coded
-/// in views, so the copy deck — and its denylist test — is the single source of truth.
+/// in views, so the copy deck (and its denylist test) is the single source of truth.
 ///
 ///     Copy.s("today.title")                                   → "Today"
 ///     Copy.f("today.scan_countdown", ["days": "12"])          → "Next scan opens in 12 days"

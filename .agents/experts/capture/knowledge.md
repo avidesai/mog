@@ -1,4 +1,4 @@
-# Capture — what I know about this repo
+# Capture: what I know about this repo
 
 - Primary geometry source: ARKit face mesh (1,220 vertices, metric, pose-normalised in anchor space). MediaPipe is deferred. Anatomical points: picked indices in `ios/Mog/Geometry/landmark_map.json` (all null until the Debug vertex picker is used on a real face) else `Heuristics` (geometric estimates, confidence 0.75).
 - Profile angles (nasofrontal, nasolabial, convexity, mentolabial, E-line, Goode) are computed from the frontal mesh's sagittal midline. Not in the mesh: trichion (thirds), cervical point (cervicomental), tragus (ramus), hairline → those metrics suppress.

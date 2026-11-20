@@ -2,7 +2,7 @@ import SwiftUI
 import MogCore
 
 /// Task detail: the rule's copy (headline, body, why this, based on, evidence, effort, timeline)
-/// and a single Done control. Nothing can be "added to plan" — the plan is derived from findings.
+/// and a single Done control. Nothing can be "added to plan". The plan is derived from findings.
 struct TaskDetailView: View {
     @Environment(AppModel.self) private var app
     @Environment(\.dismiss) private var dismiss

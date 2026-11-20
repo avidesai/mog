@@ -1,6 +1,6 @@
 # MetricCard
 
-The workhorse of the product — it appears dozens of times per session, so its density and restraint set the character of the whole app.
+The workhorse of the product: it appears dozens of times per session, so its density and restraint set the character of the whole app.
 
 ## Anatomy
 
@@ -8,10 +8,10 @@ Top to bottom: metric name (`title-3`) with evidence badge right-aligned on the 
 
 ## Variants
 
-- **full** — all elements. The default on the results list.
-- **compact** — name, value and range bar only, for two-up grids on the detail screen. Never on the results summary, where comparison across cards matters more than density.
-- **locked** — real name and real evidence badge, value replaced by an 8px-blurred plate. Tap opens the paywall.
-- **suppressed** — name, a `caution` reason line naming the specific gate that failed, a Retake action, no value.
+- **full**: all elements. The default on the results list.
+- **compact**: name, value and range bar only, for two-up grids on the detail screen. Never on the results summary, where comparison across cards matters more than density.
+- **locked**: real name and real evidence badge, value replaced by an 8px-blurred plate. Tap opens the paywall.
+- **suppressed**: name, a `caution` reason line naming the specific gate that failed, a Retake action, no value.
 
 ## States
 

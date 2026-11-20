@@ -19,7 +19,7 @@ Your face is measured on your phone. The images and face geometry never leave it
 
 **The app computes on your phone**
 
-- Facial measurements derived from guided camera captures. How these are handled — captured, processed, deleted, retained — is set out in full in the Biometric Data Policy. In summary: frames, depth data and landmarks exist for seconds and never leave the device; named measurements are kept on the device; they are synced to your account only if you turn that on.
+- Facial measurements derived from guided camera captures. How these are handled (captured, processed, deleted, retained) is set out in full in the Biometric Data Policy. In summary: frames, depth data and landmarks exist for seconds and never leave the device; named measurements are kept on the device; they are synced to your account only if you turn that on.
 - A score, a tier, a plan of recommendations, and your habit data (which days you completed your plan, your streak, which weeks you banked).
 
 **We collect automatically**
@@ -32,7 +32,7 @@ Your face is measured on your phone. The images and face geometry never leave it
 
 ## 2. How we use it
 
-- To measure, score and build a plan for you — on your phone.
+- To measure, score and build a plan for you, on your phone.
 - To keep your history across devices, if you turn on sync.
 - To phrase plan copy in natural language. When this uses a cloud model, the model receives structured findings (metric names, categories like "high", your goals) and never an image, landmark, coordinate, or score. Where supported, this runs on-device instead.
 - To process purchases and restore them.

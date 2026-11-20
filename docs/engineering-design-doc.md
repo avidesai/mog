@@ -1,15 +1,15 @@
-# Mog — v1 Engineering Design Doc
+# Mog: v1 Engineering Design Doc
 
 Nov 11, 2026 · @Avi
 
-V1 is one loop: guided front and profile capture, on-device geometry, a deterministic calibrated score with a confidence band, and an evidence-graded improvement plan. Every architectural decision below serves three constraints — the same face must produce the same score, no face image or landmark template may leave the device, and no recommendation may exceed its evidence grade.
+V1 is one loop: guided front and profile capture, on-device geometry, a deterministic calibrated score with a confidence band, and an evidence-graded improvement plan. Every architectural decision below serves three constraints. The same face must produce the same score, no face image or landmark template may leave the device, and no recommendation may exceed its evidence grade.
 
-## Decision record — 11 November 2026
+## Decision record: 11 November 2026
 
 Decided since this document was written. Each is reflected in the 28-screen canvas and the design system; the sections below are unchanged and still correct except where this record says otherwise.
 
 - **Rules-only scorer at launch.** The $400 build section is the plan. The calibrated model is v1.1, trained on peer ratings collected in-app with separate consent.
-- **A habit layer ships in v1.** Today, a daily task list derived from the plan, a streak, an eight-week path with scans at weeks 4 and 8. This adds the data model below. It does **not** add XP, levels, badges or leagues — all were designed, then cut.
+- **A habit layer ships in v1.** Today, a daily task list derived from the plan, a streak, an eight-week path with scans at weeks 4 and 8. This adds the data model below. It does **not** add XP, levels, badges or leagues. All were designed, then cut.
 - **Profile capture stays in v1 for now**, pending spike 2. If the contour model isn't usable by week 3, it moves to v1.1 and the Profile screens are hidden behind a flag.
 - **Onboarding collects three things**: goals, sex and age band, time budget. The self-rating is gone; the distress trigger uses results-open frequency and rescan attempts instead.
 - **Scan rate limit is a product feature**, not just a cost control: the next scan unlocks at week 4 and week 8 of the plan, and Today counts down to it.
@@ -57,7 +57,7 @@ V1 ships exactly one loop and nothing else: capture, measure, score, explain, re
 
 ### The three constraints
 
-**1. Determinism.** The same input must produce the same output, bit for bit. This is the product's differentiator, not a nice-to-have — the single most common complaint about Umax is that re-uploading one photo yields different numbers. Consequence: no language model, no sampling, and no non-deterministic kernel may sit anywhere on the path that produces a number. Floating-point reduction order gets pinned, and model inference runs with a fixed compute unit.
+**1. Determinism.** The same input must produce the same output, bit for bit. This is the product's differentiator, not a nice-to-have. The single most common complaint about Umax is that re-uploading one photo yields different numbers. Consequence: no language model, no sampling, and no non-deterministic kernel may sit anywhere on the path that produces a number. Floating-point reduction order gets pinned, and model inference runs with a fixed compute unit.
 
 **2. Face data never leaves the device.** Not the image, not the mesh, not the 478 landmark coordinates. Derived landmark templates are plausibly "face geometry" under Illinois BIPA and a "record of face geometry" under Texas CUBI, and a facial template under the amended COPPA Rule. Consequence: all geometry and all appearance inference are on-device; the cloud sees only scalar metric outputs and only when the user opts into history.
 
@@ -69,7 +69,7 @@ V1 does not diagnose, does not estimate height from photos, does not compare the
 
 ## The $400 build
 
-The budget for v1 is $300–400 total. Everything in this document that assumes paid data collection, licensed imagery, or professional services is the funded version, kept deliberately for when revenue exists. This section is the version that actually ships first, and nothing below it is a compromise on the three constraints — determinism, on-device processing, and evidence-graded advice all survive intact.
+The budget for v1 is $300–400 total. Everything in this document that assumes paid data collection, licensed imagery, or professional services is the funded version, kept deliberately for when revenue exists. This section is the version that actually ships first, and nothing below it is a compromise on the three constraints. Determinism, on-device processing, and evidence-graded advice all survive intact.
 
 ### Where the money goes
 
@@ -87,14 +87,14 @@ The budget for v1 is $300–400 total. Everything in this document that assumes 
 | Funded plan | Cost | $400 substitute |
 | --- | --- | --- |
 | Calibration panel, 2,000 faces × 20 raters | $1,500–4,000 | Rules-only scorer at launch; peer-rating mode collects the panel for free afterwards |
-| Commercially licensed face imagery | Variable, significant | None needed — no training set at launch |
+| Commercially licensed face imagery | Variable, significant | None needed, no training set at launch |
 | Profile labelling vendor, 2,000 images | $1,000–3,000 | Defer profile to v1.1, or self-label a few hundred images |
 | Privacy attorney review | $1,500–5,000 | Architectural mitigation plus a conservative launch posture; see the residual risk below |
 | Creator marketing | $2,000–5,000 | Organic owned accounts and founder-led content |
 
 ### The scorer, without a panel
 
-V1 ships the rules-only scorer: metrics computed geometrically, compared against published anthropometric norms, combined into a score as an evidence-weighted deviation from those norms. This costs nothing, is perfectly deterministic, and is fully explainable. Its honest weakness is that the weighting is a considered judgement rather than something calibrated against real human ratings — which is also true of every competitor, none of whom say so.
+V1 ships the rules-only scorer: metrics computed geometrically, compared against published anthropometric norms, combined into a score as an evidence-weighted deviation from those norms. This costs nothing, is perfectly deterministic, and is fully explainable. Its honest weakness is that the weighting is a considered judgement rather than something calibrated against real human ratings, which is also true of every competitor, none of whom say so.
 
 The product's claim shrinks accordingly and must be worded precisely: not "how people would rate you," but a measured comparison against published population norms, weighted by evidence strength. That is a smaller claim than the funded version makes, and it is still a larger one than anyone else in the category can support.
 
@@ -104,27 +104,27 @@ The peer-rating mode was a v3 item in the original roadmap. Under this budget it
 
 Users opt in, with separate explicit consent, to have their capture rated by other users and to rate others in return. Every rating is a labelled data point produced at zero marginal cost. Once enough accumulate, the calibrated model trains on it and ships as a visible, trust-building upgrade: the app announces that scores are now calibrated against real ratings, explains the change, and re-scores stored metric vectors locally.
 
-Three things to get right. Stratification is not automatic, so rater demographics must be collected and the sample monitored, or the panel drifts toward whoever uses the app most. Moderation is required the moment users see each other's faces, which is a real cost in time. And the cold start is genuine — budget the \~$100–150 of rater incentive for a seed panel of friends, testers and small-scale recruits to validate the pipeline before public launch.
+Three things to get right. Stratification is not automatic, so rater demographics must be collected and the sample monitored, or the panel drifts toward whoever uses the app most. Moderation is required the moment users see each other's faces, which is a real cost in time. And the cold start is genuine. Budget the \~$100–150 of rater incentive for a seed panel of friends, testers and small-scale recruits to validate the pipeline before public launch.
 
 ### The LLM for free
 
-iOS 26 exposes on-device models through the Foundation Models framework. For a phrasing layer that only rewords structured findings, this is a strong fit: no API cost, no network, and nothing to send anywhere — which strengthens the privacy claim rather than straining it. Verify output quality and determinism during the spike window; keep a cheap cloud fallback behind a flag, and keep static copy as the floor.
+iOS 26 exposes on-device models through the Foundation Models framework. For a phrasing layer that only rewords structured findings, this is a strong fit: no API cost, no network, and nothing to send anywhere, which strengthens the privacy claim rather than straining it. Verify output quality and determinism during the spike window; keep a cheap cloud fallback behind a flag, and keep static copy as the floor.
 
 ### The legal gap, stated plainly
 
 This is the one substitution that does not fully work, and it should not be papered over. Counsel review is the correct answer and is out of reach at this budget. What is available:
 
-- **Architectural mitigation.** No images, no landmarks, no templates leave the device, and nothing biometric is retained server-side. This substantially narrows exposure under BIPA, CUBI and MHMDA, because much of what those statutes govern is collection, storage, disclosure and retention of biometric identifiers — but it does not eliminate exposure, since on-device extraction of face geometry may itself be covered.
+- **Architectural mitigation.** No images, no landmarks, no templates leave the device, and nothing biometric is retained server-side. This substantially narrows exposure under BIPA, CUBI and MHMDA, because much of what those statutes govern is collection, storage, disclosure and retention of biometric identifiers, but it does not eliminate exposure, since on-device extraction of face geometry may itself be covered.
 - **BIPA-grade consent for everyone**, as specified earlier, which costs nothing.
 - **A published retention and destruction policy**, which BIPA requires and which is free to write and host.
 - **Consider excluding Illinois, Texas and Washington at launch.** The App Store cannot geofence by state, so this means in-app state attestation and blocking the scan. It is clumsy and costs users, but those three states carry the private rights of action and the largest penalties.
-- **Revisit the moment revenue exists.** Counsel review should be the first expense the product funds — before marketing, before contractors, before anything.
+- **Revisit the moment revenue exists.** Counsel review should be the first expense the product funds, before marketing, before contractors, before anything.
 
 Residual risk here is real and unquantified. It is a deliberate, informed decision to launch without review, not an oversight.
 
 ### What this does to the schedule
 
-Removing the calibration panel removes the long pole. The profile model, if deferred, removes the second. A frontal-only, rules-scored v1 is roughly 10–12 weeks rather than 18 — and ships something real that can start funding the funded version.
+Removing the calibration panel removes the long pole. The profile model, if deferred, removes the second. A frontal-only, rules-scored v1 is roughly 10–12 weeks rather than 18, and ships something real that can start funding the funded version.
 
 ## System architecture
 
@@ -138,7 +138,7 @@ Capture is where score consistency is won or lost, so the app refuses to measure
 
 ### Why gating is non-negotiable
 
-Ward, Ward, Fried and Paskhover (JAMA Facial Plastic Surgery, 2018) measured a selfie taken at roughly 12 inches against a portrait at 5 feet: the nasal base appears about 30% wider in men and 29% wider in women, the nasal tip about 7% wider. An ungated app therefore measures camera distance and calls it nose width. Pose is the same story — a few degrees of yaw changes every horizontal ratio on the face.
+Ward, Ward, Fried and Paskhover (JAMA Facial Plastic Surgery, 2018) measured a selfie taken at roughly 12 inches against a portrait at 5 feet: the nasal base appears about 30% wider in men and 29% wider in women, the nasal tip about 7% wider. An ungated app therefore measures camera distance and calls it nose width. Pose is the same story: a few degrees of yaw changes every horizontal ratio on the face.
 
 ### Gates and thresholds
 
@@ -176,7 +176,7 @@ Three landmark sources feed the pipeline, each chosen for what it is actually go
 
 | Source | Returns | Used for | Known limitation |
 | --- | --- | --- | --- |
-| ARKit `ARFaceAnchor` | 1,220-vertex mesh, 52 blendshapes, eye transforms, metric scale | Pose, metric distance, expression gating, depth-corrected horizontal ratios | Apple documents it as a coarse mesh conformed to a generic model — it smooths real bone detail |
+| ARKit `ARFaceAnchor` | 1,220-vertex mesh, 52 blendshapes, eye transforms, metric scale | Pose, metric distance, expression gating, depth-corrected horizontal ratios | Apple documents it as a coarse mesh conformed to a generic model. It smooths real bone detail |
 | MediaPipe Face Landmarker | 478 landmarks including 10 iris points, 52 ARKit-compatible blendshapes | Dense 2D ratios, iris-based scale reference, eye-region detail | Relative depth only; frontal-biased |
 | Custom profile contour model | Profile silhouette keypoints | Convexity, nasolabial, mentolabial, cervicomental, chin projection | Must be trained; no off-the-shelf option |
 
@@ -185,16 +185,16 @@ The design rule: **ARKit for pose and scale, MediaPipe for position, the custom 
 ### Normalization, in order
 
 1. **Pose de-rotation.** Back-project MediaPipe landmarks using ARKit's depth, then rotate into a canonical frontal frame using the head transform. Horizontal ratios are measured in this frame, not in image space, which removes residual yaw within the gate tolerance.
-2. **Perspective correction.** With TrueDepth metric distance, apply a pinhole correction to each landmark for its own depth. Without it, apply a distance estimate from iris diameter, which is the most stable biological constant available — adult horizontal iris diameter varies little across people.
+2. **Perspective correction.** With TrueDepth metric distance, apply a pinhole correction to each landmark for its own depth. Without it, apply a distance estimate from iris diameter, which is the most stable biological constant available. Adult horizontal iris diameter varies little across people.
 3. **Scale normalization.** Convert to millimetres using ARKit metric scale where available, otherwise express every metric as a dimensionless ratio. No metric is ever reported in pixels.
 4. **Frankfort alignment.** Rotate the profile into Frankfort horizontal before computing any profile angle, since those angles are defined against that plane.
 5. **Temporal smoothing.** MediaPipe's streaming path applies a OneEuro filter by default. The pipeline disables it for measurement and instead aggregates raw per-frame landmarks, because a smoothing filter tuned for visual stability introduces a lag that biases a still measurement.
 
 ### The profile contour model
 
-This is the only component with no off-the-shelf answer, and it is on the critical path. Approach: person segmentation to isolate the silhouette, then a small heatmap keypoint regressor over roughly 20 profile landmarks — glabella, nasion, pronasale, subnasale, labrale superius and inferius, stomion, sulcus mentolabialis, pogonion, menton, cervical point, tragus, and the lid and brow points visible in profile.
+This is the only component with no off-the-shelf answer, and it is on the critical path. Approach: person segmentation to isolate the silhouette, then a small heatmap keypoint regressor over roughly 20 profile landmarks. Glabella, nasion, pronasale, subnasale, labrale superius and inferius, stomion, sulcus mentolabialis, pogonion, menton, cervical point, tragus, and the lid and brow points visible in profile.
 
-Training data is the constraint. Target roughly 1,500 to 2,500 labelled profile images spanning sex, ethnicity, age and facial-hair presence. Label in-house or via a labelling vendor, and license images commercially — academic face datasets almost universally prohibit commercial use.
+Training data is the constraint. Target roughly 1,500 to 2,500 labelled profile images spanning sex, ethnicity, age and facial-hair presence. Label in-house or via a labelling vendor, and license images commercially. Academic face datasets almost universally prohibit commercial use.
 
 ### Confidence propagation
 
@@ -222,7 +222,7 @@ The metric layer turns normalized landmarks into roughly 35 named scalars. Each 
 
 ### Reliability tiers
 
-Tier is measured, not asserted — it comes from the test-retest harness, not from judgement.
+Tier is measured, not asserted. It comes from the test-retest harness, not from judgement.
 
 | Tier | Test-retest criterion | Treatment |
 | --- | --- | --- |
@@ -235,7 +235,7 @@ Any metric that cannot reach tier C is cut, regardless of how much the community
 
 ### Evidence grade is independent of reliability
 
-These two axes are orthogonal and the distinction matters commercially. A metric can be measured precisely and still predict almost nothing. Facial width-to-height ratio is the clearest case: it is reliably measurable, and Geniole et al.'s 2015 meta-analysis in PLOS ONE found that higher FWHR is associated with *lower* rated attractiveness, r = −.26 across 14 samples — the opposite of what the community asserts.
+These two axes are orthogonal and the distinction matters commercially. A metric can be measured precisely and still predict almost nothing. Facial width-to-height ratio is the clearest case: it is reliably measurable, and Geniole et al.'s 2015 meta-analysis in PLOS ONE found that higher FWHR is associated with *lower* rated attractiveness, r = −.26 across 14 samples. The opposite of what the community asserts.
 
 The product's answer is to show the measurement, state the reference range, and attach a badge that tells the truth about the evidence. Community metrics are displayed because the audience expects them; their score weight is capped near zero because the evidence does not support more.
 
@@ -251,7 +251,7 @@ Every displayed reference range must cite either a clinical anthropometric norm 
 
 ### Suppression
 
-A metric is suppressed when its confidence is below floor, its required pose was not captured, or its region was occluded. Suppressed metrics show the reason and the retake action — never a guess, never a dash.
+A metric is suppressed when its confidence is below floor, its required pose was not captured, or its region was occluded. Suppressed metrics show the reason and the retake action, never a guess, never a dash.
 
 ## Scoring and calibration
 
@@ -259,7 +259,7 @@ A metric is suppressed when its confidence is below floor, its required pose was
 
 The score is defined precisely, and the definition appears in the app: *an estimate of the mean rating this capture would receive from the calibration panel, expressed as a percentile against a sex-matched, age-banded reference distribution.* It is not a claim about objective attractiveness, and the app never implies otherwise.
 
-That restraint is forced by the research. Raters agree strongly in aggregate — Langlois et al. (2000) found interrater reliability around r = .90 for adults and r = .94 cross-culturally. But individual taste is roughly as large as shared taste: Leder et al. (2016) attribute about 40% of meaningful variance in face ratings to private taste, and Kramer et al. (2024) found it explained approximately half. No model can predict the half that is personal. Claiming otherwise is both false and the thing that gets an app mocked on the forums it is trying to win.
+That restraint is forced by the research. Raters agree strongly in aggregate: Langlois et al. (2000) found interrater reliability around r = .90 for adults and r = .94 cross-culturally. But individual taste is roughly as large as shared taste: Leder et al. (2016) attribute about 40% of meaningful variance in face ratings to private taste, and Kramer et al. (2024) found it explained approximately half. No model can predict the half that is personal. Claiming otherwise is both false and the thing that gets an app mocked on the forums it is trying to win.
 
 ### Architecture
 
@@ -288,9 +288,9 @@ This is the long pole of the entire project, the main cash cost, and the real lo
 
 ### Fairness, as an engineering requirement
 
-The fairness report is a release gate, not a document. For each stratum — sex × ancestry group × age band — the build emits mean absolute error against panel mean, score distribution, and calibration curve. Release requires that no stratum's mean score deviates from the global mean by more than a set threshold once true panel means are controlled for, and that no stratum's error exceeds the global error by more than a set ratio.
+The fairness report is a release gate, not a document. For each stratum (sex × ancestry group × age band) the build emits mean absolute error against panel mean, score distribution, and calibration curve. Release requires that no stratum's mean score deviates from the global mean by more than a set threshold once true panel means are controlled for, and that no stratum's error exceeds the global error by more than a set ratio.
 
-Ancestry group is used only to select a reference range where population variation is documented — canthal tilt, nasal angles, the E-line — and never as a feature that can move a score down. Where ancestry is uncertain, the pooled reference is used and the band widens.
+Ancestry group is used only to select a reference range where population variation is documented (canthal tilt, nasal angles, the E-line) and never as a feature that can move a score down. Where ancestry is uncertain, the pooled reference is used and the band widens.
 
 ### Determinism controls
 
@@ -300,7 +300,7 @@ Fixed model version pinned per build; fixed Core ML compute unit, since the Neur
 
 Open face datasets are useful for most of this build and useless for its most important component. Two independent blockers keep them out of the shipping scorer.
 
-**Licensing.** The attractiveness-rated sets — SCUT-FBP5500, MEBeauty and relatives — are released for non-commercial research. Most academic landmark corpora carry the same restriction.
+**Licensing.** The attractiveness-rated sets (SCUT-FBP5500, MEBeauty and relatives) are released for non-commercial research. Most academic landmark corpora carry the same restriction.
 
 **Fitness for purpose.** No public dataset was captured under this app's gates. A corpus of studio portraits or web photos cannot calibrate captures taken at 45–75 cm with ± 3° pose tolerance and neutral expression, because the systematic distortion the gates exist to control is baked into the public images at unknown and varying magnitude. Even with unlimited licensing, the calibration panel would still have to be collected.
 
@@ -310,25 +310,25 @@ There is a third consideration specific to this product. Several widely used fac
 
 | Dataset class | Use | License posture |
 | --- | --- | --- |
-| Attractiveness-rated (SCUT-FBP5500, MEBeauty) | Offline pipeline smoke tests; replicating the published bias findings against your own architecture before spending on the panel | Research only — never in a shipped model |
+| Attractiveness-rated (SCUT-FBP5500, MEBeauty) | Offline pipeline smoke tests; replicating the published bias findings against your own architecture before spending on the panel | Research only, never in a shipped model |
 | Landmark corpora with pose variation (WFLW, AFLW-family, 300W-LP) | Pretraining the profile contour model before fine-tuning on licensed, labelled profiles | Mostly research only; check each individually |
 | Morphable models and 3D head scans (FLAME-family, FaceScape) | Synthetic validation: render a known head at controlled distances and poses to test perspective correction against perfect ground truth | Non-commercial for the models themselves; commercial terms usually exist separately |
-| Published anthropometric and cephalometric norms (Farkas and the clinical literature) | Sourcing every displayed reference range, stratified by sex and ancestry | Published literature — cite it |
+| Published anthropometric and cephalometric norms (Farkas and the clinical literature) | Sourcing every displayed reference range, stratified by sex and ancestry | Published literature: cite it |
 | Commercially licensed, model-released imagery | Profile-model training data and appearance-head labels | Purchasable; budget for it |
 
-The fourth row is the one to act on first and the cheapest by far. It is not images at all — it is the population norms that let the app state "typical range 115–125° for adult males" with a citation rather than a forum convention. That single sourcing decision does more for the credibility positioning than any model choice in this document.
+The fourth row is the one to act on first and the cheapest by far. It is not images at all. It is the population norms that let the app state "typical range 115–125° for adult males" with a citation rather than a forum convention. That single sourcing decision does more for the credibility positioning than any model choice in this document.
 
 ### Synthetic data, used narrowly
 
-Synthetic renders are appropriate for validating geometry — testing that perspective correction recovers a known ground-truth ratio across simulated capture distances. They are not appropriate for calibration, because synthetic faces have no real human ratings and inherit the aesthetic priors of whatever generated them.
+Synthetic renders are appropriate for validating geometry. Testing that perspective correction recovers a known ground-truth ratio across simulated capture distances. They are not appropriate for calibration, because synthetic faces have no real human ratings and inherit the aesthetic priors of whatever generated them.
 
 ### The one real shortcut
 
-Collect and rate in a single pass. Recruit on Prolific, have participants capture themselves through a stripped-down build of the app's own capture flow, obtain explicit commercial-use and retention consent at collection, then have a separate stratified rater panel rate those captures. This yields images captured under the production gates, with consent, with ratings, and commercially usable — which no public dataset offers on any of the four.
+Collect and rate in a single pass. Recruit on Prolific, have participants capture themselves through a stripped-down build of the app's own capture flow, obtain explicit commercial-use and retention consent at collection, then have a separate stratified rater panel rate those captures. This yields images captured under the production gates, with consent, with ratings, and commercially usable, which no public dataset offers on any of the four.
 
 ## Recommendation engine
 
-Recommendations come from a versioned, human-authored rules table. A model never decides what to recommend — only how to word it. This is a safety architecture as much as a quality one: it makes the set of things the app can ever say finite, reviewable, and auditable.
+Recommendations come from a versioned, human-authored rules table. A model never decides what to recommend, only how to word it. This is a safety architecture as much as a quality one: it makes the set of things the app can ever say finite, reviewable, and auditable.
 
 ### Rule schema
 
@@ -378,7 +378,7 @@ Tier X is a hard-coded denylist checked at authoring time and again at render ti
 
 ### Selection and ranking
 
-All rules whose triggers fire are collected, filtered by goal match and safety tier, de-duplicated via `excludes`, then ranked by impact × evidence grade × goal weight, with an effort penalty. The top three to six become the plan. Tier 3 and 4 items never enter that ranked list — they appear in a separate, visually distinct "things to discuss with a professional" section, so that the plan the user acts on alone contains only things they can safely do alone.
+All rules whose triggers fire are collected, filtered by goal match and safety tier, de-duplicated via `excludes`, then ranked by impact × evidence grade × goal weight, with an effort penalty. The top three to six become the plan. Tier 3 and 4 items never enter that ranked list. They appear in a separate, visually distinct "things to discuss with a professional" section, so that the plan the user acts on alone contains only things they can safely do alone.
 
 Every card renders with its triggering finding attached: the metric, its value, and the overlay that shows it on the user's own capture. That link from evidence to advice is the product's core value proposition, and the generic-tips complaint is the single most common criticism of every competitor.
 
@@ -390,7 +390,7 @@ Triggered by excessive re-scanning, a very low self-rating in onboarding paired 
 
 The language model has one job: turn structured findings into natural second-person prose. It is text-only, it never sees a face, and it cannot introduce a recommendation.
 
-This is the deliberate inverse of how competitors appear to work. Fortune reported that Umax is powered partly by OpenAI's technology, which is consistent with its most-complained-about behaviour — scores that drift between identical uploads. A model asked to produce a number will produce a different number next time.
+This is the deliberate inverse of how competitors appear to work. Fortune reported that Umax is powered partly by OpenAI's technology, which is consistent with its most-complained-about behaviour. Scores that drift between identical uploads. A model asked to produce a number will produce a different number next time.
 
 ### What it receives
 
@@ -413,14 +413,14 @@ No image. No landmarks. No raw coordinates. No score. The score is rendered by t
 ### Hard constraints
 
 - Temperature 0, fixed model version, strict JSON schema response, one output object per rule id
-- The output schema contains only `headline`, `body`, and `why_this` — there is no field in which a new recommendation could appear
+- The output schema contains only `headline`, `body`, and `why_this`. There is no field in which a new recommendation could appear
 - Any rule id in the output that was not in `selected_rules` fails validation and the turn falls back to the rule's static copy
 - A tier-X term denylist runs over generated text as a second line of defence; a hit discards the generation and uses static copy
 - Every rule ships with static fallback copy, so the product degrades to slightly stiffer prose rather than to an error when the API is down, slow, or returns something invalid
 
 ### Why the model is in the product at all
 
-Only for register. The rules table holds roughly 60 to 100 cards; the model's value is making a card read as though written for this specific person's combination of findings and goals rather than as a template. Per-scan cost lands in the fractions of a cent, latency is a couple of seconds, and it sits off the critical path — the score and the metric cards render immediately while plan copy streams in behind them.
+Only for register. The rules table holds roughly 60 to 100 cards; the model's value is making a card read as though written for this specific person's combination of findings and goals rather than as a template. Per-scan cost lands in the fractions of a cent, latency is a couple of seconds, and it sits off the critical path. The score and the metric cards render immediately while plan copy streams in behind them.
 
 ### Follow-up questions
 
@@ -455,7 +455,7 @@ rules            (id, version, trigger_json, safety_tier, evidence_grade, copy_j
 reference_dists  (id, model_version, sex, ancestry_group, age_band, quantiles_json)
 ```
 
-`metrics_json` holds scalar metric values only — named numbers such as `canthal_tilt_deg: 4.2`. It holds no coordinates, no mesh, no descriptor vector, and nothing from which a face could be reconstructed or matched. The row exists at all only if the user opted into cloud history.
+`metrics_json` holds scalar metric values only. Named numbers such as `canthal_tilt_deg: 4.2`. It holds no coordinates, no mesh, no descriptor vector, and nothing from which a face could be reconstructed or matched. The row exists at all only if the user opted into cloud history.
 
 ### What is never stored server-side
 
@@ -463,7 +463,7 @@ Images, landmark coordinates, the ARKit mesh, face embeddings, depth maps, any b
 
 ### Deletion
 
-One tap deletes everything: local store wiped immediately, server rows hard-deleted within 30 days, Apple sub tombstoned so a re-sign-in creates a fresh identity. Deletion is tested in CI against the actual schema — an untested deletion path is the compliance failure everyone discovers in litigation.
+One tap deletes everything: local store wiped immediately, server rows hard-deleted within 30 days, Apple sub tombstoned so a re-sign-in creates a fresh identity. Deletion is tested in CI against the actual schema. An untested deletion path is the compliance failure everyone discovers in litigation.
 
 ### Offline and failure behaviour
 
@@ -471,7 +471,7 @@ Scan, score, metric cards and static plan copy all work with no network. Only LL
 
 ## Privacy and consent implementation
 
-The architecture above is the compliance strategy. On-device processing is not a feature choice that happens to help with privacy — it is the control that makes the rest of the exposure manageable.
+The architecture above is the compliance strategy. On-device processing is not a feature choice that happens to help with privacy. It is the control that makes the rest of the exposure manageable.
 
 This section is engineering research, not legal advice. A privacy attorney must review the consent language, the retention schedule, and the question of whether derived scalar metrics constitute biometric identifiers before launch.
 
@@ -490,7 +490,7 @@ BIPA-grade by default for every user, because geofencing consent quality is frag
 
 1. Shown before the first capture, after onboarding, never bundled with the paywall or the terms of service
 2. Plain English: what is captured, that it is processed on the device, that it is not uploaded, what is retained, for how long, and how to delete it
-3. An explicit affirmative action — a tap on a labelled consent control, not a continue button, and not a pre-checked box
+3. An explicit affirmative action: a tap on a labelled consent control, not a continue button, and not a pre-checked box
 4. Recorded in `consents` with policy version and timestamp; a policy version bump re-prompts
 5. Separate, independently revocable consent for cloud history, and a third for any future calibration contribution
 
@@ -502,7 +502,7 @@ App Store Review Guideline 5.1.2(vi) prohibits using data from depth and facial-
 
 Run a MITM proxy against the app and confirm that no capture, mesh, landmark set, or image leaves the device on any path, including crash reports and analytics batches. Do this as an explicit release gate with the trace saved.
 
-This is not theoretical. Face Harmony's App Store reviews cite a YouTuber intercepting traffic that allegedly showed face-derived data posted to a server endpoint despite on-device claims — unverified, but it is now part of why that app sits at 2.3 stars. This audience will point a proxy at the app. The correct posture is to assume they already have and to be able to publish the trace.
+This is not theoretical. Face Harmony's App Store reviews cite a YouTuber intercepting traffic that allegedly showed face-derived data posted to a server endpoint despite on-device claims. Unverified, but it is now part of why that app sits at 2.3 stars. This audience will point a proxy at the app. The correct posture is to assume they already have and to be able to publish the trace.
 
 ### Minors
 
@@ -517,7 +517,7 @@ Launch 18+. The audience skews young, which is precisely why.
 
 ### Entitlement model
 
-One entitlement, `pro`, unlocks everything paid. Resolution order is RevenueCat cache, then server, then a grace period on failure — a network error must never present a paying user with a paywall. StoreKit 2 transactions verify server-side via RevenueCat webhooks into `entitlements`.
+One entitlement, `pro`, unlocks everything paid. Resolution order is RevenueCat cache, then server, then a grace period on failure. A network error must never present a paying user with a paywall. StoreKit 2 transactions verify server-side via RevenueCat webhooks into `entitlements`.
 
 Products at launch: `weekly_499`, `annual_3499_trial3d`, `lifetime_5999`. Price testing runs through RevenueCat Offerings, so a price change does not need an app release.
 
@@ -534,9 +534,9 @@ The free tier must deliver a real, honest result. This is both the strategy and 
 |  | Complete evidence-graded plan |
 |  | Re-scan with deltas and history |
 
-Locked cards render with their real labels and a blurred value — the user sees exactly what exists and what they would get. They never see a fabricated number.
+Locked cards render with their real labels and a blurred value. The user sees exactly what exists and what they would get. They never see a fabricated number.
 
-The negative requirement is as important as the positive one: **the free score is the real score.** Face Harmony's reviews center on the opposite — users report a teaser score before the paywall and a different one after, alongside $9.99/week pricing. That single decision is most of why it sits at 2.3 stars against a category that otherwise clears 4.5.
+The negative requirement is as important as the positive one: **the free score is the real score.** Face Harmony's reviews center on the opposite. Users report a teaser score before the paywall and a different one after, alongside $9.99/week pricing. That single decision is most of why it sits at 2.3 stars against a category that otherwise clears 4.5.
 
 ### Paywall placement
 
@@ -548,7 +548,7 @@ Price, period, and renewal terms on the paywall itself, not behind a link. Links
 
 ### Remote config
 
-Superwall drives paywall layout and copy experiments; RevenueCat Offerings drive price. Anything that could affect a score, a metric, a recommendation, or a safety tier is **never** remotely configurable — those ship in the binary, versioned and reviewable. The blast radius of a bad remote config should be a worse paywall, never a wrong number or an unsafe recommendation.
+Superwall drives paywall layout and copy experiments; RevenueCat Offerings drive price. Anything that could affect a score, a metric, a recommendation, or a safety tier is **never** remotely configurable. Those ship in the binary, versioned and reviewable. The blast radius of a bad remote config should be a worse paywall, never a wrong number or an unsafe recommendation.
 
 ## Telemetry and quality gates
 
@@ -556,7 +556,7 @@ Superwall drives paywall layout and copy experiments; RevenueCat Offerings drive
 
 The product's central claim needs a number behind it, published.
 
-Protocol: 20 subjects spanning sex, ancestry group, age band and facial hair, each captured 10 times across separate sessions on separate days, with varied lighting and clothing inside gate tolerance. Measure per-metric coefficient of variation — which assigns reliability tiers — and the standard deviation of the final score across sessions.
+Protocol: 20 subjects spanning sex, ancestry group, age band and facial hair, each captured 10 times across separate sessions on separate days, with varied lighting and clothing inside gate tolerance. Measure per-metric coefficient of variation (which assigns reliability tiers) and the standard deviation of the final score across sessions.
 
 **Release gate: score SD ≤ 0.2 points on the 10-point scale.** No build ships above it. A second harness runs on every CI build against a fixed set of stored captures and fails the build on any score change not explained by a declared version bump. That second one catches the silent regressions that would otherwise reach users as "the app changed my score overnight."
 
@@ -580,21 +580,21 @@ Never emitted: any score tied to an identity in a third-party tool, any metric v
 
 ### Watching for harm signals
 
-Aggregate, never individual: re-scan frequency distribution, time-on-results distribution, and the rate at which the distress card triggers. These exist to inform rate-limiting and copy changes. Scan rate-limiting — one full scan per day — is itself a harm-reduction control as much as a cost control, and it should never be relaxed as a growth lever.
+Aggregate, never individual: re-scan frequency distribution, time-on-results distribution, and the rate at which the distress card triggers. These exist to inform rate-limiting and copy changes. Scan rate-limiting (one full scan per day) is itself a harm-reduction control as much as a cost control, and it should never be relaxed as a growth lever.
 
 ## Build order
 
 &#91;embedded content: v1 build order · 11 workstreams, roughly 18 weeks to submission\]
 
-The sequencing is driven by two things. The calibration panel starts early and runs long because it is the only workstream with an external dependency and a hard floor on elapsed time — recruiting and rating cannot be compressed by working more hours. And the spikes run first because spikes 1 and 2 can invalidate the schedule that follows them: if metric reliability or profile landmarking fails, the right response is to re-scope v1, not to push through.
+The sequencing is driven by two things. The calibration panel starts early and runs long because it is the only workstream with an external dependency and a hard floor on elapsed time. Recruiting and rating cannot be compressed by working more hours. And the spikes run first because spikes 1 and 2 can invalidate the schedule that follows them: if metric reliability or profile landmarking fails, the right response is to re-scope v1, not to push through.
 
 Workstreams overlap deliberately. While the panel is being collected and rated, the geometry and profile work proceeds; while counsel reviews, TestFlight runs. The critical path is spikes to geometry to scoring to UX to submission, with the panel joining at scoring.
 
-About 18 weeks to submission at 12–15 hours a week, which is longer than the 14 weeks in the original research note. The difference is the profile model and the fairness work, both of which were underestimated there. Treat App Review as a two-week buffer rather than a date — TrueDepth usage reliably draws questions.
+About 18 weeks to submission at 12–15 hours a week, which is longer than the 14 weeks in the original research note. The difference is the profile model and the fairness work, both of which were underestimated there. Treat App Review as a two-week buffer rather than a date. TrueDepth usage reliably draws questions.
 
 ## Open technical risks and spikes
 
-Each of these is unresolved and resolvable only by building something small. Run the first three in week one, before committing to the full schedule — any of them could change the plan.
+Each of these is unresolved and resolvable only by building something small. Run the first three in week one, before committing to the full schedule. Any of them could change the plan.
 
 | # | Risk | Spike | Resolves by |
 | --- | --- | --- | --- |
@@ -609,6 +609,6 @@ Each of these is unresolved and resolvable only by building something small. Run
 
 ### The decision that gates everything else
 
-Spikes 1 and 2 together determine whether the product thesis is buildable as specified. If metrics cannot be measured reliably enough from phone captures, then "the consistent one" is not a defensible position, and the product should be re-scoped around the things that *are* reliably measurable and most improvable — skin, adiposity, hair, grooming and photo technique — with bone metrics shown as context rather than as the core.
+Spikes 1 and 2 together determine whether the product thesis is buildable as specified. If metrics cannot be measured reliably enough from phone captures, then "the consistent one" is not a defensible position, and the product should be re-scoped around the things that *are* reliably measurable and most improvable (skin, adiposity, hair, grooming and photo technique) with bone metrics shown as context rather than as the core.
 
 That fallback is not a failure case. It is arguably a better product for most users, and it maps directly onto the strongest evidence. It is simply a worse match for what the forum audience says it wants, which is a positioning and marketing problem rather than an engineering one.

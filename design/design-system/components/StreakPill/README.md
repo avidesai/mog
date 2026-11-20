@@ -8,7 +8,7 @@ Flame glyph 13×15 in `flame` · count in `chip` weight 700, `flame-text` · `fl
 
 ## What it counts
 
-Days on which all of today's tasks were ticked. **Never** scans, opens, or re-scans. A streak that rewarded checking your face daily would train the compulsive-checking behaviour the product exists to avoid, and would also be pointless — nothing changes day to day.
+Days on which all of today's tasks were ticked. **Never** scans, opens, or re-scans. A streak that rewarded checking your face daily would train the compulsive-checking behaviour the product exists to avoid, and would also be pointless. Nothing changes day to day.
 
 ## States
 

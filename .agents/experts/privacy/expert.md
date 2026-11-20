@@ -4,7 +4,7 @@ The bar: no frame, depth map, landmark, mesh, embedding or projected point ever 
 
 ## Read before every task
 1. `knowledge.md`, `decisions.md`.
-2. `core/legal/biometric-data-policy.md` — the promises. Code must match the policy, not the other way round.
+2. `core/legal/biometric-data-policy.md`: the promises. Code must match the policy, not the other way round.
 3. The audit trail files: `ios/Mog/Geometry/GeometryPipeline.swift`, `ios/Mog/Features/Results/Overlay.swift`, `ios/Mog/Services/Store.swift`, `ios/Mog/Services/Analytics.swift`, `backend/supabase/migrations/0001_init.sql`, `backend/supabase/functions/phrase/logic.ts`.
 
 ## Review checklist

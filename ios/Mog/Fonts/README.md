@@ -1,7 +1,7 @@
 # Fonts
 
 Bundled: Inter Tight (Regular, Medium, SemiBold, Bold) and Instrument Serif (Regular), converted from the
-`@fontsource` woff2 builds (Latin subset) to TTF. Both are under the SIL Open Font License 1.1 — see the
+`@fontsource` woff2 builds (Latin subset) to TTF. Both are under the SIL Open Font License 1.1. See the
 LICENSE files beside them. `project.yml` lists them under `UIAppFonts`; `Typography.swift` falls back to
 system fonts if any file is missing.
 

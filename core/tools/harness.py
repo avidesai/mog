@@ -5,7 +5,7 @@ Layout:  captures/<person>/<session>/capture_N.json   (same files the Landmark d
 
 Per person:   score SD across all captures (the release gate: median ≤ 0.60, no person above 1.0),
               per-metric between-session CV (reuses cv_analysis), suppression rate per metric.
-Per stratum:  by sex and by skin-tone group — mean score, mean skin_evenness, mean facial_adiposity,
+Per stratum:  by sex and by skin-tone group. Mean score, mean skin_evenness, mean facial_adiposity,
               suppression rate. The smoke test flags a stratum whose mean skin_evenness differs from the
               pooled mean by more than 0.08, or whose suppression rate for any metric exceeds the pooled
               rate by more than 15 points. Those are the two ways the cheap appearance head could be
@@ -102,8 +102,8 @@ def run(people, meta, reg):
             centre = st.median(tone_means.values())      # robust: one biased stratum does not drag the comparison
             delta = tone_means[key[1]] - centre
             if abs(delta) > TONE_EVENNESS_FLAG:
-                power = "" if s.get("people", 0) >= 5 else f" [only {s.get('people', 0)} people in this stratum — low power; recruit more before concluding]"
-                out["flags"].append(f"tone={key[1]}: mean skin_evenness {tone_means[key[1]]:.3f} vs the median tone stratum {centre:.3f} (Δ {delta:+.3f} > {TONE_EVENNESS_FLAG}) — check the luma gate floor / the index, not the people{power}")
+                power = "" if s.get("people", 0) >= 5 else f" [only {s.get('people', 0)} people in this stratum: low power, recruit more before concluding]"
+                out["flags"].append(f"tone={key[1]}: mean skin_evenness {tone_means[key[1]]:.3f} vs the median tone stratum {centre:.3f} (Δ {delta:+.3f} > {TONE_EVENNESS_FLAG}); check the luma gate floor / the index, not the people{power}")
         for k, pct in row["suppression_pct"].items():
             if k in psupp and pct - psupp[k] > SUPPRESSION_FLAG_PTS:
                 out["flags"].append(f"{key[0]}={key[1]}: {k} suppressed {pct:.0f}% vs pooled {psupp[k]:.0f}%")
@@ -122,7 +122,7 @@ def print_report(out) -> None:
     print("\nflags:" if out["flags"] else "\nno flags.")
     for f in out["flags"]: print("  !", f)
     worst = max((r["score_sd"] for r in out["people"].values() if r["score_sd"] == r["score_sd"]), default=float("nan"))
-    print(f"\nworst per-person score SD {worst:.3f} — gate {SCORE_SD_GATE}: {'PASS' if worst <= SCORE_SD_GATE else 'FAIL'}")
+    print(f"\nworst per-person score SD {worst:.3f}, gate {SCORE_SD_GATE}: {'PASS' if worst <= SCORE_SD_GATE else 'FAIL'}")
 
 
 def selftest() -> None:

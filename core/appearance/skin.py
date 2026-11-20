@@ -8,7 +8,7 @@ texture        high-frequency energy of the ILLUMINATION-NORMALISED luma inside 
                which is why the index is stable across the luma gate's allowed range.
 chroma_spread  std of Cb and Cr inside the mask (the "skin colour homogeneity" of Fink et al.),
                after removing a large-scale chroma gradient the same way. Blotchiness, redness and
-               hyperpigmentation all raise it; even skin of ANY tone keeps it low — the index is a
+               hyperpigmentation all raise it; even skin of ANY tone keeps it low. The index is a
                spread, not a level, so it carries no skin-colour preference by construction.
 
 Scaling constants were set so that a synthetic clean patch reads ≈0.9 and a heavily blotchy one
