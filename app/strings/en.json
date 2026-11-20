@@ -113,6 +113,8 @@
   "capture.aborted_body": "{gate} drifted during capture. Nothing was saved. Try again — it takes a few seconds.",
   "capture.skip_profile": "Skip profile for now",
   "capture.skip_profile_note": "Profile measurements will show as needing a capture. You can add it later from Settings.",
+  "capture.camera_purpose": "Measures your face on this phone. Camera frames are never saved or sent.",
+  "capture.unsupported": "Measuring needs an iPhone with Face ID: its TrueDepth camera supplies the depth and head angle.",
   "processing.title": "Measuring",
   "processing.step_landmarks": "Locating landmarks",
   "processing.step_normalise": "Correcting for distance and angle",

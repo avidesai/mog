@@ -20,5 +20,8 @@
   },
   "purchases": {
     "catalog": "store/catalog.json"
-  }
+  },
+  "modules": [
+    "mog-capture"
+  ]
 }

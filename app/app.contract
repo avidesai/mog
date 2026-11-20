@@ -120,7 +120,8 @@ fn suppressedLabel(r: string): string = r == "low_confidence" ? t("common.suppre
 fn reliabilityLabel(r: string): string = r == "A" ? t("metric_detail.reliability_A") : r == "B" ? t("metric_detail.reliability_B") : t("metric_detail.reliability_C")
 fn effortLabel(e: string): string = e == "low" ? t("task_detail.effort_low") : e == "medium" ? t("task_detail.effort_medium") : t("task_detail.effort_high")
 fn metricLine(m: Metric): string = m.suppressed != "" ? suppressedLabel(m.suppressed) : m.value == "" ? categoryLabel(m.category) : `${m.value} · ${categoryLabel(m.category)}`
-fn gateLabel(i: number): string = i == 0 ? t("capture.gate_angle") : i == 1 ? t("capture.gate_lighting") : i == 2 ? t("capture.gate_distance") : i == 3 ? t("capture.gate_expression") : i == 4 ? t("capture.gate_clear") : t("capture.gate_sharp")
+fn gateLabel(i: string): string = i == "0" ? t("capture.gate_angle") : i == "1" ? t("capture.gate_lighting") : i == "2" ? t("capture.gate_distance") : i == "3" ? t("capture.gate_expression") : i == "4" ? t("capture.gate_clear") : t("capture.gate_sharp")
+fn hintLabel(k: string): string = k == "capture.hint_closer" ? t("capture.hint_closer") : k == "capture.hint_further" ? t("capture.hint_further") : k == "capture.hint_yaw" ? t("capture.hint_yaw") : k == "capture.hint_pitch_up" ? t("capture.hint_pitch_up") : k == "capture.hint_pitch_down" ? t("capture.hint_pitch_down") : k == "capture.hint_roll" ? t("capture.hint_roll") : k == "capture.hint_lighting_uneven" ? t("capture.hint_lighting_uneven") : k == "capture.hint_lighting_dark" ? t("capture.hint_lighting_dark") : k == "capture.hint_clipping" ? t("capture.hint_clipping") : k == "capture.hint_expression" ? t("capture.hint_expression") : k == "capture.hint_occlusion" ? t("capture.hint_occlusion") : k == "capture.hint_sharp" ? t("capture.hint_sharp") : t("capture.hint_ready")
 fn stepLabel(i: number): string = i == 0 ? t("processing.step_landmarks") : i == 1 ? t("processing.step_normalise") : i == 2 ? t("processing.step_metrics") : t("processing.step_reference")
 fn weekStatus(w: number, s: Summary): string = s.banked.includes(w) ? t("journey.node_banked") : w == s.week ? t("journey.node_current") : w == 4 or w == 8 ? t("journey.node_scan") : ""
 
@@ -140,6 +141,12 @@ component App
   state declined = false
   state capStep = 0
   state capturing = false
+  // What <mog-capture> last said: the six checks as 0/1, the hint key, a check that drifted, the readings.
+  state captureMask = "000000"
+  state captureHint = "capture.hint_yaw"
+  state captureAbort = ""
+  state captureUnsupported = false
+  state captured = ""
   state now = 0
   resource time = exactTime() as shape Time
   derive today = formatDate(time.epochAtZero + now, time.utcOffset, "iso")
@@ -202,15 +209,33 @@ component App
       consentedAt = time.epochAtZero + performanceNow()
       consentPolicy = policyVersion
       declined = false
-      capStep = 0
-      capturing = true
+      resetCapture()
       nav = push(nav, "/capture")
   action decline
     declined = true
-  action startScan
-    if consentCurrent
+  action resetCapture
+    capStep = 0
+    capturing = false
+    captureMask = "000000"
+    captureHint = "capture.hint_yaw"
+    captureAbort = ""
+    captureUnsupported = false
+    captured = ""
+  action onCapture(msg: string)
+    if msg.startsWith("gates ")
+      captureMask = msg.slice(6, 12)
+      captureHint = msg.slice(13)
+    else if msg.startsWith("aborted ")
+      captureAbort = msg.slice(8)
+    else if msg == "unsupported"
+      captureUnsupported = true
+    else if msg == "sample" or msg.startsWith("readings ")
+      captured = msg
       capStep = 0
       capturing = true
+  action startScan
+    if consentCurrent
+      resetCapture()
       nav = push(nav, "/capture")
     else
       nav = push(nav, "/start/consent")
@@ -218,12 +243,16 @@ component App
     consentedOn = ""
     consentedAt = 0
     consentPolicy = ""
+  // The processing steps, once the readings are in; then they are scored and saved.
   action advance
-    if capStep < 10
+    if capStep < 4
       capStep = capStep + 1
     else
       capturing = false
-      send scanned = saveSampleScan(today, sex, ageBand, goals.length == 0 ? ["general"] : goals, timeBudget)
+      if captured == "sample"
+        send scanned = saveSampleScan(today, sex, ageBand, goals.length == 0 ? ["general"] : goals, timeBudget)
+      else
+        send scanned = saveScan(today, sex, ageBand, goals.length == 0 ? ["general"] : goals, timeBudget, captured.slice(9))
   action afterScan
     onboarded = true
     nav = replace(nav, "/reveal")
@@ -566,17 +595,30 @@ component App
                       text t("capture.front_title") font="-exact-large-title"
                         color="-exact-label"
                         testId="capture-title"
-                      text (capStep < 6 ? t("capture.hint_sharp") : t("capture.hint_ready")) color="-exact-secondary-label"
-                        testId="capture-hint"
+                      if captureUnsupported
+                        text t("capture.unsupported") color="-exact-secondary-label"
+                          testId="capture-unsupported"
+                      else if captured == ""
+                        mog-capture message=onCapture
+                          height="20rem"
+                          border-radius=16
+                          aria-label=t("capture.front_title")
+                        if captureAbort != ""
+                          text t("capture.aborted_title") font="-exact-headline"
+                            color="-exact-label"
+                            testId="capture-aborted"
+                          text t("capture.aborted_body", gate=gateLabel(captureAbort)) color="-exact-secondary-label"
+                        text hintLabel(captureHint) color="-exact-secondary-label"
+                          testId="capture-hint"
                       list appearance="auto" listStyle="inset-grouped"
                         section
                           for i in [0, 1, 2, 3, 4, 5] key=i
                             row
-                              text gateLabel(i) flex=1
-                              if capStep > i
-                                image "symbol:checkmark" aria-label=gateLabel(i)
-                      if capStep >= 6
-                        text t("processing.title") font="-exact-title2"
+                              text gateLabel(`${i}`) flex=1
+                              if captured != "" or captureMask.slice(i, i + 1) == "1"
+                                image "symbol:checkmark" aria-label=gateLabel(`${i}`)
+                      if captured != ""
+                        text t("processing.title") font="-exact-title2" -exact-fit="shrink"
                           color="-exact-label"
                           testId="processing"
                         list appearance="auto" listStyle="inset-grouped"
@@ -584,7 +626,7 @@ component App
                             for i in [0, 1, 2, 3] key=i
                               row
                                 text stepLabel(i) flex=1
-                                if capStep > 6 + i
+                                if capStep > i
                                   image "symbol:checkmark" aria-label=stepLabel(i)
                         text t("processing.footnote") font="-exact-footnote"
                           color="-exact-secondary-label"
@@ -762,13 +804,19 @@ component App
                     flex=1
                     min-height=0
                     section
-                      text t("paywall.intro")
+                      row
+                        text t("paywall.intro") flex=1 min-width=0
                     section
-                      text t("paywall.includes_1", n=`${app.nMetrics}`)
-                      text t("paywall.includes_2")
-                      text t("paywall.includes_3")
-                      text t("paywall.includes_4")
-                      text t("paywall.includes_5")
+                      row
+                        text t("paywall.includes_1", n=`${app.nMetrics}`) flex=1 min-width=0
+                      row
+                        text t("paywall.includes_2") flex=1 min-width=0
+                      row
+                        text t("paywall.includes_3") flex=1 min-width=0
+                      row
+                        text t("paywall.includes_4") flex=1 min-width=0
+                      row
+                        text t("paywall.includes_5") flex=1 min-width=0
                     // Prices are the store's own strings; where there is no store (the web), the list's.
                     if plans.length > 0
                       section

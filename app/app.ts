@@ -14,7 +14,7 @@ import { acknowledge, unfinishedPurchases } from '@exact/purchases';
 // Privacy invariant: this file holds named measurements and plan state only. No frame, depth map,
 // landmark, mesh or embedding is ever passed in, stored or sent; there is no net grant.
 const FILE = 'app:/data/mog.json';
-export const grants = `fs.read ${FILE}\nfs.write ${FILE}`;
+export const grants = `fs.read ${FILE}\nfs.write ${FILE}\ndevice.camera capture.camera_purpose`;
 
 const reg = loadRegistry({ metrics: metricsJson, rules: rulesJson, references: referencesJson, denylist: denylistJson });
 const ref = compositeJson as unknown as CompositeReference;
@@ -144,6 +144,21 @@ const emptyView = (): View => ({
 
 const ok = { ok: true, error: '' };
 
+async function storeScan(storage: Storage, today: string, sex: string, ageBand: string, goals: string[], timeBudget: number,
+  readings: Record<string, MetricReading>, profileCaptured: boolean) {
+  if (sex !== 'male' && sex !== 'female') return { ok: false, error: 'no reference table' };
+  if (ageBand === '') return { ok: false, error: 'no age band' };
+  const s = await load(storage);
+  const scan: Scan = { id: `scan-${s.scans.length + 1}`, date: today, sex: sex as Sex, ageBand, profileCaptured, readings };
+  const r = score({ sex: scan.sex, ageBand, readings, profileCaptured }, reg, ref);
+  const plan = buildPlan({ goals, timeBudgetMin: timeBudget, score: r }, reg);
+  const tasks = plan.tasks.map((t) => ({ taskId: t.taskId, cadence: t.cadence as 'daily' | 'weekly' | 'once', opensWeek: t.opensWeek, weeklyTarget: t.weeklyTarget }));
+  const habit = s.habit && s.scans.length ? s.habit : newHabitState(today, tasks);
+  if (s.habit && new HabitEngine(habit).scanWindowOpen(today) !== null) new HabitEngine(habit).recordScan(today, scan.id);
+  await save(storage, { ...s, goals, timeBudget, scans: [...s.scans, scan], habit });
+  return ok;
+}
+
 // The one place a purchase is finished (Exact's purchases recipe): Pro is a subscription or a
 // non-consumable, so each purchased item is acknowledged once; the store redelivers until it is.
 // One run at a time; a request during a run asks it to read the queue again.
@@ -170,19 +185,26 @@ const sources: Sources = {
 
   // Stands in for <mog-capture> until the native module lands: a sample face's readings from the
   // golden fixtures. The real module hands over the same named measurements and nothing else.
-  saveSampleScan: async ([today, sex, ageBand, goals, timeBudget], _store, storage) => {
-    if (sex !== 'male' && sex !== 'female') return { ok: false, error: 'no reference table' };
-    if (ageBand === '') return { ok: false, error: 'no age band' };
-    const s = await load(storage);
+  // Stands in for <mog-capture> where there is no TrueDepth camera (the web): a sample face's readings.
+  saveSampleScan: ([today, sex, ageBand, goals, timeBudget], _store, storage) => {
     const sample = (fixtures as any[]).find((c) => c.name === (sex === 'female' ? 'average_female_full' : 'average_male_full'));
-    const scan: Scan = { id: `scan-${s.scans.length + 1}`, date: today, sex: sex as Sex, ageBand, profileCaptured: true, readings: sample.readings };
-    const r = score({ sex: scan.sex, ageBand, readings: scan.readings, profileCaptured: scan.profileCaptured }, reg, ref);
-    const plan = buildPlan({ goals, timeBudgetMin: timeBudget, score: r }, reg);
-    const tasks = plan.tasks.map((t) => ({ taskId: t.taskId, cadence: t.cadence as 'daily' | 'weekly' | 'once', opensWeek: t.opensWeek, weeklyTarget: t.weeklyTarget }));
-    const habit = s.habit && s.scans.length ? s.habit : newHabitState(today, tasks);
-    if (s.habit && new HabitEngine(habit).scanWindowOpen(today) !== null) new HabitEngine(habit).recordScan(today, scan.id);
-    await save(storage, { ...s, goals, timeBudget, scans: [...s.scans, scan], habit });
-    return ok;
+    return storeScan(storage, today, sex, ageBand, goals, timeBudget, sample.readings, true);
+  },
+
+  // <mog-capture>'s readings. Only known metric ids with finite numbers are kept; anything else in the
+  // message (a nested object, a list, an unknown key) is dropped, so nothing geometric can be stored.
+  saveScan: ([today, sex, ageBand, goals, timeBudget, json], _store, storage) => {
+    let raw: unknown;
+    try { raw = JSON.parse(json); } catch { return Promise.resolve({ ok: false, error: 'unreadable capture' }); }
+    const readings: Record<string, MetricReading> = {};
+    for (const [id, r] of Object.entries(raw && typeof raw === 'object' ? raw as Record<string, any> : {})) {
+      if (!reg.metrics.has(id) || !r || typeof r !== 'object') continue;
+      const { value, confidence, iqr } = r;
+      if (![value, confidence, iqr].every((x) => typeof x === 'number' && Number.isFinite(x))) continue;
+      readings[id] = { value, confidence, iqr };
+    }
+    if (Object.keys(readings).length === 0) return Promise.resolve({ ok: false, error: 'nothing measured' });
+    return storeScan(storage, today, sex, ageBand, goals, timeBudget, readings, false);
   },
 
   setTask: async ([taskId, today, done], _store, storage) => {

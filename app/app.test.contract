@@ -22,7 +22,7 @@ test "first session: onboarding, consent, capture, reveal, results, plan"
   clock settle
   tap "consent"
   clock settle
-  expect tree has "capture-hint"
+  expect tree has "processing"
   clock +6000
   clock data
   clock settle
