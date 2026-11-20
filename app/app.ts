@@ -15,7 +15,7 @@ import { acknowledge, unfinishedPurchases } from '@exact/purchases';
 // Privacy invariant: this file holds named measurements and plan state only. No frame, depth map,
 // landmark, mesh or embedding is ever passed in, stored or sent; there is no net grant.
 const FILE = 'app:/data/mog.json';
-export const grants = `fs.read ${FILE}\nfs.write ${FILE}\ndevice.camera capture.camera_purpose`;
+export const grants = `fs.read ${FILE}\nfs.write ${FILE}\ndevice.camera capture.camera_purpose\ndevice.notifications reminder.purpose`;
 
 const reg = loadRegistry({ metrics: metricsJson, rules: rulesJson, references: referencesJson, denylist: denylistJson });
 const ref = compositeJson as unknown as CompositeReference;

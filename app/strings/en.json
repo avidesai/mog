@@ -341,10 +341,17 @@
   "day_done.week_label": "week {week}",
   "day_done.banked_label": "week {week} complete",
   "day_done.note": "Your streak counts the days you did the plan.",
+  "day_done.milestone": "{n}-day streak",
   "tiers.range_LTN": "below 4.5",
   "tiers.range_MTN": "4.5 to 6.5",
   "tiers.range_HTN": "6.5 to 8.5",
   "tiers.range_Chadlite": "8.5 to 9.7",
   "tiers.range_Chad": "9.7 and up",
-  "tiers.you": "You"
+  "tiers.you": "You",
+  "reminder.purpose": "Reminds you in the evening when today's plan isn't done.",
+  "reminder.setting": "Evening reminder",
+  "reminder.setting_body": "At 7 pm, on days the plan isn't done.",
+  "reminder.title": "Your plan for today",
+  "reminder.body_streak": "Your streak is at {n} days.",
+  "reminder.body_start": "One task starts your streak."
 }

@@ -5,11 +5,14 @@
     "": {
       "name": "app",
       "dependencies": {
+        "@exact/notifications": "file:../../ext/exact/packages/notifications",
         "@exact/purchases": "file:../../ext/exact/packages/purchases",
       },
     },
   },
   "packages": {
+    "@exact/notifications": ["@exact/notifications@file:../../ext/exact/packages/notifications", {}],
+
     "@exact/purchases": ["@exact/purchases@file:../../ext/exact/packages/purchases", {}],
   }
 }

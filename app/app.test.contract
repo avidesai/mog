@@ -198,6 +198,7 @@ test "delete everything wipes the measurements and returns to the start"
   expect state consentPolicy == ""
   expect state streakSeenOn == ""
   expect state checkinSeenOn == ""
+  expect state reminderOn == false
   expect state captured == ""
   expect state app.hasScan == false
 
@@ -764,3 +765,35 @@ test "an ignored check-in still waits out its two weeks"
   clock settle
   clock data
   expect tree missing "checkin"
+
+test "the evening reminder switch asks for permission, and turns off again"
+  tap "start"
+  clock settle
+  tap "goal-general"
+  tap "goals-next"
+  clock settle
+  tap "sex-male"
+  tap "age-18-24"
+  tap "region-other"
+  tap "adult"
+  tap "about-next"
+  clock settle
+  tap "time-next"
+  clock settle
+  tap "consent"
+  clock settle
+  clock +6000
+  clock data
+  clock settle
+  tap "start-week"
+  clock settle
+  tap "tab-you"
+  clock settle
+  expect state reminderOn == false
+  tap "reminder"
+  clock data
+  clock settle
+  expect state reminderOn == true
+  tap "reminder"
+  clock settle
+  expect state reminderOn == false
