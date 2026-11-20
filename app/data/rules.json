@@ -164,7 +164,7 @@
       "copy": {
         "headline": "Lift three times a week",
         "body": "Resistance training is what keeps fat loss showing up as definition rather than as a drawn look. Three full-body sessions a week is enough; more is optional.",
-        "why_this": "Supports the fat-loss recommendation above — muscle retention is what makes the result look sharp rather than gaunt."
+        "why_this": "Supports fat loss: keeping muscle is what makes the result look sharp rather than gaunt."
       }
     },
     {
@@ -307,7 +307,7 @@
       "task_title": "Evening active (start 2–3 nights a week)",
       "copy": {
         "headline": "Add one over-the-counter active, slowly",
-        "body": "Once the basics are steady, one evening active can do real work on texture and tone: an adapalene gel for texture and breakouts, or a low-strength azelaic acid for redness and uneven tone. Start two or three nights a week and build up. Expect some dryness or flaking in the first weeks — that is normal, and it is why this opens in week three, not week one. Stop and see a pharmacist or dermatologist if irritation is more than mild.",
+        "body": "Once the basics are steady, one evening active can do real work on texture and tone: an adapalene gel for texture and breakouts, or a low-strength azelaic acid for redness and uneven tone. Start two or three nights a week and build up. Expect some dryness or flaking in the first weeks; that is normal. Stop and see a pharmacist or dermatologist if irritation is more than mild.",
         "why_this": "Your skin evenness reads low. Over-the-counter retinoids and azelaic acid have the best evidence of anything you can buy without a prescription."
       }
     },
@@ -379,7 +379,7 @@
       "task_title": "Hydrate; go easy on sodium and alcohol in the evening",
       "copy": {
         "headline": "Reduce morning puffiness",
-        "body": "Evening sodium, alcohol and short sleep all show up under the eyes the next morning. Water through the day, less salt late, and the sleep habit above are the whole intervention. Eye creams are optional and mostly moisturiser.",
+        "body": "Evening sodium, alcohol and short sleep all show up under the eyes the next morning. Water through the day, less salt late, and a regular bedtime are the whole intervention. Eye creams are optional and mostly moisturiser.",
         "why_this": "You asked about the eye area. This is the low-effort part; sleep is the high-return part."
       }
     },
@@ -441,11 +441,11 @@
       "cadence": "once",
       "time_cost_min": 45,
       "opens_week": 1,
-      "task_title": "Book a haircut; bring your facial-thirds card",
+      "task_title": "Book a haircut",
       "copy": {
         "headline": "Get a cut that works with your proportions",
-        "body": "A good barber can shift how your face proportions read more than almost anything else on this list. Bring your facial thirds card: if your upper third reads long, ask for volume at the sides rather than height; if it reads short, a little height on top helps. Avoid anything that hides the hairline if it is receding — covering reads as hiding.",
-        "why_this": "Reversible, fast, and it directly changes your measured thirds."
+        "body": "A good barber can shift how your face proportions read more than almost anything else on this list. If your forehead is long for your face, ask for volume at the sides rather than height; if it is short, a little height on top helps. Avoid anything that hides the hairline if it is receding — covering reads as hiding.",
+        "why_this": "Reversible and fast, and it changes how your proportions read."
       }
     },
     {
@@ -475,8 +475,8 @@
       "task_title": "Hair: no heat today, condition if you wash, style without pulling",
       "copy": {
         "headline": "Treat the hair you have gently",
-        "body": "None of this regrows hair, and we won't pretend it does. It does make the hair you have look fuller and healthier within a few weeks: wash with a gentle shampoo rather than daily stripping, condition, keep heat styling to a minimum, and avoid tight styles that pull at the hairline.",
-        "why_this": "You asked about hair. Honest grade: limited evidence, zero risk, fast to show."
+        "body": "None of this regrows hair. It does make the hair you have look fuller and healthier within a few weeks: wash with a gentle shampoo rather than daily stripping, condition, keep heat styling to a minimum, and avoid tight styles that pull at the hairline.",
+        "why_this": "You asked about hair. Zero risk, and it shows within weeks."
       }
     },
     {
@@ -513,7 +513,7 @@
       "task_title": null,
       "copy": {
         "headline": "Hairline recession: treatments exist, and they work best early",
-        "body": "Your hairline reads at a stage where recession is visible. Two treatments have strong evidence for slowing or partly reversing it: topical minoxidil, which is available over the counter, and oral finasteride, which is prescription-only and has side effects worth a real conversation. We don't tell you how much of either to use. A dermatologist or your GP can, in one short appointment, and the earlier the better.",
+        "body": "Your hairline reads at a stage where recession is visible. Two treatments have strong evidence for slowing or partly reversing it: topical minoxidil, which is available over the counter, and oral finasteride, which is prescription-only and has side effects worth a real conversation. We don't tell you how much of either to use. A dermatologist or your GP can, in one short appointment, and the earlier the better. We don't recommend procedures or prescriptions and we have no financial relationship with any provider.",
         "why_this": "Hairline stage estimated at Norwood 3 or above."
       }
     },
@@ -550,7 +550,7 @@
       "task_title": "Take a hairline reference photo in the same light",
       "copy": {
         "headline": "Keep an eye on the hairline",
-        "body": "A mature hairline is normal and not recession. The only way to tell the difference is time: your week-4 and week-8 scans will measure it again. If it moves, the treatment conversation is worth having early.",
+        "body": "A mature hairline is normal and not recession. The only way to tell the difference is time: the same reference photo, a few weeks apart. If it moves, the treatment conversation is worth having early.",
         "why_this": "Hairline stage estimated at Norwood 2 — within normal adult variation."
       }
     },
@@ -583,7 +583,7 @@
       "copy": {
         "headline": "Shoot from further back",
         "body": "A phone held at arm's length makes the nose read about thirty percent wider than it is and shrinks the ears and jaw. Step back to a metre or more and zoom in, or have someone else take the photo. This single change alters how your proportions photograph more than any filter.",
-        "why_this": "Measured in a 2018 JAMA study. It is also why this app refuses to scan you closer than 45 cm."
+        "why_this": "Measured in a 2018 JAMA study."
       }
     },
     {
@@ -768,7 +768,7 @@
       "is_info_card": true,
       "copy": {
         "headline": "About mewing",
-        "body": "You will see tongue-posture routines promoted for a profile like yours. The British Orthodontic Society and the American Association of Orthodontists have both said in 2025 that there is no scientific evidence it changes adult facial shape. Good head posture is worth having; expecting bone to move is not. This card is here so you don't spend months on it.",
+        "body": "You will see tongue-posture routines promoted for a profile like yours. The British Orthodontic Society and the American Association of Orthodontists have both said in 2025 that there is no scientific evidence it changes adult facial shape. Good head posture is worth having; expecting bone to move is not.",
         "why_this": "Your profile convexity reads outside the typical range, which is exactly the finding these routines are marketed to."
       }
     },
@@ -807,7 +807,7 @@
       "task_title": null,
       "copy": {
         "headline": "Profile convexity: an orthodontist can tell you what it is",
-        "body": "Your profile reads markedly convex. That can be the jaw position, the teeth, or simply soft tissue — and only a clinical assessment can tell which. An orthodontic consultation is often free or inexpensive, and it is the honest next step if this matters to you. We don't recommend a treatment, and we have no relationship with any provider.",
+        "body": "Your profile reads markedly convex. That can be the jaw position, the teeth, or simply soft tissue — and only a clinical assessment can tell which. An orthodontic consultation is often free or inexpensive, and it is the honest next step if this matters to you. We don't recommend procedures or prescriptions and we have no financial relationship with any provider.",
         "why_this": "Soft-tissue facial convexity measured well below the typical range."
       }
     },
@@ -845,7 +845,7 @@
       "task_title": null,
       "copy": {
         "headline": "Chin projection",
-        "body": "Your chin sits well behind the nose-to-chin reference line. Procedures exist for this and they are the kind of thing a board-certified facial plastic surgeon or maxillofacial surgeon could assess. We don't recommend procedures, we don't link to anyone who performs them, and we have no financial relationship with any provider. Posture and facial hair (above) change how this reads without changing anything.",
+        "body": "Your chin sits well behind the nose-to-chin reference line. Procedures exist for this and they are the kind of thing a board-certified facial plastic surgeon or maxillofacial surgeon could assess. Posture and facial hair change how this reads without changing anything. We don't recommend procedures or prescriptions and we have no financial relationship with any provider.",
         "why_this": "Soft-tissue chin measured more than 6 mm behind the E-line."
       }
     },
@@ -1029,7 +1029,7 @@
       "copy": {
         "headline": "Drink water with meals",
         "body": "The evidence that hydration changes skin appearance is weaker than the internet says, but mild dehydration does show in the face by evening and it costs nothing to rule out.",
-        "why_this": "Supporting habit. Honest grade: limited evidence."
+        "why_this": "Supporting habit. It costs nothing."
       }
     },
     {
@@ -1105,7 +1105,7 @@
       "task_title": null,
       "copy": {
         "headline": "Prescription retinoids: worth asking about",
-        "body": "Your skin evenness reads well below typical. Over-the-counter options help, but the best-evidenced treatment for texture and tone is prescription tretinoin, and persistent breakouts have prescription options too. A dermatologist or GP visit — often available by telehealth — is the step that unlocks them. We don't tell you how to use any of it; they will.",
+        "body": "Your skin evenness reads well below typical. Over-the-counter options help, but the best-evidenced treatment for texture and tone is prescription tretinoin, and persistent breakouts have prescription options too. A dermatologist or GP visit — often available by telehealth — is the step that unlocks them. We don't tell you how to use any of it; they will. We don't recommend procedures or prescriptions and we have no financial relationship with any provider.",
         "why_this": "Skin evenness index below 0.50."
       }
     },

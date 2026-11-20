@@ -163,7 +163,7 @@
     "free_strength_label": "Your strongest measurement",
     "free_improvable_label": "Your most improvable measurement, and one thing to do about it",
     "model_changed_title": "Your score moved because the model changed, not because your face did",
-    "model_changed_body": "We updated the scoring model from {old} to {new}. Your stored measurements were re-scored on this phone. Here is the change and the reason for it.",
+    "model_changed_body": "We updated the scoring model from {old} to {new}. Your stored measurements were re-scored on this phone.",
     "model_changed_cta": "Got it",
     "no_profile_note": "Profile measurements need a profile capture."
   },
@@ -173,9 +173,9 @@
     "reading": "Reading",
     "evidence": "Evidence",
     "overlay_hint": "Long-press to hide the geometry",
-    "reliability_A": "Measured to within 2% across sessions",
-    "reliability_B": "Measured to within 5% across sessions, shown as a range",
-    "reliability_C": "Shown as a category — not precise enough for a number",
+    "reliability_A": "Shown as a number",
+    "reliability_B": "Shown as a range: it moves more between sessions",
+    "reliability_C": "Shown as a category: it moves too much between sessions for a number",
     "fwhr_explainer": "The community treats a higher ratio as desirable. A 2015 meta-analysis across fourteen samples found the opposite association with rated attractiveness. We show it because you expect it; it carries no weight in the score.",
     "community_explainer": "No clinical norm exists for this. The reference range is the community's convention, and the score weight is capped near zero.",
     "beard_note": "Facial hair reduces how precisely the jaw and chin can be located. This reading is shown with wider uncertainty.",
@@ -268,7 +268,7 @@
     "node_upcoming": "Week {week}",
     "node_scan": "Scan",
     "finish_title": "Eight weeks",
-    "finish_body": "Both scans done. Your deltas are in Progress. Want to go again? The plan rebuilds from the week-8 scan."
+    "finish_body": "Both scans done. Your deltas are in Progress. The plan rebuilds from the week-8 scan."
   },
   "progress": {
     "title": "Progress",
