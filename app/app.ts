@@ -188,7 +188,7 @@ function habitTasks(e: HabitEngine, today: string, findings: Map<string, string[
       headline: rule?.copy.headline ?? '', body: rule?.copy.body ?? '', whyThis: rule?.copy.why_this ?? '',
       evidence: rule?.evidenceGrade ?? 'weak', effort: rule?.effort ?? 'low',
       weeksLow: rule?.expectedTimelineWeeks[0] ?? 0, weeksHigh: rule?.expectedTimelineWeeks[1] ?? 0,
-      basedOn: (findings.get(rule?.id ?? '') ?? []).map((id) => copyOf.get(id)?.short ?? id).join(', '),
+      basedOn: (findings.get(rule?.id ?? '') ?? []).map((id) => midSentence(copyOf.get(id)?.short ?? id)).join(', '),
     };
   });
 }

@@ -25,10 +25,23 @@ test "first session: onboarding, consent, capture, the reveal, then Today"
   expect text "reveal-band" == "likely 5.2 to 8.0"
   expect text "reveal-tier" == "HTN"
   expect text "reveal-pct" == "· 67th percentile"
+  expect text "ladder-line" == "Your band covers MTN to HTN."
+  expect tree has "rung-HTN"
+  tap "share"
+  clock settle
+  expect tree has "share-card"
+  expect state shareKind == "score"
+  expect state shareBest == false
+  tap "share-kind-streak"
+  expect text "share-note" == "This browser can only share the text."
+  expect state shareKind == "streak"
+  back
+  clock settle
   tap "start-week"
   clock settle
   expect state nav.tab == "today"
   expect text "day" == "Day 1"
+  expect tree has "today-rating"
   expect text "left" == "2 left today."
 
 test "declining consent says what it means and captures nothing"
@@ -433,7 +446,7 @@ test "the paywall: two plans, yearly first, and with no store the button says wh
   tap "see-all"
   clock settle
   expect state nav.tab == "metrics"
-  tap "metric-canthal_tilt_deg"
+  tap "locked-eyes"
   clock settle
   expect text "paywall-intro" == "Canthal tilt, jaw width, midface and 21 more are already measured. Pro shows your number for each one and whether it's in the typical range."
   expect tree has "plan-pro.annual"

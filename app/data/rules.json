@@ -41,7 +41,7 @@
   "rules": [
     {
       "id": "adiposity_high_cervicomental_obtuse",
-      "version": 4,
+      "version": 5,
       "triggers": [
         {
           "metric": "facial_adiposity",
@@ -81,7 +81,7 @@
       "cadence": "daily",
       "time_cost_min": 10,
       "opens_week": 1,
-      "task_title": "Hit your protein and movement targets for the day",
+      "task_title": "Protein and steps",
       "copy": {
         "headline": "Lower body fat gradually",
         "body": "The line between jaw and neck is mostly soft tissue. Losing body fat slowly, about half a percent to one percent of bodyweight a week, with protein and resistance training, sharpens it more than anything done to the jaw.",
@@ -90,7 +90,7 @@
     },
     {
       "id": "adiposity_moderate_general",
-      "version": 3,
+      "version": 4,
       "triggers": [
         {
           "metric": "facial_adiposity",
@@ -122,7 +122,7 @@
       "cadence": "daily",
       "time_cost_min": 10,
       "opens_week": 1,
-      "task_title": "Hit your protein and movement targets for the day",
+      "task_title": "Protein and steps",
       "copy": {
         "headline": "Lean out gradually",
         "body": "Facial fat changes more than almost anything else about a face. Lose it slowly, about half a percent to one percent of bodyweight a week, and keep protein and lifting up so you hold on to muscle.",
@@ -131,7 +131,7 @@
     },
     {
       "id": "resistance_training_weekly",
-      "version": 3,
+      "version": 4,
       "triggers": [
         {
           "metric": "facial_adiposity",
@@ -160,7 +160,7 @@
       "weekly_target": 3,
       "time_cost_min": 45,
       "opens_week": 1,
-      "task_title": "Resistance training session",
+      "task_title": "Lift",
       "copy": {
         "headline": "Lift three times a week",
         "body": "Lifting three times a week keeps your muscle while you lose fat. Without it, fat loss can leave a face looking gaunt.",
@@ -201,7 +201,7 @@
     },
     {
       "id": "spf_daily",
-      "version": 4,
+      "version": 5,
       "triggers": [],
       "always_on": true,
       "goal_match": [
@@ -227,7 +227,7 @@
       "cadence": "daily",
       "time_cost_min": 1,
       "opens_week": 1,
-      "task_title": "Broad-spectrum SPF 30+ on face and neck",
+      "task_title": "SPF, morning",
       "copy": {
         "headline": "Daily broad-spectrum SPF",
         "body": "Sun exposure causes most uneven skin over time. Put on broad-spectrum SPF 30 or higher every morning, including cloudy days.",
@@ -236,7 +236,7 @@
     },
     {
       "id": "skin_evenness_low_cleanse_moisturise",
-      "version": 3,
+      "version": 4,
       "triggers": [
         {
           "metric": "skin_evenness",
@@ -266,7 +266,7 @@
       "cadence": "daily",
       "time_cost_min": 3,
       "opens_week": 1,
-      "task_title": "Gentle cleanse and moisturise, morning and night",
+      "task_title": "Cleanse and moisturise",
       "copy": {
         "headline": "A two-step routine, twice a day",
         "body": "Use a gentle, fragrance-free cleanser and a plain moisturiser morning and night. Most unevenness comes from irritation and dryness, and these two clear much of it in a few weeks.",
@@ -275,7 +275,7 @@
     },
     {
       "id": "skin_evenness_low_otc_actives",
-      "version": 3,
+      "version": 4,
       "triggers": [
         {
           "metric": "skin_evenness",
@@ -304,7 +304,7 @@
       "cadence": "daily",
       "time_cost_min": 1,
       "opens_week": 3,
-      "task_title": "Evening active (start 2 or 3 nights a week)",
+      "task_title": "Evening active",
       "copy": {
         "headline": "Add one over-the-counter active, slowly",
         "body": "Pick one active for the evening: adapalene gel for texture and breakouts, or low-strength azelaic acid for redness and tone. Start two or three nights a week and build up. Some dryness or flaking early on is normal. Stop and see a pharmacist or dermatologist if irritation is more than mild.",
@@ -313,7 +313,7 @@
     },
     {
       "id": "sleep_regular",
-      "version": 3,
+      "version": 4,
       "triggers": [],
       "always_on": true,
       "goal_match": [
@@ -340,7 +340,7 @@
       "cadence": "daily",
       "time_cost_min": 0,
       "opens_week": 1,
-      "task_title": "In bed by your target time",
+      "task_title": "Bed on time",
       "copy": {
         "headline": "Protect your sleep",
         "body": "Sleep-deprived faces are rated less healthy in controlled studies, mostly around the eyes. A consistent bedtime does more than any product.",
@@ -349,7 +349,7 @@
     },
     {
       "id": "eye_area_puffiness",
-      "version": 3,
+      "version": 4,
       "triggers": [
         {
           "metric": "skin_evenness",
@@ -376,7 +376,7 @@
       "cadence": "daily",
       "time_cost_min": 1,
       "opens_week": 2,
-      "task_title": "Drink water, and go easy on salt and alcohol tonight",
+      "task_title": "Easy on salt and alcohol tonight",
       "copy": {
         "headline": "Reduce morning puffiness",
         "body": "Salt and alcohol in the evening and short sleep all show under your eyes the next morning. Drink water through the day, eat less salt late and keep a regular bedtime. Most eye creams are moisturiser.",
@@ -385,7 +385,7 @@
     },
     {
       "id": "brow_grooming",
-      "version": 4,
+      "version": 5,
       "triggers": [],
       "always_on": true,
       "goal_match": [
@@ -408,7 +408,7 @@
       "cadence": "once",
       "time_cost_min": 15,
       "opens_week": 1,
-      "task_title": "Tidy brows: remove strays between and below, keep the shape",
+      "task_title": "Tidy brows",
       "copy": {
         "headline": "Tidy your brows and keep their shape",
         "body": "Remove the stray hairs between your brows and below the arch, and leave the shape alone. Thin brows make a face look older and more tired.",
@@ -450,7 +450,7 @@
     },
     {
       "id": "hair_care_daily",
-      "version": 3,
+      "version": 4,
       "triggers": [],
       "always_on": true,
       "goal_match": [
@@ -472,7 +472,7 @@
       "cadence": "daily",
       "time_cost_min": 2,
       "opens_week": 1,
-      "task_title": "Hair: no heat today, condition if you wash, style without pulling",
+      "task_title": "Gentle on your hair",
       "copy": {
         "headline": "Treat the hair you have gently",
         "body": "This won't regrow hair, but it makes the hair you have look fuller. Use a gentle shampoo and conditioner, go easy on heat, and avoid tight styles that pull at your hairline.",
@@ -519,7 +519,7 @@
     },
     {
       "id": "hairline_early_monitor",
-      "version": 3,
+      "version": 4,
       "triggers": [
         {
           "metric": "hairline_stage",
@@ -547,7 +547,7 @@
       "cadence": "once",
       "time_cost_min": 2,
       "opens_week": 4,
-      "task_title": "Take a hairline reference photo in the same light",
+      "task_title": "Hairline photo",
       "copy": {
         "headline": "Keep an eye on the hairline",
         "body": "A mature hairline is normal and isn't the same as recession. To tell them apart, take the same reference photo every few weeks. If the hairline moves, talk to a doctor about treatment early.",
@@ -556,7 +556,7 @@
     },
     {
       "id": "photo_distance_lens",
-      "version": 3,
+      "version": 4,
       "triggers": [],
       "always_on": true,
       "goal_match": [
@@ -579,7 +579,7 @@
       "cadence": "once",
       "time_cost_min": 5,
       "opens_week": 1,
-      "task_title": "Retake your best photo from further back with 2× zoom",
+      "task_title": "Retake a photo from further back",
       "copy": {
         "headline": "Shoot from further back",
         "body": "At arm's length a phone makes your nose look about thirty percent wider and shrinks your ears and jaw. Step back a metre or more and zoom in, or have someone else take the photo.",
@@ -588,7 +588,7 @@
     },
     {
       "id": "photo_lighting",
-      "version": 3,
+      "version": 4,
       "triggers": [],
       "always_on": true,
       "goal_match": [
@@ -610,7 +610,7 @@
       "cadence": "once",
       "time_cost_min": 5,
       "opens_week": 1,
-      "task_title": "Find your window: soft light from slightly above and to one side",
+      "task_title": "Find your window light",
       "copy": {
         "headline": "Use soft, slightly directional light",
         "body": "Flat light from the front hides the structure of a face, and hard light from overhead exaggerates it. Use window light from slightly above and to one side, and face it.",
@@ -619,7 +619,7 @@
     },
     {
       "id": "posture_head_position",
-      "version": 3,
+      "version": 4,
       "triggers": [],
       "goal_match": [
         "sharper_jawline",
@@ -641,7 +641,7 @@
       "cadence": "daily",
       "time_cost_min": 1,
       "opens_week": 2,
-      "task_title": "Posture check: ears over shoulders, chin level",
+      "task_title": "Posture check",
       "copy": {
         "headline": "Bring your head back over your shoulders",
         "body": "Holding your head forward softens the line between jaw and neck. Bring your ears back over your shoulders and keep your chin level. Your bone structure stays the same, but the line looks sharper straight away.",
@@ -651,7 +651,7 @@
     },
     {
       "id": "beard_shape_jaw",
-      "version": 3,
+      "version": 4,
       "triggers": [
         {
           "metric": "beard_presence",
@@ -685,7 +685,7 @@
       "cadence": "once",
       "time_cost_min": 15,
       "opens_week": 1,
-      "task_title": "Shape the beard: keep length along the jaw, fade the cheeks and neck",
+      "task_title": "Shape the beard",
       "copy": {
         "headline": "Shape your beard to widen the jaw",
         "body": "Facial hair can widen and square the lower face. Keep density and a little length along the jaw and chin, fade the cheeks, and set the neckline a finger above the Adam's apple.",
@@ -694,7 +694,7 @@
     },
     {
       "id": "cleanshaven_jaw_note",
-      "version": 3,
+      "version": 4,
       "triggers": [
         {
           "metric": "beard_presence",
@@ -727,7 +727,7 @@
       "cadence": "once",
       "time_cost_min": 0,
       "opens_week": 2,
-      "task_title": "Try growing stubble along the jaw for two weeks",
+      "task_title": "Grow stubble along the jaw",
       "copy": {
         "headline": "Consider stubble along the jaw",
         "body": "Stubble along the jaw and chin adds visual width where your face is narrowest. Give it two weeks to see whether it suits you.",
@@ -928,7 +928,7 @@
     },
     {
       "id": "symmetry_lighting_note",
-      "version": 3,
+      "version": 4,
       "triggers": [
         {
           "metric": "symmetry_index",
@@ -957,7 +957,7 @@
       "cadence": "once",
       "time_cost_min": 5,
       "opens_week": 2,
-      "task_title": "Find your better side in soft, even light",
+      "task_title": "Find your better side",
       "copy": {
         "headline": "Every face is asymmetric, and light changes how much it shows",
         "body": "Every face is asymmetric, and uneven light exaggerates it. Even light from the front shows it least. Most people have a side that photographs better, so find yours.",
@@ -1111,7 +1111,7 @@
     },
     {
       "id": "weekly_progress_photo",
-      "version": 3,
+      "version": 4,
       "triggers": [],
       "always_on": true,
       "goal_match": [
@@ -1140,7 +1140,7 @@
       "weekly_target": 1,
       "time_cost_min": 2,
       "opens_week": 1,
-      "task_title": "Reference photo: same spot, same light, same distance",
+      "task_title": "Weekly reference photo",
       "copy": {
         "headline": "One reference photo a week",
         "body": "Take a plain photo in the same spot, light and distance each week. It stays in your camera roll and the app never reads it.",

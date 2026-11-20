@@ -100,8 +100,8 @@
     "p2_body": "Only measurements are kept: numbers like a canthal tilt of 4°.",
     "p3_title": "Kept until you delete them",
     "p3_body": "Delete everything is in You.",
-    "p4_title": "Nobody else sees it",
-    "p4_body": "Not sold and not shared."
+    "p4_title": "It goes nowhere unless you send it",
+    "p4_body": "We don't sell it or pass it on. Your score leaves this iPhone only if you tap Share."
   },
   "capture": {
     "front_title": "Front",
@@ -153,15 +153,18 @@
     "eyebrow": "Your measurement",
     "what_it_is": "This is your starting point. About half of what makes a face appealing is personal taste, which no measurement captures.",
     "model_version": "Scoring model {version}",
-    "measured_label": "measurements",
-    "movable_label": "you can change",
     "cta_start": "Start week 1",
     "cta_all": "See all {n} first",
     "cta_progress": "See what changed",
-    "cta_today": "Back to Today"
+    "cta_today": "Back to Today",
+    "ladder_label": "Tiers",
+    "band_covers": "Your band covers {from} to {to}.",
+    "band_inside": "Your band sits inside {tier}.",
+    "cta_share": "Share",
+    "see_all": "See all {n}"
   },
   "results": {
-    "title": "Metrics",
+    "title": "Rating",
     "section_strength": "Your best measurement",
     "section_improvable": "Most room to improve",
     "group_eyes": "Eyes and brows",
@@ -179,7 +182,9 @@
     "pro_title": "You have {n} more measurements",
     "pro_body": "See your number for each one and whether it's in the typical range.",
     "pro_cta": "Unlock all {n}",
-    "not_measured_label": "Not measured"
+    "not_measured_label": "Not measured",
+    "locked_count": "{n} locked",
+    "profile_note": "These need a profile capture."
   },
   "metric_detail": {
     "measured": "How it was measured",
@@ -240,7 +245,9 @@
     "all_done": "Done for today.",
     "task_done": "Done",
     "plan_link": "Your plan",
-    "quiet_checkin_call": "Call 988"
+    "quiet_checkin_call": "Call 988",
+    "rating_label": "Your rating",
+    "task_for": "For {metrics}"
   },
   "task_detail": {
     "why_this": "Why this",
@@ -314,13 +321,26 @@
   },
   "share": {
     "title": "Share",
-    "toggle_score": "Score",
-    "toggle_tier": "Tier",
-    "toggle_metrics": "Up to three measurements",
-    "toggle_photo": "Include capture",
-    "photo_warning": "Your capture leaves the device only if you choose to include it, and only in the image you share.",
-    "card_footer": "Measured on-device · reference-range percentile",
-    "cta": "Share"
+    "kind_score": "Score",
+    "kind_streak": "Streak",
+    "kind_moved": "What moved",
+    "add_best": "Add my best measurement",
+    "note_score": "Your score, tier and range. No photo.",
+    "note_streak": "No face and no score on this one. Just the work.",
+    "note_moved": "Your score change and nothing else. No photo.",
+    "card_band": "likely {low} to {high}",
+    "card_pct": "{pct} percentile of the reference group",
+    "card_best": "Best measurement",
+    "streak_days": "days",
+    "streak_line": "{n} days in a row on the plan.",
+    "streak_line_one": "Day one on the plan.",
+    "moved_line": "{before} to {after} over {weeks} weeks",
+    "moved_line_days": "{before} to {after} over {days} days",
+    "cta": "Share",
+    "no_pictures": "This browser can only share the text.",
+    "text": "{score} on {app_name}, {tier}. Likely {low} to {high}.",
+    "text_streak": "{n}-day streak on {app_name}.",
+    "text_moved": "{delta} on {app_name} since my last scan."
   },
   "methodology": {
     "title": "How the score works",
@@ -369,5 +389,13 @@
     "week_label": "week {week}",
     "banked_label": "week {week} complete",
     "note": "Your streak counts the days you did the plan."
+  },
+  "tiers": {
+    "range_LTN": "below 4.5",
+    "range_MTN": "4.5 to 6.5",
+    "range_HTN": "6.5 to 8.5",
+    "range_Chadlite": "8.5 to 9.7",
+    "range_Chad": "9.7 and up",
+    "you": "You"
   }
 }
