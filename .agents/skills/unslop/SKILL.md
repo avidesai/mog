@@ -28,7 +28,7 @@ Scope is the diff against the base unless given files. Behaviour never changes: 
 
 - A *why* in three lines or fewer: a platform bug, a spec rule, a trade-off, a link to the test that pins it.
 - Doc comments on public API that say what the reader cannot see: default, unit, when it fires, what happens on change.
-- In this repo specifically: the privacy-invariant comments at the top of `GeometryPipeline.swift`, `MogCapture.swift`, `MogGeometry.swift` and the backend migration. They are the audit trail, not narration. Keep them short.
+- In this repo specifically: the privacy-invariant comments at the top of `GeometryPipeline.swift`, `MogCapture.swift`, `MogGeometry.swift`, `app/app.ts` and the backend migration. They are the audit trail, not narration. Keep them short.
 
 ## Steps
 

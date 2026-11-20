@@ -21,7 +21,9 @@ project.yml     XcodeGen spec for the spike tools app
 
 `app/modules/apple/MogCapture.swift` and `MogGeometry.swift` are the copies that ship. A change to a gate threshold, a heuristic or a metric goes into both. `scripts/sync-app.mjs` copies `Mog/Geometry/landmark_map.json` into `app/geometry/`, so edit the map here and run the script.
 
-The landmark dump writes raw mesh vertices to the phone's Documents folder. That is why the tools have their own app and bundle id (`com.avidesai.mog.spike`) and must never be added to the Exact app.
+The landmark dump writes raw mesh vertices to the phone's Documents folder. That is why the tools have their own app and bundle id (`com.avidesai.mog.spike`) and must never be added to the Exact app. The folder is excluded from device backups, and `captures/` is gitignored for the copies you pull to the Mac.
+
+This app has no consent screen and no region check; the deleted screens had both. Use it on your own face. Capturing anyone else, as the week-9 harness plans to, needs their consent handled first, and nothing here does that yet.
 
 ## Generate and run
 

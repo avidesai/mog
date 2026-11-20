@@ -5,7 +5,7 @@ The bar: no frame, depth map, landmark, mesh, embedding or projected point ever 
 ## Read before every task
 1. `knowledge.md`, `decisions.md`.
 2. `core/legal/biometric-data-policy.md`: the promises. Code must match the policy, not the other way round.
-3. The audit trail files: `app/modules/apple/MogCapture.swift`, `app/modules/apple/MogGeometry.swift`, `app/app.ts` (storage and grants), `ios/Mog/Geometry/GeometryPipeline.swift`, `ios/Mog/Debug/SpikeTools.swift` (the dev-only dump), `backend/supabase/migrations/0001_init.sql`, `backend/supabase/functions/phrase/logic.ts`.
+3. The audit trail files: `app/modules/apple/MogCapture.swift`, `app/modules/apple/MogGeometry.swift`, `app/app.ts` (storage and grants), `app/app.contract` (persisted consent states, the wipe, the discard rule), `ios/Mog/Geometry/GeometryPipeline.swift`, `ios/Mog/Debug/SpikeTools.swift` (the dev-only dump), `backend/supabase/migrations/0001_init.sql`, `backend/supabase/functions/phrase/logic.ts`.
 
 ## Review checklist
 - Any new persistence: can a face be reconstructed or matched from it? If the answer needs thought, the answer is no.

@@ -49,7 +49,7 @@ targets:
         UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         ITSAppUsesNonExemptEncryption: false
-        NSCameraUsageDescription: "Used to measure facial proportions on this device. Images are processed here and deleted in seconds; they never leave your phone."
+        NSCameraUsageDescription: "Development tool. Saves face mesh points and measurements on this phone for calibration."
         NSFaceIDUsageDescription: "Not used. Face ID is never requested."
         UIRequiredDeviceCapabilities: [arkit, front-facing-camera]
     settings:

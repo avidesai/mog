@@ -152,7 +152,11 @@ struct LandmarkDumpView: View {
     }
 
     private func start() {
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        // Raw vertices: keep the folder out of device backups and unreadable while the phone is locked.
+        var folder = dir
+        try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        var noBackup = URLResourceValues(); noBackup.isExcludedFromBackup = true
+        try? folder.setResourceValues(noBackup)
         frames = []
         cap.dumpFrames = { frames.append($0) }
         cap.start { collected in
@@ -169,7 +173,7 @@ struct LandmarkDumpView: View {
             let d = Dump(session: sessionName, capture: idx, timestamp: Date().timeIntervalSince1970,
                          frames: zip(collected, perFrame).map { f, m in .init(yaw: f.pose.yaw, pitch: f.pose.pitch, roll: f.pose.roll, distance: f.pose.distance, metrics: m.metrics, vertices: f.vertices.map { [$0.x, $0.y, $0.z] }) },
                          readings: readings)
-            if let data = try? JSONEncoder().encode(d) { try? data.write(to: dir.appending(path: "capture_\(idx).json")) }
+            if let data = try? JSONEncoder().encode(d) { try? data.write(to: dir.appending(path: "capture_\(idx).json"), options: .completeFileProtection) }
             frames = []
         }
     }

@@ -27,4 +27,5 @@ Exact app. Both read the same geometry; keep `app/modules/apple` and `ios/Mog/{C
    captures/`, then `harness.py --write-tiers`. **≥ 6 frontal metrics at tier A/B → go; < 4 → re-scope
    around skin, adiposity and grooming.** Read the mesh-derived profile angles' CV: if good, spike 2 is cancelled.
 8. **Privacy.** During a capture the Exact app writes no files and makes no network calls (interception
-   audit). The dumps stay on the dev machine.
+   audit). The dumps stay on the dev machine (`captures/` is gitignored). The spike tools app has no
+   consent screen or region check, so capture only your own face with it.
