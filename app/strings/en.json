@@ -168,6 +168,8 @@
   "paywall.renewal_terms": "Subscriptions renew automatically until cancelled. Cancel any time in Settings › Apple ID › Subscriptions. The trial converts to a paid subscription unless cancelled before it ends.",
   "paywall.cta": "Continue",
   "paywall.keep_free": "Keep the free version",
+  "paywall.pending": "Waiting for approval.",
+  "paywall.failed": "The purchase didn't go through. Try again.",
   "today.title": "Today",
   "today.greeting_week": "Week {week}",
   "today.streak_days": "{streak} days",

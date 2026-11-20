@@ -9,6 +9,7 @@ import { loadRegistry, type Sex } from './core/registry.ts';
 import { score, type CompositeReference, type MetricReading, type ScoreResult } from './core/scoring.ts';
 import { buildPlan, type PlanCard } from './core/planner.ts';
 import { HabitEngine, newHabitState, type HabitState } from './core/habit.ts';
+import { acknowledge, unfinishedPurchases } from '@exact/purchases';
 
 // Privacy invariant: this file holds named measurements and plan state only. No frame, depth map,
 // landmark, mesh or embedding is ever passed in, stored or sent; there is no net grant.
@@ -143,6 +144,27 @@ const emptyView = (): View => ({
 
 const ok = { ok: true, error: '' };
 
+// The one place a purchase is finished (Exact's purchases recipe): Pro is a subscription or a
+// non-consumable, so each purchased item is acknowledged once; the store redelivers until it is.
+// One run at a time; a request during a run asks it to read the queue again.
+let delivering = false, askedAgain = false;
+async function deliverPurchases(): Promise<typeof ok> {
+  if (delivering) { askedAgain = true; return ok; }
+  delivering = true;
+  try {
+    do {
+      askedAgain = false;
+      for (const p of await unfinishedPurchases()) {
+        if (p.purchaseState !== 'purchased' || !p.itemId.startsWith('pro.')) continue;
+        try { await acknowledge({ purchaseToken: p.purchaseToken }); } catch { /* stays queued; retried */ }
+      }
+    } while (askedAgain);
+    return ok;
+  } finally {
+    delivering = false;
+  }
+}
+
 const sources: Sources = {
   loadApp: async ([today, isPro], _store, storage) => view(await load(storage), today, isPro),
 
@@ -181,6 +203,8 @@ const sources: Sources = {
     await save(storage, s);
     return ok;
   },
+
+  deliverPurchases: () => deliverPurchases(),
 
   deleteEverything: async (_args, _store, storage) => {
     await save(storage, { ...EMPTY });

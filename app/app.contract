@@ -4,6 +4,7 @@ use EmptyState from "exact:content"
 use SummaryCard from "exact:content"
 use Badge from "exact:content"
 use RowText from "exact:content"
+use getDetails, listPurchases, unfinishedPurchases, purchase, restorePurchases, purchasesStatus, ItemDetails, PurchaseDetails, PurchasesStatus from "@exact/purchases"
 
 routes nav
   tab today "/"
@@ -142,7 +143,20 @@ component App
   state now = 0
   resource time = exactTime() as shape Time
   derive today = formatDate(time.epochAtZero + now, time.utcOffset, "iso")
-  resource app = loadApp(today, false) as shape AppView else empty() transient
+  state plan = "pro.annual"
+  state buyNote = ""
+  resource store = purchasesStatus() as shape PurchasesStatus else empty()
+  // A screen gates on what the person holds; delivery reads the store's queue and nothing else.
+  resource owned = listPurchases() as shape PurchaseDetails[] else empty()
+  resource queue = unfinishedPurchases() as shape PurchaseDetails[] else empty()
+  resource plans = getDetails(itemIds=["pro.annual", "pro.weekly", "pro.lifetime"]) as shape ItemDetails[] else empty()
+  mutation bought as shape PurchaseDetails refreshes queue, owned then afterBuy
+  mutation restored as shape PurchaseDetails[] refreshes owned
+  mutation delivered as shape Reply refreshes owned, queue
+  derive isPro = owned.filter(p => p.itemId.startsWith("pro.")).length > 0
+  derive due = queue.filter(p => p.purchaseState == "purchased").map(p => p.purchaseToken).join(",")
+  derive buyError = match failure(bought) { case some(f) => f.code == "AbortError" ? "" : t("paywall.failed"), case none => "" }
+  resource app = loadApp(today, isPro) as shape AppView else empty() transient
   mutation scanned as shape Reply refreshes app then afterScan
   mutation taskSet as shape Reply queue refreshes app
   mutation repaired as shape Reply refreshes app
@@ -156,6 +170,8 @@ component App
     every(60000, step)
   task scanning when capturing
     every(450, advance)
+  task delivering when due != "" key=due
+    after(1, deliver)
 
   action step
     now = performanceNow()
@@ -220,6 +236,25 @@ component App
     send repaired = repairStreak(today)
   action letReset
     streakSeenOn = today
+  action choosePlan(id: string)
+    plan = id
+  action buy
+    buyNote = ""
+    send bought = purchase(itemId=plan)
+  // The purchase's answer is for this screen; delivery is the queue's.
+  action afterBuy
+    match bought
+      case some(p)
+        if p.purchaseState == "pending"
+          buyNote = t("paywall.pending")
+        else
+          nav = back(nav)
+      case none
+        buyNote = ""
+  action restore
+    send restored = restorePurchases()
+  action deliver
+    send delivered = deliverPurchases()
   action askWipe
     showModal("wipe")
   action wipe
@@ -734,14 +769,39 @@ component App
                       text t("paywall.includes_3")
                       text t("paywall.includes_4")
                       text t("paywall.includes_5")
-                    section
-                      text t("paywall.plan_annual_trial", price_annual="$34.99")
-                      text t("paywall.plan_weekly", price_weekly="$4.99")
-                      text t("paywall.plan_lifetime", price_lifetime="$59.99")
-                      footer
-                        text t("paywall.renewal_terms")
-                  button press=back margin=16 testId="keep-free"
-                    text t("paywall.keep_free")
+                    // Prices are the store's own strings; where there is no store (the web), the list's.
+                    if plans.length > 0
+                      section
+                        for p in plans key=p.itemId
+                          button role="radio"
+                            aria-checked=(plan == p.itemId)
+                            press=choosePlan(p.itemId)
+                            testId=`plan-${p.itemId}`
+                            text (p.itemId == "pro.annual" ? t("paywall.plan_annual_trial", price_annual=p.displayPrice) : p.itemId == "pro.weekly" ? t("paywall.plan_weekly", price_weekly=p.displayPrice) : t("paywall.plan_lifetime", price_lifetime=p.displayPrice)) flex=1
+                            if plan == p.itemId
+                              image "symbol:checkmark"
+                        footer
+                          text t("paywall.renewal_terms")
+                    else
+                      section
+                        text t("paywall.plan_annual_trial", price_annual="$34.99")
+                        text t("paywall.plan_weekly", price_weekly="$4.99")
+                        text t("paywall.plan_lifetime", price_lifetime="$59.99")
+                        footer
+                          text t("paywall.renewal_terms")
+                  column gap=8 padding=16
+                    if buyNote != "" or buyError != ""
+                      text (buyError != "" and not pending(bought) ? buyError : buyNote) font="-exact-footnote"
+                        color="-exact-secondary-label"
+                        testId="buy-note"
+                    if plans.length > 0
+                      button press=buy buttonStyle="filled" disabled=pending(bought) testId="buy"
+                        text t("paywall.cta")
+                    button press=back testId="keep-free"
+                      text t("paywall.keep_free")
+                    if store.available
+                      button press=restore testId="restore"
+                        text t("common.restore_purchases")
               else if e.name == "plan"
                 column navigationKey=`${e.id}`
                   navigationScroll=`content-${e.id}`
@@ -901,6 +961,17 @@ component App
                           text t("settings.delete_everything")
                         footer
                           text (consentedOn != "" ? t("settings.consent_revoke_body") : "")
+                    if store.available
+                      section
+                        header
+                          text t("settings.section_plan")
+                        if isPro
+                          link href="https://apps.apple.com/account/subscriptions"
+                            testId="manage-subscription"
+                            text t("settings.manage_subscription") flex=1
+                            image "symbol:forward-chevron"
+                        button press=restore testId="restore-settings"
+                          text t("common.restore_purchases")
                     section
                       header
                         text t("settings.section_about")
