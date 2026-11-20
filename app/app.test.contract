@@ -48,6 +48,36 @@ test "declining consent says what it means and captures nothing"
   tap "decline"
   expect text "declined" == "Nothing is captured. The app can't measure without this."
   expect state onboarded == false
+  expect state consentedOn == ""
+
+test "closing the capture while it measures saves nothing, and Not now takes the consent back"
+  tap "start"
+  clock settle
+  tap "goal-general"
+  tap "goals-next"
+  clock settle
+  tap "sex-male"
+  tap "age-18-24"
+  tap "region-other"
+  tap "adult"
+  tap "about-next"
+  clock settle
+  tap "time-next"
+  clock settle
+  tap "consent"
+  clock settle
+  expect tree has "processing"
+  back
+  clock +6000
+  clock data
+  clock settle
+  expect state captured == ""
+  expect state app.hasScan == false
+  expect state onboarded == false
+  expect state consentPolicy == "1.0"
+  tap "decline"
+  expect state consentedOn == ""
+  expect state consentPolicy == ""
 
 test "Today survives a relaunch"
   tap "start"
@@ -154,6 +184,7 @@ test "delete everything wipes the measurements and returns to the start"
   expect state consentedAt == 0
   expect state consentPolicy == ""
   expect state streakSeenOn == ""
+  expect state captured == ""
   expect state app.hasScan == false
 
 test "Illinois, Texas or Washington: the consent screen says so and offers no consent"
@@ -173,6 +204,7 @@ test "Illinois, Texas or Washington: the consent screen says so and offers no co
   expect tree has "state-block"
   expect tree missing "consent"
   expect state consentedOn == ""
+  expect state consentCurrent == false
 
 test "withdrawing consent keeps the measurements and asks again before the next scan"
   tap "start"
@@ -202,6 +234,40 @@ test "withdrawing consent keeps the measurements and asks again before the next 
   tap "withdraw"
   expect state consentedOn == ""
   expect state app.hasScan == true
+
+test "closing a re-scan while it measures leaves the scan window open"
+  tap "start"
+  clock settle
+  tap "goal-general"
+  tap "goals-next"
+  clock settle
+  tap "sex-male"
+  tap "age-18-24"
+  tap "region-other"
+  tap "adult"
+  tap "about-next"
+  clock settle
+  tap "time-next"
+  clock settle
+  tap "consent"
+  clock settle
+  clock +6000
+  clock data
+  clock settle
+  tap "start-week"
+  clock settle
+  clock +1900800000
+  clock data
+  tap "rescan"
+  clock settle
+  expect tree has "processing"
+  back
+  clock +6000
+  clock data
+  clock settle
+  expect state captured == ""
+  expect state app.summary.scanWindow == 4
+  expect state nav.tab == "today"
 
 test "a task opens its detail, says why, and toggles done"
   tap "start"

@@ -57,7 +57,7 @@ In all cases, biometric identifiers and information are permanently destroyed no
 
 ## 7. How to delete
 
-Settings › Your data › **Delete everything.** This wipes all local data immediately and queues permanent server-side deletion of anything synced, completed within 30 days. You can also email {contact_email}. Deletion is tested automatically against our production schema on every release.
+You › **Delete everything.** This wipes all local data immediately and queues permanent server-side deletion of anything synced, completed within 30 days. You can also email {contact_email}. Deletion is tested automatically against our production schema on every release.
 
 ## 8. Security
 

@@ -187,7 +187,7 @@ component App
   derive aboutReady = sex != "" and ageBand != "" and adult and region != ""
   // Consent is per policy version (biometric data policy §5): a new version asks again before the next capture.
   derive policyVersion = "1.0"
-  derive consentCurrent = consentedOn != "" and consentPolicy == policyVersion
+  derive consentCurrent = consentedOn != "" and consentPolicy == policyVersion and region != "restricted"
   derive left = app.tasks.filter(k => k.cadence == "daily" and not k.done).length
   // The drawn tab bar shows on the four tab roots only; pushed screens take the whole height.
   derive atRoot = top(nav).name == "today" or top(nav).name == "path" or top(nav).name == "metrics" or top(nav).name == "you"
@@ -231,8 +231,13 @@ component App
       declined = false
       resetCapture()
       nav = push(nav, "/capture")
+  // "Not now" is a refusal: a consent given earlier does not stand behind it.
   action decline
     declined = true
+    consentedOn = ""
+    consentedAt = 0
+    consentPolicy = ""
+    resetCapture()
   action resetCapture
     capStep = 0
     capturing = false
@@ -272,14 +277,15 @@ component App
   action openSettings
     openURL("app-settings:")
   // The processing steps, once the readings are in; then they are scored and saved.
+  // Closing the capture or withdrawing consent while it measures discards the readings.
   action advance
-    if capStep < 4
+    if not consentCurrent or top(nav).name != "capture"
+      resetCapture()
+    else if capStep < 4
       capStep = capStep + 1
     else
       capturing = false
-      if not consentCurrent
-        resetCapture()
-      else if captured == "sample"
+      if captured == "sample"
         send scanned = saveSampleScan(today, sex, ageBand, goals.length == 0 ? ["general"] : goals, timeBudget)
       else
         send scanned = saveScan(today, sex, ageBand, goals.length == 0 ? ["general"] : goals, timeBudget, captured.slice(9))
@@ -287,11 +293,14 @@ component App
     match scanned
       case some(r)
         if r.ok
+          resetCapture()
           onboarded = true
           nav = replace(nav, "/reveal")
         else
+          resetCapture()
           captureFailed = true
       case none
+        resetCapture()
         captureFailed = true
   action goHome
     nav = open(nav, "/")
@@ -348,6 +357,7 @@ component App
     consentedAt = 0
     consentPolicy = ""
     streakSeenOn = ""
+    resetCapture()
     nav = open(nav, "/")
 
   view
@@ -765,10 +775,15 @@ component App
                           text t("consent.state_block_title") class=T3
                           text t("consent.state_block_body") class=Body
                       else
-                        text (declined ? t("consent.decline_body") : t("consent.affirm_label", app_name="Mog")) class=Detail
+                        text t("consent.affirm_label", app_name="Mog") class=Detail
                           text-align="center"
                           margin-top=16
-                          testId="declined"
+                        if declined
+                          text t("consent.decline_body") class=Detail
+                            text-align="center"
+                            margin-top=6
+                            color="ink.main"
+                            testId="declined"
                   if region != "restricted"
                     column padding="12px 20px 22px"
                       gap=4
