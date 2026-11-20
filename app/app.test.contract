@@ -1,0 +1,13 @@
+test "opens on Today with the scan empty state"
+  expect state nav.tab == "today"
+  expect tree has "content-today"
+
+test "each tab opens its own screen"
+  tap "tab-plan"
+  expect state nav.tab == "plan"
+  tap "tab-path"
+  expect text "path-intro" == "Eight weeks. A week banks at five of seven days. Scans at weeks four and eight."
+  tap "tab-you"
+  expect tree has "content-you"
+  tap "tab-today"
+  expect tree has "content-today"

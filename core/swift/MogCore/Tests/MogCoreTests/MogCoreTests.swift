@@ -48,6 +48,25 @@ final class FixtureTests: XCTestCase {
         XCTAssertEqual(a.compositeStd, b.compositeStd)
     }
 
+    func testNonFiniteReadingIsSuppressed() throws {
+        let reg = try Registry.load()
+        var rd: [String: MetricReading] = [:]
+        for (id, m) in reg.metrics {
+            let n = m.ref(.male)
+            rd[id] = m.unit == "category" ? MetricReading(value: id == "hairline_stage" ? 1 : 0, confidence: 0.9)
+                                          : MetricReading(value: n.mean, confidence: 0.9, iqr: 0.05 * n.sd)
+        }
+        let base = try score(ScoreInput(sex: .male, ageBand: "18-24", readings: rd), reg)
+        for broken in [MetricReading(value: .nan, confidence: 0.9), MetricReading(value: 0.5, confidence: .nan)] {
+            var bad = rd
+            bad["facial_adiposity"] = broken
+            let r = try score(ScoreInput(sex: .male, ageBand: "18-24", readings: bad), reg)
+            XCTAssertEqual(r.metrics.first { $0.id == "facial_adiposity" }?.suppressedReason, "low_confidence")
+            XCTAssertEqual(r.nScored, base.nScored - 1)
+            XCTAssertTrue(r.score.isFinite)
+        }
+    }
+
     func testAllRuleCopyPassesDenylist() throws {
         let reg = try Registry.load()
         for r in reg.rules.values where r.safety_tier != .excluded {

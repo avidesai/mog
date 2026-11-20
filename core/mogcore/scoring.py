@@ -61,6 +61,8 @@ SCORING_MODEL_VERSION = "rules-1.1.0"
 
 
 def tier_for_percentile(p: float) -> tuple[str, str]:
+    if not math.isfinite(p):
+        raise ValueError(f"percentile must be finite, got {p}")
     for upper, short, long in TIERS:
         if p < upper:
             return short, long
@@ -256,7 +258,8 @@ def score(inp: ScoreInput, reg: Registry, reference: dict[str, Any] | None = Non
             results.append(MetricResult(value=None, z=None, category=None, display="suppressed",
                                         suppressed_reason="occluded", confidence=conf, **base))
             continue
-        if conf < m.confidence_floor:
+        # `not >=` so a NaN confidence fails the floor; a non-finite value is a failed measurement, never a score.
+        if not (conf >= m.confidence_floor) or not math.isfinite(r.value):
             results.append(MetricResult(value=None, z=None, category=None, display="suppressed",
                                         suppressed_reason="low_confidence", confidence=conf, **base))
             continue

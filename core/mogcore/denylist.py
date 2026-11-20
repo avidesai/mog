@@ -5,6 +5,7 @@ generation and the client falls back to the rule's static copy."""
 from __future__ import annotations
 
 import re
+import unicodedata
 from dataclasses import dataclass
 from typing import Any
 
@@ -32,6 +33,7 @@ class Denylist:
 
     def scan(self, text: str, *, info_card: bool = False) -> list[Hit]:
         hits: list[Hit] = []
+        text = unicodedata.normalize("NFKC", text)  # fullwidth digits, long s, Kelvin sign → their plain forms
         for rx, label, reason, allow_info in self._compiled:
             if info_card and allow_info:
                 continue
