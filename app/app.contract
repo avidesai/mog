@@ -1,8 +1,6 @@
 // Every string is t() over strings/en.json, which scripts/sync-app.mjs generates from core/copy/strings.json.
-use EmptyState from "exact:content"
-use SummaryCard from "exact:content"
-use Badge from "exact:content"
-use RowText from "exact:content"
+// The look is ui.contract's parts over app.tamber's tokens, after design/screens-gamified.
+use Primary, Secondary, Quiet, Option, Label, Chip, Gate, Mark, StreakPill, Chevron, Lock, Check, Pips, Track, Ring, NavBar, StepBar, Tile, FaceArt, Display, T1, T2, T3, RowTitle, Body, Detail, Caption, LabelText, Value, CardBox, LipBox, RaisedBox, WashBox from "./ui.contract"
 use getDetails, listPurchases, unfinishedPurchases, purchase, restorePurchases, purchasesStatus, ItemDetails, PurchaseDetails, PurchasesStatus from "@exact/purchases"
 
 routes nav
@@ -13,13 +11,14 @@ routes nav
     consent "/start/consent"
     capture "/capture"
     reveal "/reveal"
-    results "/results"
-    metric "/metric/:id"
-    paywall "/pro"
     task "/task/:id"
-  tab plan "/plan"
+    done "/done"
+    plan "/plan"
     card "/plan/:id"
+    paywall "/pro"
   tab path "/path"
+  tab metrics "/metrics"
+    metric "/metric/:id"
   tab you "/you"
     methodology "/you/methodology"
 
@@ -43,6 +42,7 @@ shape Metric
   refHigh: string
   contradicted: bool
   community: bool
+  pos: number
 
 shape Card
   ruleId: string
@@ -63,13 +63,16 @@ shape Task
   weeklyDone: number
   weeklyTarget: number
   headline: string
+  body: string
   whyThis: string
+  evidence: string
   effort: string
   weeksLow: number
   weeksHigh: number
   basedOn: string
 
 shape Summary
+  day: number
   week: number
   currentDays: number
   longestDays: number
@@ -86,9 +89,12 @@ shape AppView
   hasScan: bool
   scanDate: string
   nMetrics: number
+  nMovable: number
   score: string
   low: string
   high: string
+  lowN: number
+  highN: number
   pct: string
   tier: string
   modelVersion: string
@@ -106,23 +112,32 @@ shape Reply
   ok: bool
   error: string
 
-fn tabTitle(name: string): string = name == "today" ? t("today.title") : name == "plan" ? t("plan.title") : name == "path" ? t("journey.title") : t("settings.title")
-fn tabSymbol(name: string): string = name == "today" ? "symbol:home" : name == "plan" ? "symbol:list" : name == "path" ? "symbol:calendar" : "symbol:person"
+shape TaskReply
+  ok: bool
+  error: string
+  dayCompleted: bool
+
+fn tabTitle(name: string): string = name == "today" ? t("today.title") : name == "path" ? t("journey.tab") : name == "metrics" ? t("results.title") : t("settings.title")
 fn goalLabel(g: string): string = g == "sharper_jawline" ? t("onboarding.goal_sharper_jawline") : g == "better_skin" ? t("onboarding.goal_better_skin") : g == "look_leaner" ? t("onboarding.goal_look_leaner") : g == "hair" ? t("onboarding.goal_hair") : g == "eye_area" ? t("onboarding.goal_eye_area") : g == "better_photos" ? t("onboarding.goal_better_photos") : t("onboarding.goal_general")
 fn ageLabel(a: string): string = a == "18-24" ? t("onboarding.about_age_18_24") : a == "25-34" ? t("onboarding.about_age_25_34") : a == "35-44" ? t("onboarding.about_age_35_44") : t("onboarding.about_age_45")
 fn timeLabel(m: number): string = m == 5 ? t("onboarding.time_5") : m == 15 ? t("onboarding.time_15") : t("onboarding.time_30")
+fn timeDetail(m: number): string = m == 5 ? t("onboarding.time_5_detail") : m == 15 ? t("onboarding.time_15_detail") : t("onboarding.time_30_detail")
 fn evidenceLabel(g: string): string = g == "strong" ? t("common.evidence_strong") : g == "moderate" ? t("common.evidence_moderate") : g == "weak" ? t("common.evidence_weak") : g == "community" ? t("common.evidence_community") : t("common.evidence_contradicted")
 fn categoryLabel(c: string): string = c == "low" ? t("common.category_low") : c == "high" ? t("common.category_high") : t("common.category_typical")
-fn tierLong(tier: string): string = tier == "LTN" ? t("common.tier_LTN") : tier == "MTN" ? t("common.tier_MTN") : tier == "HTN" ? t("common.tier_HTN") : tier == "Chadlite" ? t("common.tier_Chadlite") : t("common.tier_Chad")
 fn groupLabel(g: string): string = g == "eyes" ? t("results.group_eyes") : g == "midface" ? t("results.group_midface") : g == "lower" ? t("results.group_lower") : g == "profile" ? t("results.group_profile") : g == "proportion" ? t("results.group_proportion") : t("results.group_appearance")
 fn suppressedLabel(r: string): string = r == "low_confidence" ? t("common.suppressed_low_confidence") : r == "occluded" ? t("common.suppressed_occluded") : r == "pose_missing" ? t("common.suppressed_pose_missing") : r == "not_shipped" ? t("common.suppressed_not_shipped") : ""
 fn reliabilityLabel(r: string): string = r == "A" ? t("metric_detail.reliability_A") : r == "B" ? t("metric_detail.reliability_B") : t("metric_detail.reliability_C")
 fn effortLabel(e: string): string = e == "low" ? t("task_detail.effort_low") : e == "medium" ? t("task_detail.effort_medium") : t("task_detail.effort_high")
-fn metricLine(m: Metric): string = m.suppressed != "" ? suppressedLabel(m.suppressed) : m.value == "" ? categoryLabel(m.category) : `${m.value} · ${categoryLabel(m.category)}`
+fn cadenceLabel(c: string): string = c == "daily" ? t("task_detail.cadence_daily") : c == "weekly" ? t("task_detail.cadence_weekly") : t("task_detail.cadence_once")
 fn gateLabel(i: string): string = i == "0" ? t("capture.gate_angle") : i == "1" ? t("capture.gate_lighting") : i == "2" ? t("capture.gate_distance") : i == "3" ? t("capture.gate_expression") : i == "4" ? t("capture.gate_clear") : t("capture.gate_sharp")
 fn hintLabel(k: string): string = k == "capture.hint_closer" ? t("capture.hint_closer") : k == "capture.hint_further" ? t("capture.hint_further") : k == "capture.hint_yaw" ? t("capture.hint_yaw") : k == "capture.hint_pitch_up" ? t("capture.hint_pitch_up") : k == "capture.hint_pitch_down" ? t("capture.hint_pitch_down") : k == "capture.hint_roll" ? t("capture.hint_roll") : k == "capture.hint_lighting_uneven" ? t("capture.hint_lighting_uneven") : k == "capture.hint_lighting_dark" ? t("capture.hint_lighting_dark") : k == "capture.hint_clipping" ? t("capture.hint_clipping") : k == "capture.hint_expression" ? t("capture.hint_expression") : k == "capture.hint_occlusion" ? t("capture.hint_occlusion") : k == "capture.hint_sharp" ? t("capture.hint_sharp") : t("capture.hint_ready")
-fn stepLabel(i: number): string = i == 0 ? t("processing.step_landmarks") : i == 1 ? t("processing.step_normalise") : i == 2 ? t("processing.step_metrics") : t("processing.step_reference")
-fn weekStatus(w: number, s: Summary): string = s.banked.includes(w) ? t("journey.node_banked") : w == s.week ? t("journey.node_current") : w == 4 or w == 8 ? t("journey.node_scan") : ""
+fn stepLabel(i: number): string = i <= 0 ? t("processing.step_landmarks") : i == 1 ? t("processing.step_normalise") : i == 2 ? t("processing.step_metrics") : t("processing.step_reference")
+fn planName(id: string): string = id == "pro.annual" ? t("paywall.plan_annual") : id == "pro.weekly" ? t("paywall.plan_weekly_name") : t("paywall.plan_lifetime_name")
+fn priceOf(plans: ItemDetails[], id: string): string = match first(plans.filter(p => p.itemId == id)) { case some(p) => p.displayPrice, case none => id == "pro.annual" ? "$34.99" : id == "pro.weekly" ? "$4.99" : "$59.99" }
+fn planLine(id: string, price: string): string = id == "pro.annual" ? t("paywall.plan_annual_trial", price_annual=price) : id == "pro.weekly" ? t("paywall.plan_weekly", price_weekly=price) : t("paywall.plan_lifetime", price_lifetime=price)
+// The path's eight nodes on a 350 × 560 field, as the artboard places them.
+fn nodeX(w: number): number = w == 1 or w == 5 ? 70 : w == 3 or w == 7 ? 280 : 180
+fn nodeY(w: number): number = 34 + 64 * (w - 1) + (w == 8 ? 8 : 0)
 
 component App
   state onboarded = false persist
@@ -166,13 +181,17 @@ component App
   derive buyError = match failure(bought) { case some(f) => f.code == "AbortError" ? "" : t("paywall.failed"), case none => "" }
   resource app = loadApp(today, isPro) as shape AppView else empty() transient
   mutation scanned as shape Reply refreshes app then afterScan
-  mutation taskSet as shape Reply queue refreshes app
+  mutation taskSet as shape TaskReply queue refreshes app then afterTask
   mutation repaired as shape Reply refreshes app
   mutation wiped as shape Reply refreshes app then afterWipe
   derive aboutReady = sex != "" and ageBand != "" and adult and region != ""
   // Consent is per policy version (biometric data policy §5): a new version asks again before the next capture.
   derive policyVersion = "1.0"
   derive consentCurrent = consentedOn != "" and consentPolicy == policyVersion
+  derive left = app.tasks.filter(k => k.cadence == "daily" and not k.done).length
+  // The drawn tab bar shows on the four tab roots only; pushed screens take the whole height.
+  derive atRoot = top(nav).name == "today" or top(nav).name == "path" or top(nav).name == "metrics" or top(nav).name == "you"
+  derive showTabs = onboarded and atRoot
   derive sexPlural = sex == "female" ? t("common.sex_plural_female") : t("common.sex_plural_male")
   task tick mount
     every(60000, step)
@@ -274,11 +293,21 @@ component App
           captureFailed = true
       case none
         captureFailed = true
-  action finish
+  action goHome
+    nav = open(nav, "/")
+  action seeAll
     let home = open(nav, "/")
-    nav = open(home, "/plan")
+    nav = open(home, "/metrics")
   action setTask(id: string, done: bool)
     send taskSet = setTask(id, today, done)
+  // The day's last task: mark the moment once.
+  action afterTask
+    match taskSet
+      case some(r)
+        if r.dayCompleted and top(nav).name != "done"
+          nav = push(nav, "/done")
+      case none
+        declined = declined
   action repair
     send repaired = repairStreak(today)
   action letReset
@@ -318,6 +347,7 @@ component App
     consentedOn = ""
     consentedAt = 0
     consentPolicy = ""
+    streakSeenOn = ""
     nav = open(nav, "/")
 
   view
@@ -327,803 +357,1460 @@ component App
       testId="app"
       width="100%"
       height="100%"
-      display="flex"
-      flex-direction="column"
-      column flex=1 min-height=0 position="relative"
+      position="relative"
+      background-color="bg.paper"
+      color="ink.main"
+      font-family="Inter Tight"
+      font-variant-numeric="tabular-nums"
+      column position="absolute" inset=0
         for t in nav.tabs key=t.name
           column role="tabpanel" id=`panel-${t.name}` position="absolute" inset=0
             for e in t.stack key=e.id
               if e.name == "today" and not onboarded
-                column navigationKey=`${e.id}` navigationBar="none" position="absolute" inset=0
+                column navigationKey=`${e.id}`
+                  navigationBar="none"
+                  position="absolute"
+                  inset=0
+                  background-color="bg.paper"
                   scroll flex=1 min-height=0
-                    column min-height="100%"
-                      box-sizing="border-box"
-                      padding=24
-                      gap=16
-                      justify-content="center"
-                      max-width="30rem"
+                    column padding="0 20px"
+                      gap=0
+                      max-width="26.25rem"
                       margin-left="auto"
                       margin-right="auto"
-                      text t("onboarding.start_title") role="heading"
+                      box-sizing="border-box"
+                      width="100%"
+                      row align-items="center" min-height=56
+                        Mark(name="Mog")
+                      view margin-top=24
+                        FaceArt(value="", tall=true)
+                      text t("onboarding.start_title") class=Display
+                        role="heading"
                         aria-level=1
-                        font="-exact-large-title"
+                        font-size="2.75rem"
+                        line-height=1.3
+                        margin-top=28
                         -exact-fit="shrink"
-                      text t("onboarding.start_body") color="-exact-secondary-label"
-                      text t("onboarding.start_age_note") font="-exact-footnote"
-                        color="-exact-secondary-label"
-                  button press=visit("/start/goals") buttonStyle="filled" margin=24 testId="start"
-                    text t("onboarding.start_cta")
+                      text t("onboarding.start_body") class=Body
+                        font-size="1rem"
+                        line-height="1.4375rem"
+                        margin-top=14
+                  column padding="12px 20px 22px"
+                    gap=10
+                    max-width="26.25rem"
+                    margin-left="auto"
+                    margin-right="auto"
+                    box-sizing="border-box"
+                    width="100%"
+                    Primary(
+                      label=t("onboarding.start_cta"),
+                      go=visit("/start/goals"),
+                      off=false,
+                      id="start"
+                    )
+                    text t("onboarding.start_age_note") class=Caption text-align="center"
               else if e.name == "today"
                 column navigationKey=`${e.id}`
-                  navigationScroll=`content-${e.id}`
+                  navigationBar="none"
                   position="absolute"
                   inset=0
-                  header
-                    text t("today.title") role="heading" aria-level=1
-                  if not app.hasScan
-                    EmptyState(
-                      symbol="symbol:camera",
-                      title=t("today.empty_title"),
-                      message=t("today.empty_body")
-                    )
-                      button press=startScan buttonStyle="filled" testId="scan-empty"
-                        text t("today.empty_cta")
-                  else
-                    list id=`content-${e.id}`
-                      appearance="auto"
-                      listStyle="inset-grouped"
-                      flex=1
-                      min-height=0
-                      testId="today-list"
-                      section background-color="transparent"
-                        SummaryCard(
-                          label=t("today.greeting_week", week=`${app.summary.week}`),
-                          value=(app.summary.currentDays == 0 ? t("today.streak_zero") : app.summary.currentDays == 1 ? t("today.streak_single") : t("today.streak_days", streak=`${app.summary.currentDays}`)),
-                          detail=t("today.week_banking", days=`${app.summary.thisWeekDays}`),
-                          progress=some(app.summary.thisWeekDays / 5),
-                          symbol=none
-                        )
-                      if app.summary.atRisk and streakSeenOn != today
-                        if app.summary.repairAvailable
-                          section testId="streak-save"
-                            header
-                              text t("streak.save_title")
-                            text t("streak.save_body")
-                            button press=repair testId="repair"
-                              text t("streak.save_cta")
-                            button press=letReset testId="let-reset"
-                              text t("streak.save_decline")
-                            footer
-                              text t("streak.repair_note")
-                        else
-                          section testId="streak-used"
-                            header
-                              text t("streak.save_unavailable_title")
-                            text t("streak.save_unavailable_body")
-                            button press=letReset testId="streak-okay"
-                              text t("streak.save_unavailable_cta")
-                      section
-                        header
-                          text t("today.tasks_header")
-                        for k in app.tasks key=k.id
-                          row gap=12 align-items="center"
-                            input type="checkbox"
-                              checked=k.done
-                              change=setTask(k.id)
-                              aria-label=k.title
-                              testId=`task-${k.id}`
-                            link href=path("task", k.id) testId=`open-${k.id}` flex=1 min-width=0
-                              RowText(
-                                title=k.title,
-                                detail=(k.cadence == "weekly" ? t("task_detail.weekly_progress", done=`${k.weeklyDone}`, target=`${k.weeklyTarget}`) : ""),
-                                value=none
+                  background-color="bg.paper"
+                  box-sizing="border-box"
+                  padding-bottom="calc(60px + env(safe-area-inset-bottom))"
+                  scroll flex=1 min-height=0 testId="today-list"
+                    column padding="0 20px 24px"
+                      max-width="26.25rem"
+                      margin-left="auto"
+                      margin-right="auto"
+                      box-sizing="border-box"
+                      width="100%"
+                      row align-items="center" justify-content="space-between" min-height=56
+                        Mark(name="Mog")
+                        StreakPill(count=app.summary.currentDays)
+                      text t("today.day_title", day=`${app.summary.day}`) class=Display
+                        role="heading"
+                        aria-level=1
+                        font-size="3.25rem"
+                        line-height=1.3
+                        margin-top=6
+                        -exact-fit="shrink"
+
+                        testId="day"
+                      text (left == 0 ? t("today.all_done") : left == 1 ? t("today.left_one") : t("today.left_many", n=`${left}`)) class=T3
+                        color="ink.soft"
+                        margin-top=10
+                        testId="left"
+                      row align-items="baseline"
+                        justify-content="space-between"
+                        margin-top=18
+                        margin-bottom=8
+                        gap=8
+                        flex-wrap="wrap"
+                        Label(label=t("today.greeting_week", week=`${app.summary.week}`))
+                        text (app.summary.banked.includes(app.summary.week) ? t("today.week_banked", week=`${app.summary.week}`) : t("today.week_banking", days=`${app.summary.thisWeekDays}`)) font-size="0.75rem"
+                          font-weight=600
+                          color="ink.mute"
+                          testId="banking"
+                      Pips(days=app.summary.thisWeekDays)
+                      column gap=10 margin-top=24
+                        if app.summary.atRisk and streakSeenOn != today
+                          column class=CardBox
+                            border-color="flame.icon"
+                            padding=16
+                            gap=10
+                            testId=(app.summary.repairAvailable ? "streak-save" : "streak-used")
+                            text t("streak.save_title") class=T3
+                            text (app.summary.repairAvailable ? t("streak.save_body") : t("streak.save_unavailable_body")) class=Body
+                            if app.summary.repairAvailable
+                              Primary(label=t("streak.save_cta"), go=repair, off=false, id="repair")
+                              Quiet(label=t("streak.save_decline"), go=letReset, id="let-reset")
+                              text t("streak.repair_note") class=Caption text-align="center"
+                            else
+                              Secondary(
+                                label=t("streak.save_unavailable_cta"),
+                                go=letReset,
+                                id="streak-okay"
                               )
-                              image "symbol:forward-chevron"
-                        footer
-                          text (app.summary.dayComplete ? t("today.all_done_title", streak=`${app.summary.currentDays}`) : "") testId="day-done"
-                      section
                         if app.summary.scanWindow > 0
-                          row padding-top=8 padding-bottom=8
-                            column gap=4 flex=1 min-width=0
-                              text t("today.scan_open_title", week=`${app.summary.scanWindow}`) font="-exact-headline"
-                              text t("today.scan_open_body") color="-exact-secondary-label"
-                          button press=startScan testId="rescan"
-                            text t("today.scan_open_cta")
-                        else if app.summary.daysUntilScan == 1
-                          text t("today.scan_countdown_one")
-                        else if app.summary.daysUntilScan > 1
-                          text t("today.scan_countdown", days=`${app.summary.daysUntilScan}`) testId="countdown"
-                        link href=path("results") testId="open-results"
-                          text t("results.title")
-                          image "symbol:forward-chevron"
+                          column class=CardBox
+                            border="2px solid"
+                            border-color="accent.main"
+                            border-radius=20
+                            padding=18
+                            gap=12
+                            column gap=2
+                              text t("today.scan_open_title", week=`${app.summary.scanWindow}`) class=T3
+                              text t("today.scan_open_body") class=Detail
+                            Primary(
+                              label=t("today.scan_open_cta"),
+                              go=startScan,
+                              off=false,
+                              id="rescan"
+                            )
+                        for k in app.tasks key=k.id
+                          row class=(k.done ? CardBox : LipBox)
+                            align-items="center"
+                            gap=4
+                            padding="6px 16px 6px 8px"
+                            button appearance="none"
+                              role="checkbox"
+                              aria-checked=k.done
+                              aria-label=k.title
+                              press=setTask(k.id, not k.done)
+                              testId=`task-${k.id}`
+                              display="flex"
+                              align-items="center"
+                              justify-content="center"
+                              width=44
+                              height=44
+                              flex-shrink=0
+                              Check(done=k.done)
+                            link href=path("task", k.id)
+                              testId=`open-${k.id}`
+                              display="flex"
+                              align-items="center"
+                              gap=12
+                              flex=1
+                              min-width=0
+                              padding="8px 0"
+                              column flex=1 min-width=0 gap=1
+                                text k.title class=RowTitle
+                                if k.done
+                                  text t("today.task_done") class=Detail color="positive.text"
+                                else if k.cadence == "weekly"
+                                  text t("task_detail.weekly_progress", done=`${k.weeklyDone}`, target=`${k.weeklyTarget}`) class=Detail
+                                else if k.basedOn != ""
+                                  text k.basedOn class=Detail
+                              Chevron()
+                        link href=path("plan")
+                          class=LipBox
+                          testId="open-plan"
+                          display="flex"
+                          align-items="center"
+                          gap=12
+                          padding="14px 16px"
+                          text t("today.plan_link") class=RowTitle flex=1
+                          text (app.plan.length == 1 ? t("plan.count_one") : t("plan.count", n=`${app.plan.length}`)) class=Detail
+                          Chevron()
+                        if app.summary.scanWindow == 0 and app.summary.daysUntilScan > 0
+                          row class=RaisedBox
+                            align-items="center"
+                            gap=12
+                            padding="14px 16px"
+                            margin-top=4
+                            testId="countdown"
+                            Lock()
+                            column flex=1 min-width=0 gap=2
+                              text (app.summary.daysUntilScan == 1 ? t("today.scan_countdown_one") : t("today.scan_countdown", days=`${app.summary.daysUntilScan}`)) font-size="0.875rem"
+                                font-weight=600
+                                color="ink.soft"
+                              text t("today.scan_locked_why") class=Caption
               else if e.name == "goals"
                 column navigationKey=`${e.id}`
-                  navigationScroll=`content-${e.id}`
+                  navigationBar="none"
                   position="absolute"
                   inset=0
-                  header
-                    text t("onboarding.goals_title") role="heading" aria-level=2
-                  list id=`content-${e.id}`
-                    appearance="auto"
-                    listStyle="inset-grouped"
-                    flex=1
-                    min-height=0
-                    section
-                      header
-                        text t("onboarding.goals_body")
-                      for g in ["sharper_jawline", "better_skin", "look_leaner", "hair", "eye_area", "better_photos", "general"] key=g
-                        button role="checkbox"
-                          aria-checked=goals.includes(g)
-                          press=toggleGoal(g)
-                          testId=`goal-${g}`
-                          text goalLabel(g) flex=1
-                          if goals.includes(g)
-                            text `${goals.indexOf(g) + 1}` color="-exact-secondary-label"
-                              font-variant-numeric="tabular-nums"
-                            image "symbol:checkmark"
-                  button press=visit("/start/about")
-                    buttonStyle="filled"
-                    margin=16
-                    disabled=(goals.length == 0)
-                    testId="goals-next"
-                    text t("common.continue")
+                  background-color="bg.paper"
+                  StepBar(step=1, back=back, backLabel=t("common.back"))
+                  scroll flex=1 min-height=0
+                    column padding="0 20px 16px"
+                      max-width="26.25rem"
+                      margin-left="auto"
+                      margin-right="auto"
+                      box-sizing="border-box"
+                      width="100%"
+                      text t("onboarding.goals_title") class=T1
+                        role="heading"
+                        aria-level=1
+                        margin-top=22
+                      text t("onboarding.goals_body") class=Body color="ink.mute" margin-top=8
+                      column gap=9 margin-top=22
+                        for g in ["sharper_jawline", "better_skin", "look_leaner", "hair", "eye_area", "better_photos", "general"] key=g
+                          Option(
+                            label=goalLabel(g),
+                            detail="",
+                            on=goals.includes(g),
+                            mark=`${goals.indexOf(g) + 1}`,
+                            go=toggleGoal(g),
+                            id=`goal-${g}`
+                          )
+                  column padding="12px 20px 26px"
+                    max-width="26.25rem"
+                    margin-left="auto"
+                    margin-right="auto"
+                    box-sizing="border-box"
+                    width="100%"
+                    Primary(
+                      label=t("common.continue"),
+                      go=visit("/start/about"),
+                      off=(goals.length == 0),
+                      id="goals-next"
+                    )
               else if e.name == "about"
                 column navigationKey=`${e.id}`
-                  navigationScroll=`content-${e.id}`
+                  navigationBar="none"
                   position="absolute"
                   inset=0
-                  header
-                    text t("onboarding.about_title") role="heading" aria-level=2
-                  list id=`content-${e.id}`
-                    appearance="auto"
-                    listStyle="inset-grouped"
-                    flex=1
-                    min-height=0
-                    section
-                      header
-                        text t("onboarding.about_sex_label")
-                      for v in ["male", "female"] key=v
-                        button role="radio"
-                          aria-checked=(sex == v)
-                          press=setSex(v)
-                          testId=`sex-${v}`
-                          text (v == "male" ? t("onboarding.about_sex_male") : t("onboarding.about_sex_female")) flex=1
-                          if sex == v
-                            image "symbol:checkmark"
-                      footer
-                        text t("onboarding.about_body")
-                    section
-                      header
-                        text t("onboarding.about_age_label")
-                      for a in ["18-24", "25-34", "35-44", "45+"] key=a
-                        button role="radio"
-                          aria-checked=(ageBand == a)
-                          press=setAge(a)
-                          testId=`age-${a}`
-                          text ageLabel(a) flex=1
-                          if ageBand == a
-                            image "symbol:checkmark"
-                    section
-                      header
-                        text t("onboarding.about_state_label")
-                      for v in ["other", "restricted"] key=v
-                        button role="radio"
-                          aria-checked=(region == v)
-                          press=setRegion(v)
-                          testId=`region-${v}`
-                          text (v == "restricted" ? t("onboarding.about_state_restricted") : t("onboarding.about_state_other")) flex=1
-                          if region == v
-                            image "symbol:checkmark"
-                    section
-                      row
-                        text t("onboarding.about_age_attest") flex=1 min-width=0
+                  background-color="bg.paper"
+                  StepBar(step=2, back=back, backLabel=t("common.back"))
+                  scroll flex=1 min-height=0
+                    column padding="0 20px 16px"
+                      max-width="26.25rem"
+                      margin-left="auto"
+                      margin-right="auto"
+                      box-sizing="border-box"
+                      width="100%"
+                      text t("onboarding.about_title") class=T1
+                        role="heading"
+                        aria-level=1
+                        margin-top=22
+                      text t("onboarding.about_body") class=Body color="ink.mute" margin-top=8
+                      view margin-top=24 margin-bottom=10
+                        Label(label=t("onboarding.about_sex_label"))
+                      row gap=10 flex-wrap="wrap"
+                        for v in ["male", "female"] key=v
+                          view flex="1 1 8rem" min-width=0
+                            Option(
+                              label=(v == "male" ? t("onboarding.about_sex_male") : t("onboarding.about_sex_female")),
+                              detail="",
+                              on=(sex == v),
+                              mark="",
+                              go=setSex(v),
+                              id=`sex-${v}`
+                            )
+                      view margin-top=22 margin-bottom=10
+                        Label(label=t("onboarding.about_age_label"))
+                      row gap=10 flex-wrap="wrap"
+                        for a in ["18-24", "25-34", "35-44", "45+"] key=a
+                          view flex="1 1 8rem" min-width=0
+                            Option(
+                              label=ageLabel(a),
+                              detail="",
+                              on=(ageBand == a),
+                              mark="",
+                              go=setAge(a),
+                              id=`age-${a}`
+                            )
+                      view margin-top=22 margin-bottom=10
+                        Label(label=t("onboarding.about_state_label"))
+                      column gap=9
+                        for v in ["other", "restricted"] key=v
+                          Option(
+                            label=(v == "restricted" ? t("onboarding.about_state_restricted") : t("onboarding.about_state_other")),
+                            detail="",
+                            on=(region == v),
+                            mark="",
+                            go=setRegion(v),
+                            id=`region-${v}`
+                          )
+                      row class=RaisedBox
+                        align-items="center"
+                        gap=12
+                        padding="14px 16px"
+                        margin-top=22
+                        text t("onboarding.about_age_attest") class=RowTitle flex=1 min-width=0
                         input type="checkbox" switch
                           checked=adult
                           change=setAdult
                           aria-label=t("onboarding.about_age_attest")
                           testId="adult"
-                  button press=visit("/start/time")
-                    buttonStyle="filled"
-                    margin=16
-                    disabled=(not aboutReady)
-                    testId="about-next"
-                    text t("common.continue")
+                  column padding="12px 20px 26px"
+                    max-width="26.25rem"
+                    margin-left="auto"
+                    margin-right="auto"
+                    box-sizing="border-box"
+                    width="100%"
+                    Primary(
+                      label=t("common.continue"),
+                      go=visit("/start/time"),
+                      off=(not aboutReady),
+                      id="about-next"
+                    )
               else if e.name == "time"
                 column navigationKey=`${e.id}`
-                  navigationScroll=`content-${e.id}`
+                  navigationBar="none"
                   position="absolute"
                   inset=0
-                  header
-                    text t("onboarding.time_title") role="heading" aria-level=2
-                  list id=`content-${e.id}`
-                    appearance="auto"
-                    listStyle="inset-grouped"
-                    flex=1
-                    min-height=0
-                    section
-                      header
-                        text t("onboarding.time_body")
-                      for m in [5, 15, 30] key=m
-                        button role="radio"
-                          aria-checked=(timeBudget == m)
-                          press=setTime(m)
-                          testId=`time-${m}`
-                          text timeLabel(m) flex=1
-                          if timeBudget == m
-                            image "symbol:checkmark"
-                  button press=visit("/start/consent")
-                    buttonStyle="filled"
-                    margin=16
-                    testId="time-next"
-                    text t("common.continue")
+                  background-color="bg.paper"
+                  StepBar(step=3, back=back, backLabel=t("common.back"))
+                  scroll flex=1 min-height=0
+                    column padding="0 20px 16px"
+                      max-width="26.25rem"
+                      margin-left="auto"
+                      margin-right="auto"
+                      box-sizing="border-box"
+                      width="100%"
+                      text t("onboarding.time_title") class=T1
+                        role="heading"
+                        aria-level=1
+                        margin-top=22
+                      text t("onboarding.time_body") class=Body color="ink.mute" margin-top=8
+                      column gap=10 margin-top=22
+                        for m in [5, 15, 30] key=m
+                          Option(
+                            label=timeLabel(m),
+                            detail=timeDetail(m),
+                            on=(timeBudget == m),
+                            mark="",
+                            go=setTime(m),
+                            id=`time-${m}`
+                          )
+                      column class=RaisedBox padding=16 gap=6 margin-top=22
+                        Label(label=t("onboarding.time_next_label"))
+                        text t("onboarding.time_next_body") class=Body
+                  column padding="12px 20px 26px"
+                    max-width="26.25rem"
+                    margin-left="auto"
+                    margin-right="auto"
+                    box-sizing="border-box"
+                    width="100%"
+                    Primary(
+                      label=t("common.continue"),
+                      go=visit("/start/consent"),
+                      off=false,
+                      id="time-next"
+                    )
               else if e.name == "consent"
                 column navigationKey=`${e.id}`
-                  navigationScroll=`content-${e.id}`
+                  navigationBar="none"
                   position="absolute"
                   inset=0
-                  header
-                    text t("consent.title") role="heading" aria-level=2
-                  list id=`content-${e.id}`
-                    appearance="auto"
-                    listStyle="inset-grouped"
-                    flex=1
-                    min-height=0
-                    section
-                      header
-                        text t("consent.body_1")
-                      row padding-top=8 padding-bottom=8
-                        text t("consent.point_captured") flex=1 min-width=0
-                      row padding-top=8 padding-bottom=8
-                        text t("consent.point_processed") flex=1 min-width=0
-                      row padding-top=8 padding-bottom=8
-                        text t("consent.point_retained") flex=1 min-width=0
-                      row padding-top=8 padding-bottom=8
-                        text t("consent.point_cloud") flex=1 min-width=0
-                      row padding-top=8 padding-bottom=8
-                        text t("consent.point_delete") flex=1 min-width=0
-                      row padding-top=8 padding-bottom=8
-                        text t("consent.point_policy") flex=1 min-width=0
-                    if region != "restricted"
-                      section
-                        text t("consent.affirm_label", app_name="Mog")
-                        footer
-                          text (declined ? t("consent.decline_body") : "") testId="declined"
-                  if region == "restricted"
-                    column gap=8 padding=16 testId="state-block"
-                      text t("consent.state_block_title") font="-exact-headline"
-                      text t("consent.state_block_body") color="-exact-secondary-label"
-                  else
-                    column gap=8 padding=16
-                      button press=consent buttonStyle="filled" testId="consent"
-                        text t("consent.affirm_cta")
-                      button press=decline testId="decline"
-                        text t("consent.decline_cta")
+                  background-color="bg.paper"
+                  NavBar(title="", trailing="", close=false, back=back, backLabel=t("common.back"))
+                  scroll flex=1 min-height=0
+                    column padding="0 20px 16px"
+                      max-width="26.25rem"
+                      margin-left="auto"
+                      margin-right="auto"
+                      box-sizing="border-box"
+                      width="100%"
+                      text t("consent.title") class=T1 role="heading" aria-level=1
+                      column border="2px solid"
+                        border-color="ink.main"
+                        border-radius=20
+                        background-color="bg.card"
+                        padding=20
+                        gap=16
+                        margin-top=18
+                        text t("consent.body_1") class=Body color="ink.main"
+                        for i in [1, 2, 3, 4] key=i
+                          row gap=12 align-items="flex-start"
+                            svg width=20
+                              height=20
+                              viewBox="0 0 20 20"
+                              aria-hidden=true
+                              flex-shrink=0
+                              margin-top=1
+                              circle cx=10
+                                cy=10
+                                r=8.5
+                                stroke="accent.main"
+                                stroke-width=1.8
+                                fill="none"
+                              path d="M6.3 10.4l2.4 2.4 5-5.2"
+                                stroke="accent.main"
+                                stroke-width=1.8
+                                fill="none"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            column flex=1 min-width=0 gap=2
+                              text (i == 1 ? t("consent.p1_title") : i == 2 ? t("consent.p2_title") : i == 3 ? t("consent.p3_title") : t("consent.p4_title")) font-size="0.9375rem"
+                                font-weight=600
+                                color="ink.main"
+                              text (i == 1 ? t("consent.p1_body") : i == 2 ? t("consent.p2_body") : i == 3 ? t("consent.p3_body") : t("consent.p4_body")) class=Detail
+                                color="ink.soft"
+                        text t("consent.point_policy") class=Detail
+                      if region == "restricted"
+                        column class=RaisedBox padding=16 gap=4 margin-top=16 testId="state-block"
+                          text t("consent.state_block_title") class=T3
+                          text t("consent.state_block_body") class=Body
+                      else
+                        text (declined ? t("consent.decline_body") : t("consent.affirm_label", app_name="Mog")) class=Detail
+                          text-align="center"
+                          margin-top=16
+                          testId="declined"
+                  if region != "restricted"
+                    column padding="12px 20px 22px"
+                      gap=4
+                      max-width="26.25rem"
+                      margin-left="auto"
+                      margin-right="auto"
+                      box-sizing="border-box"
+                      width="100%"
+                      Primary(label=t("consent.affirm_cta"), go=consent, off=false, id="consent")
+                      Quiet(label=t("consent.decline_cta"), go=decline, id="decline")
               else if e.name == "capture"
                 column navigationKey=`${e.id}`
                   navigationBar="none"
                   position="absolute"
                   inset=0
-                  color-scheme="dark"
-                  background-color="-exact-background"
-                  scroll flex=1 min-height=0
-                    column padding=24
-                      gap=16
-                      max-width="30rem"
-                      margin-left="auto"
-                      margin-right="auto"
-                      box-sizing="border-box"
-                      text t("capture.front_title") font="-exact-large-title"
-                        color="-exact-label"
-                        testId="capture-title"
-                      if captureUnsupported
-                        text t("capture.unsupported") color="-exact-secondary-label"
-                          testId="capture-unsupported"
-                      else if captureDenied
-                        text t("capture.camera_denied") color="-exact-secondary-label"
-                          testId="capture-denied"
-                        button press=openSettings buttonStyle="bordered" testId="open-settings"
-                          text t("capture.open_settings")
-                      else if captureFailed
-                        text t("capture.aborted_title") font="-exact-headline"
-                          color="-exact-label"
-                          testId="capture-failed"
-                        text t("capture.failed_body") color="-exact-secondary-label"
-                        button press=resetCapture buttonStyle="bordered" testId="retake"
-                          text t("common.retake")
-                      else if captured == "" and consentCurrent
-                        mog-capture message=onCapture
-                          height="20rem"
-                          border-radius=16
-                          aria-label=t("capture.front_title")
-                        if captureAbort != ""
-                          text t("capture.aborted_title") font="-exact-headline"
-                            color="-exact-label"
-                            testId="capture-aborted"
-                          text t("capture.aborted_body", gate=gateLabel(captureAbort)) color="-exact-secondary-label"
-                        text hintLabel(captureHint) color="-exact-secondary-label"
-                          testId="capture-hint"
-                      list appearance="auto" listStyle="inset-grouped"
-                        section
-                          for i in [0, 1, 2, 3, 4, 5] key=i
-                            row
-                              text gateLabel(`${i}`) flex=1
-                              if captured != "" or captureMask.slice(i, i + 1) == "1"
-                                image "symbol:checkmark" aria-label=gateLabel(`${i}`)
-                      if captured != ""
-                        text t("processing.title") font="-exact-title2"
-                          -exact-fit="shrink"
-                          color="-exact-label"
-                          testId="processing"
-                        list appearance="auto" listStyle="inset-grouped"
-                          section
-                            for i in [0, 1, 2, 3] key=i
-                              row
-                                text stepLabel(i) flex=1
-                                if capStep > i
-                                  image "symbol:checkmark" aria-label=stepLabel(i)
-                        text t("processing.footnote") font="-exact-footnote"
-                          color="-exact-secondary-label"
+                  background-color="bg.paper"
+                  NavBar(
+                    title=t("capture.front_title"),
+                    trailing="",
+                    close=true,
+                    back=back,
+                    backLabel=t("common.close")
+                  )
+                  column flex=1
+                    min-height=0
+                    padding="0 20px 22px"
+                    gap=14
+                    max-width="26.25rem"
+                    margin-left="auto"
+                    margin-right="auto"
+                    box-sizing="border-box"
+                    width="100%"
+                    if captured != ""
+                      column flex=1
+                        min-height=0
+                        align-items="center"
+                        justify-content="center"
+                        gap=14
+                        view width="100%" max-width="17rem"
+                          FaceArt(value="", tall=false)
+                        row width="100%"
+                          max-width="17rem"
+                          height=4
+                          border-radius=2
+                          background-color="bg.track"
+                          overflow="hidden"
+                          view width=`${capStep * 25}%` height=4 background-color="accent.main"
+                        text t("processing.title") class=T3 testId="processing"
+                        text stepLabel(capStep) class=Detail
+                          text-align="center"
+                          testId="processing-step"
+                      row class=RaisedBox
+                        align-self="center"
+                        align-items="center"
+                        gap=8
+                        padding="8px 14px"
+                        border-radius=999
+                        Lock()
+                        text t("processing.footnote") class=Caption
+                    else if captureUnsupported or captureDenied or captureFailed
+                      column flex=1 min-height=0 justify-content="center" gap=14
+                        if captureFailed
+                          text t("capture.aborted_title") class=T2 testId="capture-failed"
+                        text (captureUnsupported ? t("capture.unsupported") : captureDenied ? t("capture.camera_denied") : t("capture.failed_body")) class=Body
+                          testId=(captureUnsupported ? "capture-unsupported" : captureDenied ? "capture-denied" : "capture-failed-body")
+                        if captureDenied
+                          Secondary(
+                            label=t("capture.open_settings"),
+                            go=openSettings,
+                            id="open-settings"
+                          )
+                        if captureFailed
+                          Secondary(label=t("common.retake"), go=resetCapture, id="retake")
+                    else
+                      text t("capture.intro") class=Body
+                      row gap=6 flex-wrap="wrap"
+                        for i in [0, 1, 2, 3, 4, 5] key=i
+                          Gate(label=gateLabel(`${i}`), pass=(captureMask.slice(i, i + 1) == "1"))
+                      view position="relative"
+                        flex=1
+                        min-height=240
+                        border-radius=20
+                        background-color="viewport.ground"
+                        overflow="hidden"
+                        if consentCurrent
+                          mog-capture message=onCapture
+                            position="absolute"
+                            inset=0
+                            aria-label=t("capture.front_title")
+                        svg viewBox="0 0 350 500"
+                          position="absolute"
+                          inset=0
+                          width="100%"
+                          height="100%"
+                          aria-hidden=true
+                          pointer-events="none"
+                          ellipse cx=175
+                            cy=250
+                            rx=97
+                            ry=130
+                            fill="none"
+                            stroke="viewport.guide"
+                            stroke-width=1.5
+                          path d="M175 132v26M175 342v26M97 250h26M227 250h26"
+                            stroke="viewport.guide"
+                            stroke-width=1.5
+                            opacity=0.6
+                        row position="absolute"
+                          left=0
+                          right=0
+                          bottom=18
+                          justify-content="center"
+                          padding="0 16px"
+                          row background-color="bg.card" border-radius=999 padding="9px 18px"
+                            text (captureAbort != "" ? t("capture.aborted_body", gate=gateLabel(captureAbort)) : hintLabel(captureHint)) font-size="0.9375rem"
+                              font-weight=600
+                              color="ink.main"
+                              text-align="center"
+                              testId="capture-hint"
+                      text t("capture.shutter_disabled_note") class=Detail text-align="center"
               else if e.name == "reveal"
-                column navigationKey=`${e.id}` navigationBar="none" position="absolute" inset=0
-                  scroll flex=1 min-height=0
-                    column min-height="100%"
-                      box-sizing="border-box"
-                      padding=24
-                      gap=12
-                      justify-content="center"
-                      text-align="center"
-                      max-width="30rem"
-                      margin-left="auto"
-                      margin-right="auto"
-                      text t("reveal.eyebrow") font="-exact-subheadline"
-                        color="-exact-secondary-label"
-                      text t("common.likely_band", low=app.low, high=app.high) font="-exact-large-title"
-                        -exact-fit="shrink"
-                        white-space="nowrap"
-                        font-variant-numeric="tabular-nums"
-                        testId="reveal-band"
-                      text app.score font="-exact-title2"
-                        font-variant-numeric="tabular-nums"
-                        color="-exact-secondary-label"
-                        testId="reveal-score"
-                      text t("common.tier_subline", tier_long=tierLong(app.tier), pct=app.pct) testId="reveal-tier"
-                      text t("reveal.what_it_is") font="-exact-footnote"
-                        color="-exact-secondary-label"
-                      text t("reveal.model_version", version=app.modelVersion) font="-exact-caption1"
-                        color="-exact-secondary-label"
-                  button press=visit("/results") buttonStyle="filled" margin=24 testId="see-results"
-                    text t("reveal.cta_results")
-              else if e.name == "results"
                 column navigationKey=`${e.id}`
-                  navigationScroll=`content-${e.id}`
+                  navigationBar="none"
                   position="absolute"
                   inset=0
-                  header
-                    text t("results.title") role="heading" aria-level=2
-                  list id=`content-${e.id}`
-                    appearance="auto"
-                    listStyle="inset-grouped"
-                    flex=1
-                    min-height=0
-                    section background-color="transparent"
-                      column gap=4
-                        text t("reveal.eyebrow") font="-exact-subheadline"
-                          color="-exact-secondary-label"
-                        text t("common.likely_band", low=app.low, high=app.high) font="-exact-title1"
+                  background-color="bg.paper"
+                  scroll flex=1 min-height=0
+                    column align-items="center"
+                      padding="0 20px 12px"
+                      max-width="26.25rem"
+                      margin-left="auto"
+                      margin-right="auto"
+                      box-sizing="border-box"
+                      width="100%"
+                      row align-items="center" min-height=58
+                        text t("reveal.eyebrow") class=LabelText letter-spacing="0.08em"
+                      Ring(low=app.lowN, high=app.highN)
+                        text app.score class=Display
+                          font-size=104
+                          line-height=1.3
+                          letter-spacing="-0.035em"
                           -exact-fit="shrink"
                           white-space="nowrap"
-                          font-variant-numeric="tabular-nums"
-                          testId="results-band"
-                        text t("common.tier_subline", tier_long=tierLong(app.tier), pct=app.pct) color="-exact-secondary-label"
-                    for pick in app.metrics.filter(m => m.id == app.strength) key=pick.id
-                      section
-                        header
-                          text t("results.section_strength")
-                        link href=path("metric", pick.id) testId="strength"
-                          RowText(title=pick.short, detail=metricLine(pick), value=none)
-                          image "symbol:forward-chevron"
-                    for pick in app.metrics.filter(m => m.id == app.improvable) key=pick.id
-                      section
-                        header
-                          text t("results.section_improvable")
-                        link href=path("metric", pick.id) testId="improvable"
-                          RowText(title=pick.short, detail=metricLine(pick), value=none)
-                          image "symbol:forward-chevron"
-                    for g in ["eyes", "midface", "lower", "proportion", "profile", "appearance"] key=g
-                      section
-                        header
-                          text groupLabel(g)
-                        for m in app.metrics.filter(x => x.group == g) key=m.id
-                          link href=(m.free ? path("metric", m.id) : path("paywall"))
-                            testId=`metric-${m.id}`
-                            RowText(
-                              title=(m.free ? m.short : t("common.measured_locked", metric=m.short)),
-                              detail=(m.free ? metricLine(m) : ""),
-                              value=none
-                            )
-                            if not m.free
-                              image "symbol:lock" aria-label=t("paywall.title")
-                            else
-                              image "symbol:forward-chevron"
-                    section
-                      footer
-                        text t("results.free_locked_note")
-                  button press=finish buttonStyle="filled" margin=16 testId="see-plan"
-                    text t("results.see_plan")
-              else if e.name == "metric"
-                column navigationKey=`${e.id}`
-                  navigationScroll=`content-${e.id}`
-                  position="absolute"
-                  inset=0
-                  for m in app.metrics.filter(x => x.id == e.params.id) key=m.id
-                    header
-                      text m.name role="heading" aria-level=2
-                    list id=`content-${e.id}`
-                      appearance="auto"
-                      listStyle="inset-grouped"
-                      flex=1
-                      min-height=0
-                      section
-                        if m.value != ""
-                          row
-                            text t("metric_detail.measured") flex=1
-                            text m.value font-variant-numeric="tabular-nums" testId="metric-value"
-                        row
-                          text t("metric_detail.reading") flex=1
-                          text categoryLabel(m.category)
-                        footer
-                          text (m.refLow == "" ? "" : t("common.typical_range", sex_plural=sexPlural, ref_low=m.refLow, ref_high=m.refHigh))
-                      section
-                        header
-                          text t("metric_detail.evidence")
-                        row
-                          Badge(label=evidenceLabel(m.evidence), tint=none)
-                        text reliabilityLabel(m.reliability) color="-exact-secondary-label"
-                        if m.contradicted
-                          text t("metric_detail.fwhr_explainer")
-                        else if m.community
-                          text t("metric_detail.community_explainer")
-                      if m.plain != ""
-                        section
-                          text m.plain
+                          max-width="12.5rem"
+                          testId="reveal-score"
+                        text t("common.likely_band", low=app.low, high=app.high) font-size="0.9375rem"
+                          font-weight=600
+                          letter-spacing="-0.01em"
+                          color="ink.soft"
+                          margin-top=8
+                          testId="reveal-band"
+                      row class=LipBox
+                        border-radius=999
+                        align-items="center"
+                        gap=8
+                        padding="9px 18px 9px 14px"
+                        margin-top=20
+                        svg width=20 height=20 viewBox="0 0 22 22" aria-hidden=true
+                          path d="M11 3l2.2 4.8 5.3.6-3.9 3.6 1 5.2-4.6-2.6-4.6 2.6 1-5.2L4.5 8.4l5.3-.6z"
+                            fill="brand.bronze"
+                        text app.tier font-size="1rem"
+                          font-weight=700
+                          letter-spacing="-0.014em"
+                          color="ink.main"
+                          testId="reveal-tier"
+                        text `· ${t("common.tier_pill", pct=app.pct)}` font-size="0.875rem"
+                          font-weight=500
+                          color="ink.mute"
+                          testId="reveal-pct"
+                      row gap=10 margin-top=28 width="100%" flex-wrap="wrap"
+                        Tile(
+                          value=`${app.nMetrics}`,
+                          label=t("reveal.measured_label"),
+                          tone="plain"
+                        )
+                        Tile(
+                          value=`${app.nMovable}`,
+                          label=t("reveal.movable_label"),
+                          tone="accent"
+                        )
+                      text t("reveal.what_it_is") class=Caption text-align="center" margin-top=24
+                  column padding="8px 20px 20px"
+                    gap=4
+                    max-width="26.25rem"
+                    margin-left="auto"
+                    margin-right="auto"
+                    box-sizing="border-box"
+                    width="100%"
+                    Primary(label=t("reveal.cta_start"), go=goHome, off=false, id="start-week")
+                    Quiet(label=t("reveal.cta_all", n=`${app.nMetrics}`), go=seeAll, id="see-all")
               else if e.name == "task"
                 column navigationKey=`${e.id}`
-                  navigationScroll=`content-${e.id}`
+                  navigationBar="none"
                   position="absolute"
                   inset=0
+                  background-color="bg.paper"
+                  NavBar(title="", trailing="", close=false, back=back, backLabel=t("common.back"))
                   for k in app.tasks.filter(x => x.id == e.params.id) key=k.id
-                    header
-                      text k.title role="heading" aria-level=2
-                    list id=`content-${e.id}`
-                      appearance="auto"
-                      listStyle="inset-grouped"
-                      flex=1
-                      min-height=0
-                      section
-                        header
-                          text t("task_detail.why_this")
-                        text k.whyThis testId="task-why"
-                      section
-                        if k.basedOn != ""
-                          row
-                            text t("task_detail.based_on") flex=1
-                            text k.basedOn color="-exact-secondary-label"
-                        row
-                          text t("task_detail.effort") flex=1
-                          text effortLabel(k.effort) color="-exact-secondary-label"
-                        if k.cadence == "weekly"
-                          row
-                            text t("task_detail.weekly_progress", done=`${k.weeklyDone}`, target=`${k.weeklyTarget}`)
-                        footer
-                          text t("task_detail.how_long", low=`${k.weeksLow}`, high=`${k.weeksHigh}`)
-                    button press=setTask(k.id, not k.done)
-                      buttonStyle=(k.done ? "bordered" : "filled")
-                      margin=16
-                      testId="task-toggle"
-                      text (k.done ? t("task_detail.mark_undone") : t("task_detail.mark_done"))
-              else if e.name == "paywall"
+                    scroll flex=1 min-height=0
+                      column padding="0 20px 16px"
+                        gap=12
+                        max-width="26.25rem"
+                        margin-left="auto"
+                        margin-right="auto"
+                        box-sizing="border-box"
+                        width="100%"
+                        column gap=6
+                          Label(
+                            label=(k.cadence == "weekly" ? `${cadenceLabel(k.cadence)} · ${t("task_detail.weekly_progress", done=`${k.weeklyDone}`, target=`${k.weeklyTarget}`)}` : cadenceLabel(k.cadence))
+                          )
+                          text k.title class=T1 role="heading" aria-level=1
+                        column class=WashBox padding=16 gap=6
+                          text t("task_detail.why_this") class=LabelText color="accent.ink"
+                          text k.whyThis class=Body color="ink.main" testId="task-why"
+                        column class=CardBox padding=16 gap=8
+                          row align-items="center"
+                            justify-content="space-between"
+                            gap=8
+                            flex-wrap="wrap"
+                            Label(label=t("task_detail.how"))
+                            Chip(label=evidenceLabel(k.evidence))
+                          text k.body class=Body
+                        row gap=10 flex-wrap="wrap"
+                          column class=RaisedBox flex="1 1 8rem" padding="12px 14px" gap=4
+                            Label(label=t("task_detail.expect"))
+                            text t("task_detail.how_long", low=`${k.weeksLow}`, high=`${k.weeksHigh}`) class=T3
+                          column class=RaisedBox flex="1 1 8rem" padding="12px 14px" gap=4
+                            Label(label=t("task_detail.effort"))
+                            text effortLabel(k.effort) class=T3
+                    column padding="12px 20px 26px"
+                      max-width="26.25rem"
+                      margin-left="auto"
+                      margin-right="auto"
+                      box-sizing="border-box"
+                      width="100%"
+                      if k.done
+                        Secondary(
+                          label=t("task_detail.mark_undone"),
+                          go=setTask(k.id, false),
+                          id="task-toggle"
+                        )
+                      else
+                        Primary(
+                          label=t("task_detail.mark_done"),
+                          go=setTask(k.id, true),
+                          off=false,
+                          id="task-toggle"
+                        )
+              else if e.name == "done"
                 column navigationKey=`${e.id}`
-                  navigationPresentation="modal"
-                  navigationScroll=`content-${e.id}`
+                  navigationBar="none"
                   position="absolute"
                   inset=0
-                  header display="flex" align-items="center" justify-content="space-between"
-                    button id="back" press=back aria-label=t("common.close")
-                      image "symbol:close"
-                    text t("paywall.title") role="heading"
-                  list id=`content-${e.id}`
-                    appearance="auto"
-                    listStyle="inset-grouped"
-                    flex=1
-                    min-height=0
-                    section
-                      row
-                        text t("paywall.intro") flex=1 min-width=0
-                    section
-                      row
-                        text t("paywall.includes_1", n=`${app.nMetrics}`) flex=1 min-width=0
-                      row
-                        text t("paywall.includes_2") flex=1 min-width=0
-                      row
-                        text t("paywall.includes_3") flex=1 min-width=0
-                      row
-                        text t("paywall.includes_4") flex=1 min-width=0
-                      row
-                        text t("paywall.includes_5") flex=1 min-width=0
-                    // Prices are the store's own strings; where there is no store (the web), the list's.
-                    if plans.length > 0
-                      section
-                        for p in plans key=p.itemId
-                          button role="radio"
-                            aria-checked=(plan == p.itemId)
-                            press=choosePlan(p.itemId)
-                            testId=`plan-${p.itemId}`
-                            text (p.itemId == "pro.annual" ? t("paywall.plan_annual_trial", price_annual=p.displayPrice) : p.itemId == "pro.weekly" ? t("paywall.plan_weekly", price_weekly=p.displayPrice) : t("paywall.plan_lifetime", price_lifetime=p.displayPrice)) flex=1
-                            if plan == p.itemId
-                              image "symbol:checkmark"
-                        footer
-                          text t("paywall.renewal_terms")
-                    else
-                      section
-                        text t("paywall.plan_annual_trial", price_annual="$34.99")
-                        text t("paywall.plan_weekly", price_weekly="$4.99")
-                        text t("paywall.plan_lifetime", price_lifetime="$59.99")
-                        footer
-                          text t("paywall.renewal_terms")
-                  column gap=8 padding=16
-                    if buyNote != "" or buyError != ""
-                      text (buyError != "" and not pending(bought) ? buyError : buyNote) font="-exact-footnote"
-                        color="-exact-secondary-label"
-                        testId="buy-note"
-                    if plans.length > 0
-                      button press=buy buttonStyle="filled" disabled=pending(bought) testId="buy"
-                        text t("paywall.cta")
-                    button press=back testId="keep-free"
-                      text t("paywall.keep_free")
-                    if store.available
-                      button press=restore testId="restore"
-                        text t("common.restore_purchases")
+                  background-color="bg.paper"
+                  scroll flex=1 min-height=0
+                    column align-items="center"
+                      padding="56px 20px 16px"
+                      max-width="26.25rem"
+                      margin-left="auto"
+                      margin-right="auto"
+                      box-sizing="border-box"
+                      width="100%"
+                      view position="relative" width=200 height=200
+                        svg viewBox="0 0 200 200"
+                          position="absolute"
+                          inset=0
+                          width="100%"
+                          height="100%"
+                          aria-hidden=true
+                          for a in [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330] key=a
+                            line x1=100
+                              y1=4
+                              x2=100
+                              y2=18
+                              stroke="positive.fill"
+                              stroke-width=3
+                              stroke-linecap="round"
+                              opacity=0.45
+                              transform=`rotate(${a} 100 100)`
+                          circle cx=100
+                            cy=100
+                            r=66
+                            fill="positive.wash"
+                            stroke="positive.fill"
+                            stroke-width=9
+                        column position="absolute"
+                          inset=0
+                          align-items="center"
+                          justify-content="center"
+                          svg width=56 height=56 viewBox="0 0 30 30" aria-hidden=true
+                            path d="M7 15.5l5.2 5.2L23 10"
+                              stroke="positive.fill"
+                              stroke-width=3
+                              fill="none"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                      text t("day_done.title", day=`${app.summary.day}`) class=Display
+                        role="heading"
+                        aria-level=1
+                        font-size="3.25rem"
+                        line-height=1.3
+                        margin-top=24
+                        -exact-fit="shrink"
+
+                        testId="done-title"
+                      text t("day_done.sub") class=T3 color="ink.soft" margin-top=12
+                      row gap=10 margin-top=28 width="100%" flex-wrap="wrap"
+                        Tile(
+                          value=`${app.summary.currentDays}`,
+                          label=t("day_done.streak_label"),
+                          tone="flame"
+                        )
+                        Tile(
+                          value=`${app.summary.thisWeekDays}/5`,
+                          label=(app.summary.banked.includes(app.summary.week) ? t("day_done.banked_label", week=`${app.summary.week}`) : t("day_done.week_label", week=`${app.summary.week}`)),
+                          tone="positive"
+                        )
+                      text t("day_done.note") class=Caption text-align="center" margin-top=24
+                  column padding="12px 20px 26px"
+                    max-width="26.25rem"
+                    margin-left="auto"
+                    margin-right="auto"
+                    box-sizing="border-box"
+                    width="100%"
+                    Primary(label=t("common.done"), go=goHome, off=false, id="done-ok")
               else if e.name == "plan"
                 column navigationKey=`${e.id}`
-                  navigationScroll=`content-${e.id}`
+                  navigationBar="none"
                   position="absolute"
                   inset=0
-                  header
-                    text t("plan.title") role="heading" aria-level=1
-                  if not app.hasScan
-                    EmptyState(
-                      symbol="symbol:camera",
-                      title=t("today.empty_title"),
-                      message=t("today.empty_body")
-                    )
-                  else
-                    list id=`content-${e.id}`
-                      appearance="auto"
-                      listStyle="inset-grouped"
-                      flex=1
-                      min-height=0
-                      testId="plan-list"
-                      section
-                        header
-                          text t("plan.section_now")
-                        for c in app.plan key=c.ruleId
-                          link href=path("card", c.ruleId) testId=`card-${c.ruleId}`
-                            RowText(title=c.headline, detail=evidenceLabel(c.evidence), value=none)
-                            image "symbol:forward-chevron"
-                        footer
-                          text t("plan.daily_minutes", minutes=`${app.dailyMinutes}`)
+                  background-color="bg.paper"
+                  NavBar(
+                    title=t("plan.title"),
+                    trailing="",
+                    close=false,
+                    back=back,
+                    backLabel=t("common.back")
+                  )
+                  scroll flex=1 min-height=0 testId="plan-list"
+                    column padding="0 20px 24px"
+                      gap=10
+                      max-width="26.25rem"
+                      margin-left="auto"
+                      margin-right="auto"
+                      box-sizing="border-box"
+                      width="100%"
+                      text (app.plan.length == 1 ? t("plan.count_one") : t("plan.count", n=`${app.plan.length}`)) class=Display
+                        role="heading"
+                        aria-level=1
+                        font-size="2.5rem"
+                        line-height=1.3
+                        margin-top=6
+                      text t("plan.intro") class=Body margin-bottom=8
+                      for c in app.plan key=c.ruleId
+                        link href=path("card", c.ruleId)
+                          class=LipBox
+                          testId=`card-${c.ruleId}`
+                          display="flex"
+                          align-items="center"
+                          gap=12
+                          padding="14px 16px"
+                          column flex=1 min-width=0 gap=1
+                            text c.headline class=RowTitle
+                            text evidenceLabel(c.evidence) class=Detail
+                          Chevron()
                       if app.info.length > 0
-                        section
-                          header
-                            text t("plan.section_info")
-                          for c in app.info key=c.ruleId
-                            link href=path("card", c.ruleId) testId=`card-${c.ruleId}`
-                              RowText(
-                                title=c.headline,
-                                detail=evidenceLabel(c.evidence),
-                                value=none
-                              )
-                              image "symbol:forward-chevron"
-                      if app.professional.length > 0
-                        section
-                          header
-                            text t("plan.section_professional")
-                          for c in app.professional key=c.ruleId
-                            link href=path("card", c.ruleId) testId=`card-${c.ruleId}`
-                              RowText(
-                                title=c.headline,
-                                detail=evidenceLabel(c.evidence),
-                                value=none
-                              )
-                              image "symbol:forward-chevron"
-                          footer
-                            text t("plan.professional_footer")
+                        view margin-top=12
+                          Label(label=t("plan.section_info"))
+                        for c in app.info key=c.ruleId
+                          link href=path("card", c.ruleId)
+                            class=LipBox
+                            testId=`card-${c.ruleId}`
+                            display="flex"
+                            align-items="center"
+                            gap=12
+                            padding="14px 16px"
+                            text c.headline class=RowTitle flex=1 min-width=0
+                            Chevron()
+                      for c in app.professional key=c.ruleId
+                        column border="1.5px dashed"
+                          border-color="ink.faint"
+                          border-radius=16
+                          padding=16
+                          gap=6
+                          margin-top=12
+                          testId=`pro-${c.ruleId}`
+                          Label(label=t("plan.section_professional"))
+                          text c.headline class=RowTitle
+                          text c.body class=Detail color="ink.soft"
               else if e.name == "card"
                 column navigationKey=`${e.id}`
-                  navigationScroll=`content-${e.id}`
+                  navigationBar="none"
                   position="absolute"
                   inset=0
-                  for c in app.plan.concat(app.info).concat(app.professional).filter(x => x.ruleId == e.params.id) key=c.ruleId
-                    header
-                      text c.headline role="heading" aria-level=2
-                    list id=`content-${e.id}`
-                      appearance="auto"
-                      listStyle="inset-grouped"
-                      flex=1
-                      min-height=0
-                      section
-                        text c.body testId="card-body"
-                      section
-                        header
-                          text t("task_detail.why_this")
-                        text c.whyThis
-                      section
-                        row
-                          Badge(label=evidenceLabel(c.evidence), tint=none)
-                        row
-                          text t("task_detail.effort") flex=1
-                          text effortLabel(c.effort)
-                        footer
-                          text t("task_detail.how_long", low=`${c.weeksLow}`, high=`${c.weeksHigh}`)
+                  background-color="bg.paper"
+                  NavBar(title="", trailing="", close=false, back=back, backLabel=t("common.back"))
+                  scroll flex=1 min-height=0
+                    for c in app.plan.concat(app.info).filter(x => x.ruleId == e.params.id) key=c.ruleId
+                      column padding="0 20px 24px"
+                        gap=12
+                        max-width="26.25rem"
+                        margin-left="auto"
+                        margin-right="auto"
+                        box-sizing="border-box"
+                        width="100%"
+                        text c.headline class=T1 role="heading" aria-level=1
+                        column class=WashBox padding=16 gap=6
+                          text t("task_detail.why_this") class=LabelText color="accent.ink"
+                          text c.whyThis class=Body color="ink.main"
+                        column class=CardBox padding=16 gap=8
+                          row align-items="center"
+                            justify-content="space-between"
+                            gap=8
+                            flex-wrap="wrap"
+                            Label(label=t("task_detail.how"))
+                            Chip(label=evidenceLabel(c.evidence))
+                          text c.body class=Body testId="card-body"
+                        row gap=10 flex-wrap="wrap"
+                          column class=RaisedBox flex="1 1 8rem" padding="12px 14px" gap=4
+                            Label(label=t("task_detail.expect"))
+                            text t("task_detail.how_long", low=`${c.weeksLow}`, high=`${c.weeksHigh}`) class=T3
+                          column class=RaisedBox flex="1 1 8rem" padding="12px 14px" gap=4
+                            Label(label=t("task_detail.effort"))
+                            text effortLabel(c.effort) class=T3
+              else if e.name == "paywall"
+                column navigationKey=`${e.id}`
+                  navigationBar="none"
+                  navigationPresentation="modal"
+                  position="absolute"
+                  inset=0
+                  background-color="bg.paper"
+                  NavBar(title="", trailing="", close=true, back=back, backLabel=t("common.close"))
+                  scroll flex=1 min-height=0
+                    column padding="0 20px 16px"
+                      max-width="26.25rem"
+                      margin-left="auto"
+                      margin-right="auto"
+                      box-sizing="border-box"
+                      width="100%"
+                      text t("paywall.title") class=Display
+                        role="heading"
+                        aria-level=1
+                        font-size="2.5rem"
+                        line-height=1.3
+                      text t("paywall.intro") class=Body margin-top=10
+                      column class=CardBox overflow="hidden" margin-top=18
+                        row background-color="bg.raised" padding="10px 16px" gap=8
+                          view flex=1
+                          text t("paywall.col_free") class=LabelText
+                            width="3rem"
+                            text-align="center"
+                          text t("paywall.col_pro") class=LabelText
+                            color="ink.main"
+                            width="3rem"
+                            text-align="center"
+                        for i in [1, 2, 3, 4] key=i
+                          row align-items="center"
+                            padding="12px 16px"
+                            gap=8
+                            border-top="1.5px solid"
+                            border-color="line.hair"
+                            text (i == 1 ? t("paywall.row_1") : i == 2 ? t("paywall.row_2") : i == 3 ? t("paywall.row_3", n=`${app.nMetrics}`) : t("paywall.row_4")) font-size="0.875rem"
+                              line-height="1.25rem"
+                              color="ink.main"
+                              flex=1
+                              min-width=0
+                            row width="3rem" justify-content="center"
+                              if i <= 2
+                                svg width=12 height=12 viewBox="0 0 12 12" aria-hidden=true
+                                  path d="M2 6.5l2.6 2.6L10 3.6"
+                                    stroke="positive.text"
+                                    stroke-width=1.8
+                                    fill="none"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                              else
+                                text "–" color="ink.mute"
+                            row width="3rem" justify-content="center"
+                              svg width=12 height=12 viewBox="0 0 12 12" aria-hidden=true
+                                path d="M2 6.5l2.6 2.6L10 3.6"
+                                  stroke="positive.text"
+                                  stroke-width=1.8
+                                  fill="none"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                      column gap=10 margin-top=16
+                        Option(
+                          label=planName("pro.annual"),
+                          detail=planLine("pro.annual", priceOf(plans, "pro.annual")),
+                          on=(plan == "pro.annual"),
+                          mark="",
+                          go=choosePlan("pro.annual"),
+                          id="plan-pro.annual"
+                        )
+                        row gap=10 flex-wrap="wrap"
+                          for id in ["pro.weekly", "pro.lifetime"] key=id
+                            view flex="1 1 8rem" min-width=0
+                              Option(
+                                label=planName(id),
+                                detail=planLine(id, priceOf(plans, id)),
+                                on=(plan == id),
+                                mark="",
+                                go=choosePlan(id),
+                                id=`plan-${id}`
+                              )
+                      text t("paywall.renewal_terms") class=Caption margin-top=14
+                  column padding="8px 20px 20px"
+                    gap=4
+                    max-width="26.25rem"
+                    margin-left="auto"
+                    margin-right="auto"
+                    box-sizing="border-box"
+                    width="100%"
+                    if buyNote != "" or buyError != ""
+                      text (buyError != "" and not pending(bought) ? buyError : buyNote) class=Detail
+                        text-align="center"
+                        testId="buy-note"
+                    if plans.length > 0
+                      Primary(
+                        label=(plan == "pro.annual" ? t("paywall.cta_trial") : t("paywall.cta")),
+                        go=buy,
+                        off=pending(bought),
+                        id="buy"
+                      )
+                    Quiet(label=t("paywall.keep_free"), go=back, id="keep-free")
+                    if store.available
+                      Quiet(label=t("common.restore_purchases"), go=restore, id="restore")
               else if e.name == "path"
                 column navigationKey=`${e.id}`
-                  navigationScroll=`content-${e.id}`
+                  navigationBar="none"
                   position="absolute"
                   inset=0
-                  header
-                    text t("journey.title") role="heading" aria-level=1
-                  list id=`content-${e.id}`
-                    appearance="auto"
-                    listStyle="inset-grouped"
-                    flex=1
-                    min-height=0
-                    testId="path-list"
-                    section
-                      header
-                        text t("journey.intro") testId="path-intro"
-                      for w in [1, 2, 3, 4, 5, 6, 7, 8] key=w
-                        row gap=12 align-items="center" testId=`week-${w}`
-                          RowText(
-                            title=t("journey.node_upcoming", week=`${w}`),
-                            detail=weekStatus(w, app.summary),
-                            value=none
+                  background-color="bg.paper"
+                  box-sizing="border-box"
+                  padding-bottom="calc(60px + env(safe-area-inset-bottom))"
+                  scroll flex=1 min-height=0 testId="path-list"
+                    column padding="0 20px 24px"
+                      max-width="26.25rem"
+                      margin-left="auto"
+                      margin-right="auto"
+                      box-sizing="border-box"
+                      width="100%"
+                      row align-items="center" justify-content="space-between" min-height=56
+                        text t("journey.title") class=T3
+                        StreakPill(count=app.summary.currentDays)
+                      text t("journey.week_of", week=`${app.summary.week > 8 ? 8 : app.summary.week}`) class=Display
+                        role="heading"
+                        aria-level=1
+                        font-size="2.5rem"
+                        line-height=1.3
+                        margin-top=2
+                        testId="path-week"
+                      text t("journey.intro") class=Body
+                        font-size="0.875rem"
+                        line-height="1.25rem"
+                        margin-top=8
+                        testId="path-intro"
+                      view position="relative" height=560 margin-top=10
+                        svg viewBox="0 0 350 560"
+                          preserveAspectRatio="none"
+                          position="absolute"
+                          inset=0
+                          width="100%"
+                          height="100%"
+                          aria-hidden=true
+                          polyline points="70,34 180,98 280,162 180,226 70,290 180,354 280,418 180,490"
+                            fill="none"
+                            stroke="ink.faint"
+                            stroke-width=3
+                            stroke-linecap="round"
+                            stroke-dasharray="2 9"
+                          polyline points=[1, 2, 3, 4, 5, 6, 7, 8].filter(w => w <= app.summary.week).map(w => `${nodeX(w)},${nodeY(w)}`).join(" ")
+                            fill="none"
+                            stroke="positive.fill"
+                            stroke-width=3
+                            stroke-linecap="round"
+                        for w in [1, 2, 3, 4, 5, 6, 7, 8] key=w
+                          row position="absolute"
+                            left=`calc(${nodeX(w) / 3.5}% - 28px)`
+                            top=(nodeY(w) - 28)
+                            width=56
+                            height=56
+                            border-radius=999
+                            box-sizing="border-box"
+                            align-items="center"
+                            justify-content="center"
+                            testId=`week-${w}`
+                            background-color=(app.summary.banked.includes(w) ? "positive.fill" : w == app.summary.week ? "accent.main" : w == 4 or w == 8 ? "bg.card" : "bg.track")
+                            border=(app.summary.banked.includes(w) or w == app.summary.week ? "0 solid" : w == 8 ? "2.5px solid" : w == 4 ? "2px dashed" : "0 solid")
+                            border-color=(w == 8 ? "finish.gold" : "ink.faint")
+                            if app.summary.banked.includes(w)
+                              svg width=22 height=22 viewBox="0 0 24 24" aria-hidden=true
+                                path d="M6 12.5l4 4L18 8"
+                                  stroke="on.accent"
+                                  stroke-width=2.6
+                                  fill="none"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                            else if w == app.summary.week
+                              text `${app.summary.thisWeekDays}/5` font-size="min(-exact-subheadline, 16px)"
+                                font-weight=700
+                                color="on.accent"
+                            else if w == 8
+                              svg width=26 height=26 viewBox="0 0 24 24" aria-hidden=true
+                                path d="M7 4h10v4.5a5 5 0 01-10 0z"
+                                  stroke="finish.gold"
+                                  stroke-width=2
+                                  fill="none"
+                                  stroke-linejoin="round"
+                                path d="M7 6H4.5v1.5A3 3 0 007.5 10.5M17 6h2.5v1.5a3 3 0 01-3 3"
+                                  stroke="finish.gold"
+                                  stroke-width=2
+                                  fill="none"
+                                  stroke-linejoin="round"
+                                path d="M12 13.5V17M9 20h6M10 17h4v3h-4z"
+                                  stroke="finish.gold"
+                                  stroke-width=2
+                                  fill="none"
+                                  stroke-linejoin="round"
+                            else if w == 4
+                              svg width=24 height=24 viewBox="0 0 24 24" aria-hidden=true
+                                rect x=3
+                                  y=7
+                                  width=18
+                                  height=13
+                                  rx=3
+                                  stroke="ink.mute"
+                                  stroke-width=2
+                                  fill="none"
+                                circle cx=12
+                                  cy=13.5
+                                  r=3.4
+                                  stroke="ink.mute"
+                                  stroke-width=2
+                                  fill="none"
+                                path d="M9 7l1.4-2.2h3.2L15 7"
+                                  stroke="ink.mute"
+                                  stroke-width=2
+                                  fill="none"
+                                  stroke-linejoin="round"
+                            else
+                              text `${w}` font-size="min(-exact-footnote, 14px)"
+                                font-weight=600
+                                color="ink.mute"
+                          if w == app.summary.week or w == 4 or w == 8 or app.summary.banked.includes(w)
+                            column position="absolute"
+                              top=(nodeY(w) - 18)
+                              gap=1
+                              left=(nodeX(w) > 200 ? "auto" : `calc(${nodeX(w) / 3.5}% + 38px)`)
+                              right=(nodeX(w) > 200 ? `calc(${(350 - nodeX(w)) / 3.5}% + 38px)` : "auto")
+                              text-align=(nodeX(w) > 200 ? "end" : "start")
+                              text (w == app.summary.week ? t("journey.node_current") : t("journey.node_upcoming", week=`${w}`)) font-size="0.8125rem"
+                                font-weight=(w == app.summary.week ? 700 : 600)
+                                color=(w == app.summary.week ? "accent.main" : "ink.soft")
+                              if w == app.summary.week
+                                text t("journey.node_current_sub", days=`${app.summary.thisWeekDays}`) font-size="0.75rem"
+                                  color="ink.soft"
+                              else if w == 4
+                                text t("journey.node_scan") font-size="0.75rem" color="ink.mute"
+                              else if w == 8
+                                text t("journey.node_final") font-size="0.75rem" color="ink.mute"
+                              else
+                                text t("journey.node_banked") font-size="0.75rem"
+                                  color="positive.text"
+                      if app.summary.finished
+                        column class=RaisedBox padding=16 gap=4
+                          text t("journey.finish_title") class=T3
+                          text t("journey.finish_body") class=Body
+              else if e.name == "metrics"
+                column navigationKey=`${e.id}`
+                  navigationBar="none"
+                  position="absolute"
+                  inset=0
+                  background-color="bg.paper"
+                  box-sizing="border-box"
+                  padding-bottom="calc(60px + env(safe-area-inset-bottom))"
+                  row align-items="center"
+                    gap=8
+                    min-height=56
+                    padding="0 20px"
+                    border-bottom="1.5px solid"
+                    border-color="line.hair"
+                    flex-shrink=0
+                    flex-wrap="wrap"
+                    text app.score font-size="min(-exact-title1, 44px)"
+                      font-weight=700
+                      letter-spacing="-0.02em"
+                      color="ink.main"
+                      testId="metrics-score"
+                    text t("common.likely_band", low=app.low, high=app.high) font-size="0.8125rem"
+                      font-weight=500
+                      color="ink.mute"
+                      flex="1 1 6rem"
+                      testId="results-band"
+                    Chip(label=app.tier)
+                  scroll flex=1 min-height=0 testId="metrics-list"
+                    column padding="20px 20px 24px"
+                      gap=10
+                      max-width="26.25rem"
+                      margin-left="auto"
+                      margin-right="auto"
+                      box-sizing="border-box"
+                      width="100%"
+                      if not isPro
+                        Label(label=t("results.keep_label"))
+                        column class=CardBox overflow="hidden"
+                          for m in app.metrics.filter(x => x.id == app.strength or x.id == app.improvable) key=m.id
+                            link href=path("metric", m.id)
+                              testId=(m.id == app.strength ? "strength" : "improvable")
+                              display="flex"
+                              align-items="center"
+                              gap=12
+                              flex-wrap="wrap"
+                              padding="14px 16px"
+                              border-top=(m.id == app.improvable and app.strength != "" ? "1.5px solid" : "0 solid")
+                              border-color="line.hair"
+                              column flex="1 1 8rem" min-width=0 gap=1
+                                text m.short class=RowTitle
+                                text (m.id == app.strength ? t("results.section_strength") : t("results.section_improvable")) class=Detail
+                                  color=(m.id == app.strength ? "positive.text" : "accent.main")
+                              text m.value class=Value
+                        row align-items="baseline" justify-content="space-between" margin-top=14
+                          Label(label=t("results.locked_label"))
+                          text `${app.metrics.filter(x => not x.free and x.suppressed == "").length}` class=LabelText
+                        column class=CardBox overflow="hidden"
+                          for m, i in app.metrics.filter(x => not x.free and x.suppressed == "") key=m.id
+                            link href=path("paywall")
+                              testId=`metric-${m.id}`
+                              display="flex"
+                              align-items="center"
+                              gap=12
+                              padding="13px 16px"
+                              border-top=(i == 0 ? "0 solid" : "1.5px solid")
+                              border-color="line.hair"
+                              text m.short class=RowTitle flex=1 min-width=0
+                              view width=40 height=14 border-radius=4 background-color="bg.track"
+                              Lock()
+                          text t("results.free_locked_note") class=Caption
+                            padding="12px 16px"
+                            border-top="1.5px solid"
+                            border-color="line.hair"
+                        column class=WashBox padding=16 gap=10 margin-top=6
+                          column gap=4
+                            text t("results.pro_title", n=`${app.nMetrics}`) class=RowTitle
+                            text t("results.pro_body") class=Detail color="ink.soft"
+                          Primary(
+                            label=t("results.pro_cta"),
+                            go=visit("/pro"),
+                            off=false,
+                            id="see-pro"
                           )
-                          if app.summary.banked.includes(w)
-                            image "symbol:checkmark" color="-exact-system-green"
-                              aria-label=t("journey.node_banked")
-                    if app.summary.finished
-                      section
-                        text t("journey.finish_title") font="-exact-headline"
-                        text t("journey.finish_body")
+                      else
+                        for g in ["proportion", "eyes", "midface", "lower", "profile", "appearance"] key=g
+                          view margin-top=(g == "proportion" ? 0 : 14)
+                            Label(label=groupLabel(g))
+                          column class=CardBox overflow="hidden"
+                            for m, i in app.metrics.filter(x => x.group == g and x.suppressed == "") key=m.id
+                              link href=path("metric", m.id)
+                                testId=`metric-${m.id}`
+                                display="flex"
+                                align-items="center"
+                                gap=14
+                                padding="12px 16px"
+                                border-top=(i == 0 ? "0 solid" : "1.5px solid")
+                                border-color="line.hair"
+                                column flex=1 min-width=0 gap=6
+                                  text m.short class=RowTitle
+                                  Track(pos=m.pos)
+                                text (m.value == "" ? categoryLabel(m.category) : m.value) class=Value
+                      if app.metrics.filter(x => x.suppressed != "").length > 0
+                        view margin-top=14
+                          Label(label=t("results.not_measured_label"))
+                        column class=CardBox overflow="hidden"
+                          for m, i in app.metrics.filter(x => x.suppressed != "") key=m.id
+                            column padding="12px 16px"
+                              gap=1
+                              border-top=(i == 0 ? "0 solid" : "1.5px solid")
+                              border-color="line.hair"
+                              text m.short class=RowTitle
+                              text suppressedLabel(m.suppressed) class=Detail color="state.caution"
+              else if e.name == "metric"
+                column navigationKey=`${e.id}`
+                  navigationBar="none"
+                  position="absolute"
+                  inset=0
+                  background-color="bg.paper"
+                  for m in app.metrics.filter(x => x.id == e.params.id) key=m.id
+                    NavBar(
+                      title=m.short,
+                      trailing="",
+                      close=false,
+                      back=back,
+                      backLabel=t("common.back")
+                    )
+                    scroll flex=1 min-height=0
+                      column padding="0 20px 24px"
+                        gap=12
+                        max-width="26.25rem"
+                        margin-left="auto"
+                        margin-right="auto"
+                        box-sizing="border-box"
+                        width="100%"
+                        row align-items="baseline" gap=10 flex-wrap="wrap"
+                          text (m.value == "" ? categoryLabel(m.category) : m.value) font-size="min(-exact-large-title, 56px)"
+                            line-height=1.15
+                            font-weight=700
+                            letter-spacing="-0.02em"
+                            color="ink.main"
+                            testId="metric-value"
+                          if m.value != ""
+                            text categoryLabel(m.category) font-size="0.9375rem"
+                              font-weight=500
+                              color="ink.mute"
+                        if m.refLow != ""
+                          column class=CardBox padding=16 gap=10
+                            row align-items="center"
+                              justify-content="space-between"
+                              gap=8
+                              flex-wrap="wrap"
+                              Label(label=t("metric_detail.reference"))
+                              Chip(label=evidenceLabel(m.evidence))
+                            Track(pos=m.pos)
+                            text t("common.typical_range", sex_plural=sexPlural, ref_low=m.refLow, ref_high=m.refHigh) class=Body
+                            text reliabilityLabel(m.reliability) class=Detail
+                        if m.plain != ""
+                          column class=CardBox padding=16 gap=6
+                            Label(label=t("metric_detail.measured"))
+                            text m.plain class=Body
+                        if m.contradicted or m.community
+                          column class=WashBox padding=16 gap=6
+                            text (m.contradicted ? t("metric_detail.fwhr_explainer") : t("metric_detail.community_explainer")) class=Body
+                              color="ink.main"
               else if e.name == "you"
                 column navigationKey=`${e.id}`
-                  navigationScroll=`content-${e.id}`
+                  navigationBar="none"
                   position="absolute"
                   inset=0
-                  header
-                    text t("settings.title") role="heading" aria-level=1
-                  list id=`content-${e.id}`
-                    appearance="auto"
-                    listStyle="inset-grouped"
-                    flex=1
-                    min-height=0
-                    testId="content-you"
-                    if onboarded
-                      section
-                        header
-                          text t("settings.section_account")
-                        RowText(
-                          title=t("settings.reference_table", sex=(sex == "female" ? t("onboarding.about_sex_female") : t("onboarding.about_sex_male")), age_band=ageLabel(ageBand)),
-                          detail="",
-                          value=none
-                        )
-                        RowText(
-                          title=t("settings.goals"),
-                          detail=goals.map(g => goalLabel(g)).join(", "),
-                          value=none
-                        )
-                        RowText(
-                          title=t("settings.time_budget"),
-                          detail=timeLabel(timeBudget),
-                          value=none
-                        )
-                      section
-                        header
-                          text t("settings.section_data")
-                        if consentedOn != ""
-                          RowText(
-                            title=t("settings.consent_status", date=consentedOn),
-                            detail="",
-                            value=none
-                          )
-                          button press=withdraw testId="withdraw"
-                            text t("settings.consent_revoke")
-                        button press=askWipe destructive=true testId="delete"
-                          text t("settings.delete_everything")
-                        footer
-                          text (consentedOn != "" ? t("settings.consent_revoke_body") : "")
-                    if store.available
-                      section
-                        header
-                          text t("settings.section_plan")
-                        if isPro
-                          link href="https://apps.apple.com/account/subscriptions"
-                            testId="manage-subscription"
-                            text t("settings.manage_subscription") flex=1
-                            image "symbol:forward-chevron"
-                        button press=restore testId="restore-settings"
-                          text t("common.restore_purchases")
-                    section
-                      header
-                        text t("settings.section_about")
-                      link href=path("methodology") testId="open-methodology"
-                        text t("settings.methodology") flex=1
-                        image "symbol:forward-chevron"
-                      footer
-                        text t("settings.version", app_name="Mog", app_version="0.1.0", model_version="rules-1.1.0")
+                  background-color="bg.paper"
+                  box-sizing="border-box"
+                  padding-bottom="calc(60px + env(safe-area-inset-bottom))"
+                  scroll flex=1 min-height=0 testId="content-you"
+                    column padding="0 20px 24px"
+                      gap=10
+                      max-width="26.25rem"
+                      margin-left="auto"
+                      margin-right="auto"
+                      box-sizing="border-box"
+                      width="100%"
+                      row align-items="center" min-height=56
+                        text t("settings.title") class=T3
+                      column class=CardBox overflow="hidden"
+                        row align-items="center" gap=12 padding="13px 16px" flex-wrap="wrap"
+                          text t("settings.reference_label") class=RowTitle flex="1 1 8rem"
+                          text t("settings.reference_table", sex=(sex == "female" ? t("onboarding.about_sex_female") : t("onboarding.about_sex_male")), age_band=ageLabel(ageBand)) class=Detail
+                        column padding="13px 16px"
+                          gap=1
+                          border-top="1.5px solid"
+                          border-color="line.hair"
+                          text t("settings.goals") class=RowTitle
+                          text goals.map(g => goalLabel(g)).join(", ") class=Detail
+                        row align-items="center"
+                          gap=12
+                          padding="13px 16px"
+                          border-top="1.5px solid"
+                          border-color="line.hair"
+                          flex-wrap="wrap"
+                          text t("settings.time_budget") class=RowTitle flex="1 1 8rem"
+                          text timeLabel(timeBudget) class=Detail
+                      if consentedOn != ""
+                        view margin-top=14
+                          Label(label=t("settings.agreed_label"))
+                        column class=CardBox padding="13px 16px" gap=8
+                          row align-items="center" gap=12 flex-wrap="wrap"
+                            column flex="1 1 10rem" min-width=0 gap=1
+                              text t("settings.consent_title") class=RowTitle
+                              text t("settings.consent_status", date=consentedOn, version=consentPolicy) class=Detail
+                            button appearance="none"
+                              press=withdraw
+                              testId="withdraw"
+                              padding="8px 0 8px 8px"
+                              text t("settings.consent_revoke") font-size="0.875rem"
+                                font-weight=600
+                                color="accent.main"
+                          text t("settings.consent_revoke_body") class=Caption
+                      column class=CardBox overflow="hidden" margin-top=14
+                        link href=path("methodology")
+                          testId="open-methodology"
+                          display="flex"
+                          align-items="center"
+                          gap=12
+                          padding="14px 16px"
+                          text t("settings.methodology") class=RowTitle flex=1 min-width=0
+                          Chevron()
+                        if store.available
+                          button appearance="none"
+                            press=restore
+                            testId="restore-settings"
+                            display="flex"
+                            align-items="center"
+                            padding="14px 16px"
+                            border-top="1.5px solid"
+                            border-color="line.hair"
+                            text-align="start"
+                            text t("common.restore_purchases") class=RowTitle flex=1
+                          if isPro
+                            link href="https://apps.apple.com/account/subscriptions"
+                              testId="manage-subscription"
+                              display="flex"
+                              align-items="center"
+                              gap=12
+                              padding="14px 16px"
+                              border-top="1.5px solid"
+                              border-color="line.hair"
+                              text t("settings.manage_subscription") class=RowTitle
+                                flex=1
+                                min-width=0
+                              Chevron()
+                      button appearance="none"
+                        press=askWipe
+                        testId="delete"
+                        display="flex"
+                        align-items="center"
+                        justify-content="center"
+                        min-height="3.375rem"
+                        margin-top=14
+                        border="1.5px solid"
+                        border-color="state.critical"
+                        border-radius=16
+                        background-color="bg.card"
+                        text t("settings.delete_everything") font-size="1rem"
+                          font-weight=700
+                          color="state.critical"
+                      text t("settings.delete_body") class=Caption text-align="center"
+                      text t("settings.version", app_name="Mog", app_version="0.1.0", model_version="rules-1.1.0") class=Caption
+                        text-align="center"
+                        margin-top=8
               else if e.name == "methodology"
                 column navigationKey=`${e.id}`
-                  navigationScroll=`content-${e.id}`
+                  navigationBar="none"
                   position="absolute"
                   inset=0
-                  header
-                    text t("methodology.title") role="heading" aria-level=2
-                  list id=`content-${e.id}`
-                    appearance="auto"
-                    listStyle="inset-grouped"
-                    flex=1
-                    min-height=0
-                    testId="methodology-list"
-                    section
-                      text t("methodology.what_the_score_is")
-                      text t("methodology.what_it_is_not")
-                    section
-                      header
-                        text t("methodology.section_band")
-                      text t("methodology.band_body")
-                    section
-                      header
-                        text t("methodology.section_score")
-                      text t("methodology.score_body")
-                    section
-                      header
-                        text t("methodology.section_tiers")
-                      text t("methodology.tiers_body")
-                    section
-                      header
-                        text t("methodology.section_capture")
-                      text t("methodology.capture_body")
-                    section
-                      header
-                        text t("methodology.section_metrics")
-                      text t("methodology.metrics_body")
-                    section
-                      header
-                        text t("methodology.section_reference")
-                      text t("methodology.reference_body")
-                    section
-                      header
-                        text t("methodology.section_reliability_target")
-                      text t("methodology.reliability_target_body")
-                    section
-                      header
-                        text t("methodology.section_privacy")
-                      text t("methodology.privacy_body")
-                    section
-                      header
-                        text t("methodology.section_versions")
-                      text t("methodology.versions_body", version="rules-1.1.0")
-      row role="tablist" testId="tabs" display=(onboarded ? "flex" : "none")
+                  background-color="bg.paper"
+                  NavBar(title="", trailing="", close=false, back=back, backLabel=t("common.back"))
+                  scroll flex=1 min-height=0 testId="methodology-list"
+                    column padding="0 20px 28px"
+                      gap=10
+                      max-width="26.25rem"
+                      margin-left="auto"
+                      margin-right="auto"
+                      box-sizing="border-box"
+                      width="100%"
+                      text t("methodology.title") class=Display
+                        role="heading"
+                        aria-level=1
+                        font-size="2.5rem"
+                        line-height=1.3
+                      text t("methodology.what_the_score_is") class=Body margin-top=4
+                      column class=CardBox overflow="hidden" margin-top=8
+                        row align-items="center" padding="13px 16px"
+                          text t("methodology.stat_measurements") class=Body color="ink.main" flex=1
+                          text `${app.nMetrics == 0 ? 36 : app.nMetrics}` class=Value
+                            font-weight=700
+                        row align-items="center"
+                          padding="13px 16px"
+                          border-top="1.5px solid"
+                          border-color="line.hair"
+                          text t("methodology.stat_frames") class=Body color="ink.main" flex=1
+                          text "10" class=Value font-weight=700
+                      for s in ["not", "band", "score", "tiers", "capture", "metrics", "reference", "target", "privacy", "versions"] key=s
+                        view margin-top=14
+                          Label(
+                            label=(s == "not" ? t("methodology.section_not") : s == "band" ? t("methodology.section_band") : s == "score" ? t("methodology.section_score") : s == "tiers" ? t("methodology.section_tiers") : s == "capture" ? t("methodology.section_capture") : s == "metrics" ? t("methodology.section_metrics") : s == "reference" ? t("methodology.section_reference") : s == "target" ? t("methodology.section_reliability_target") : s == "privacy" ? t("methodology.section_privacy") : t("methodology.section_versions"))
+                          )
+                        text (s == "not" ? t("methodology.what_it_is_not") : s == "band" ? t("methodology.band_body") : s == "score" ? t("methodology.score_body") : s == "tiers" ? t("methodology.tiers_body") : s == "capture" ? t("methodology.capture_body") : s == "metrics" ? t("methodology.metrics_body") : s == "reference" ? t("methodology.reference_body") : s == "target" ? t("methodology.reliability_target_body") : s == "privacy" ? t("methodology.privacy_body") : t("methodology.versions_body", version="rules-1.1.0")) class=Body
+      row role="tablist"
+        appearance="none"
+        testId="tabs"
+        display=(showTabs ? "flex" : "none")
+        position="absolute"
+        left=0
+        right=0
+        bottom=0
+        box-sizing="border-box"
+        padding="10px 8px calc(8px + env(safe-area-inset-bottom))"
+        background-color="bg.paper"
+        border-top="1.5px solid"
+        border-color="line.hair"
         for t in nav.tabs key=t.name
           button role="tab"
+            appearance="none"
             aria-controls=`panel-${t.name}`
             aria-selected=(nav.tab == t.name)
             press=pick(t.name)
             testId=`tab-${t.name}`
             flex=1
             min-width=0
-            image tabSymbol(t.name)
-            text tabTitle(t.name)
+            display="flex"
+            flex-direction="column"
+            align-items="center"
+            gap=4
+            color=(nav.tab == t.name ? "accent.main" : "ink.mute")
+            svg width=22 height=22 viewBox="0 0 22 22" aria-hidden=true
+              if t.name == "today"
+                circle cx=11 cy=11 r=8.5 stroke="currentColor" stroke-width=2 fill="none"
+                path d="M11 6.5V11l3 2"
+                  stroke="currentColor"
+                  stroke-width=2
+                  fill="none"
+                  stroke-linecap="round"
+              else if t.name == "path"
+                circle cx=6 cy=16.5 r=3 stroke="currentColor" stroke-width=2 fill="none"
+                circle cx=16 cy=5.5 r=3 stroke="currentColor" stroke-width=2 fill="none"
+                path d="M8.5 14.5L13.5 8"
+                  stroke="currentColor"
+                  stroke-width=2
+                  fill="none"
+                  stroke-linecap="round"
+              else if t.name == "metrics"
+                rect x=3.5
+                  y=4.5
+                  width=15
+                  height=13
+                  rx=2.5
+                  stroke="currentColor"
+                  stroke-width=2
+                  fill="none"
+                path d="M7 11h8"
+                  stroke="currentColor"
+                  stroke-width=2
+                  fill="none"
+                  stroke-linecap="round"
+              else
+                circle cx=11 cy=8 r=3.5 stroke="currentColor" stroke-width=2 fill="none"
+                path d="M4.5 18.5c1-3.5 3.5-5 6.5-5s5.5 1.5 6.5 5"
+                  stroke="currentColor"
+                  stroke-width=2
+                  fill="none"
+                  stroke-linecap="round"
+            text tabTitle(t.name) font-size="min(-exact-caption2, 11px)"
+              line-height=1.3
+              font-weight=600
+              letter-spacing="0.01em"
       dialog id="wipe" role="alertdialog" aria-label=t("settings.delete_everything")
         text t("settings.delete_body")
         button press=wipe destructive=true commandfor="wipe" command="close" testId="wipe-confirm"

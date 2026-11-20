@@ -1,23 +1,17 @@
-test "first session: onboarding, consent, capture, reveal, results, plan"
+test "first session: onboarding, consent, capture, the reveal, then Today"
   expect tree has "start"
   expect state onboarded == false
   tap "start"
   clock settle
-  expect disabled "goals-next"
-  tap "goal-better_skin"
-  tap "goal-sharper_jawline"
-  expect state goals.0 == "better_skin"
-  expect state goals.1 == "sharper_jawline"
+  tap "goal-general"
   tap "goals-next"
   clock settle
-  expect disabled "about-next"
   tap "sex-male"
-  tap "age-25-34"
+  tap "age-18-24"
   tap "region-other"
   tap "adult"
   tap "about-next"
   clock settle
-  tap "time-15"
   tap "time-next"
   clock settle
   tap "consent"
@@ -27,16 +21,15 @@ test "first session: onboarding, consent, capture, reveal, results, plan"
   clock data
   clock settle
   expect state onboarded == true
+  expect text "reveal-score" == "5.0"
   expect text "reveal-band" == "likely 3.3–6.7"
-  expect text "reveal-tier" == "Mid-tier normie · roughly the 50th percentile of the reference distribution"
-  tap "see-results"
+  expect text "reveal-tier" == "MTN"
+  expect text "reveal-pct" == "· 50th percentile"
+  tap "start-week"
   clock settle
-  expect tree has "strength"
-  expect tree has "improvable"
-  tap "see-plan"
-  clock settle
-  expect state nav.tab == "plan"
-  expect tree has "plan-list"
+  expect state nav.tab == "today"
+  expect text "day" == "Day 1"
+  expect text "left" == "2 left today."
 
 test "declining consent says what it means and captures nothing"
   tap "start"
@@ -53,10 +46,10 @@ test "declining consent says what it means and captures nothing"
   tap "time-next"
   clock settle
   tap "decline"
-  expect text "declined" == "Without this, the app can't measure anything. Nothing is captured."
+  expect text "declined" == "Nothing is captured. The app can't measure without this."
   expect state onboarded == false
 
-test "a day's tasks count toward the streak and survive a relaunch"
+test "Today survives a relaunch"
   tap "start"
   clock settle
   tap "goal-general"
@@ -75,18 +68,46 @@ test "a day's tasks count toward the streak and survive a relaunch"
   clock +6000
   clock data
   clock settle
-  tap "see-results"
+  tap "start-week"
   clock settle
-  tap "see-plan"
-  clock settle
-  tap "tab-today"
-  clock settle
-  expect tree has "today-list"
   expect tree has "countdown"
   reload
   clock data
   expect state onboarded == true
   expect tree has "today-list"
+
+test "the four tabs: the path, the metrics with the band, and settings"
+  tap "start"
+  clock settle
+  tap "goal-general"
+  tap "goals-next"
+  clock settle
+  tap "sex-male"
+  tap "age-18-24"
+  tap "region-other"
+  tap "adult"
+  tap "about-next"
+  clock settle
+  tap "time-next"
+  clock settle
+  tap "consent"
+  clock settle
+  clock +6000
+  clock data
+  clock settle
+  tap "start-week"
+  clock settle
+  tap "tab-path"
+  clock settle
+  expect text "path-week" == "Week 1 of 8"
+  tap "tab-metrics"
+  clock settle
+  expect text "metrics-score" == "5.0"
+  expect text "results-band" == "likely 3.3–6.7"
+  expect tree has "strength"
+  tap "tab-you"
+  clock settle
+  expect tree has "open-methodology"
 
 test "delete everything wipes the measurements and returns to the start"
   tap "start"
@@ -107,9 +128,7 @@ test "delete everything wipes the measurements and returns to the start"
   clock +6000
   clock data
   clock settle
-  tap "see-results"
-  clock settle
-  tap "see-plan"
+  tap "start-week"
   clock settle
   tap "tab-you"
   clock settle
@@ -134,6 +153,7 @@ test "delete everything wipes the measurements and returns to the start"
   expect state consentedOn == ""
   expect state consentedAt == 0
   expect state consentPolicy == ""
+  expect state streakSeenOn == ""
   expect state app.hasScan == false
 
 test "Illinois, Texas or Washington: the consent screen says so and offers no consent"
@@ -175,9 +195,7 @@ test "withdrawing consent keeps the measurements and asks again before the next 
   clock +6000
   clock data
   clock settle
-  tap "see-results"
-  clock settle
-  tap "see-plan"
+  tap "start-week"
   clock settle
   tap "tab-you"
   clock settle
@@ -204,11 +222,7 @@ test "a task opens its detail, says why, and toggles done"
   clock +6000
   clock data
   clock settle
-  tap "see-results"
-  clock settle
-  tap "see-plan"
-  clock settle
-  tap "tab-today"
+  tap "start-week"
   clock settle
   tap "open-task_spf_daily"
   clock settle
@@ -218,6 +232,44 @@ test "a task opens its detail, says why, and toggles done"
   clock data
   expect text "task-toggle" == "Undo"
   expect state app.tasks.0 .done == true
+
+test "the day's last task marks the moment, once"
+  tap "start"
+  clock settle
+  tap "goal-general"
+  tap "goals-next"
+  clock settle
+  tap "sex-male"
+  tap "age-18-24"
+  tap "region-other"
+  tap "adult"
+  tap "about-next"
+  clock settle
+  tap "time-next"
+  clock settle
+  tap "consent"
+  clock settle
+  clock +6000
+  clock data
+  clock settle
+  tap "start-week"
+  clock settle
+  tap "task-task_spf_daily"
+  clock data
+  tap "task-task_sleep_regular"
+  clock data
+  clock settle
+  expect text "done-title" == "Day 1"
+  expect state app.summary.currentDays == 1
+  tap "done-ok"
+  clock settle
+  expect text "left" == "Done for today."
+  tap "task-task_spf_daily"
+  clock data
+  tap "task-task_spf_daily"
+  clock data
+  clock settle
+  expect text "done-title" == "Day 1"
 
 test "a missed day offers the month's repair, which keeps the streak"
   tap "start"
@@ -238,17 +290,15 @@ test "a missed day offers the month's repair, which keeps the streak"
   clock +6000
   clock data
   clock settle
-  tap "see-results"
-  clock settle
-  tap "see-plan"
-  clock settle
-  tap "tab-today"
+  tap "start-week"
   clock settle
   tap "task-task_spf_daily"
   clock data
   tap "task-task_sleep_regular"
   clock data
-  expect state app.summary.currentDays == 1
+  clock settle
+  tap "done-ok"
+  clock settle
   clock +172800000
   clock data
   expect tree has "streak-save"
@@ -258,6 +308,7 @@ test "a missed day offers the month's repair, which keeps the streak"
   clock data
   tap "task-task_sleep_regular"
   clock data
+  clock settle
   expect state app.summary.currentDays == 2
 
 test "letting the streak reset hides the offer for the day"
@@ -279,16 +330,15 @@ test "letting the streak reset hides the offer for the day"
   clock +6000
   clock data
   clock settle
-  tap "see-results"
-  clock settle
-  tap "see-plan"
-  clock settle
-  tap "tab-today"
+  tap "start-week"
   clock settle
   tap "task-task_spf_daily"
   clock data
   tap "task-task_sleep_regular"
   clock data
+  clock settle
+  tap "done-ok"
+  clock settle
   clock +172800000
   clock data
   tap "let-reset"
@@ -313,8 +363,9 @@ test "where there is no store, the paywall lists prices and offers no purchase"
   clock +6000
   clock data
   clock settle
-  tap "see-results"
+  tap "see-all"
   clock settle
+  expect state nav.tab == "metrics"
   tap "metric-canthal_tilt_deg"
   clock settle
   expect tree has "keep-free"
@@ -322,7 +373,7 @@ test "where there is no store, the paywall lists prices and offers no purchase"
   expect tree missing "restore"
   expect state isPro == false
 
-test "withdrawing consent during a re-scan stops it and saves nothing"
+test "the week-4 scan opens on Today and records"
   tap "start"
   clock settle
   tap "goal-general"
@@ -341,21 +392,15 @@ test "withdrawing consent during a re-scan stops it and saves nothing"
   clock +6000
   clock data
   clock settle
-  tap "see-results"
-  clock settle
-  tap "see-plan"
-  clock settle
-  tap "tab-today"
+  tap "start-week"
   clock settle
   clock +1900800000
   clock data
   expect state app.summary.scanWindow == 4
   tap "rescan"
   clock settle
-  tap "tab-you"
-  clock settle
-  tap "withdraw"
   clock +6000
   clock data
-  expect state captured == ""
-  expect state app.summary.scanWindow == 4
+  clock settle
+  expect tree has "reveal-score"
+  expect state app.summary.scanWindow == 0
