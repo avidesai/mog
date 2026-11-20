@@ -25,7 +25,7 @@ Most face-rating apps give you a different number every time you upload the same
 
 **Evidence, stated plainly.** Every measurement carries two labels: how reliably we can measure it, and how strongly research says it matters. Some things the community cares about carry almost no weight in the score, and one (facial width-to-height ratio) carries none, because the evidence points the other way. We show it anyway and say so.
 
-**A score with a band.** 0–10, as a percentile of a sex-matched reference distribution, with the uncertainty shown: "6.4 · likely 5.9–6.9 · HTN". The free score is the real score. Pro doesn't change the number; it opens the rest of the measurement.
+**A score with a band.** 0 to 10, as a percentile of a sex-matched reference distribution, with the uncertainty shown: "6.4 · likely 5.9 to 6.9 · HTN". The free score is the real score. Pro doesn't change the number; it opens the rest of the measurement.
 
 **A plan built from your findings.** Not generic tips. Each habit names the measurement it came from and the strength of the evidence behind it. Daily tasks, a streak that counts days the plan was done, and an eight-week path with re-scans at weeks 4 and 8, when enough has changed to measure. Anything that needs a professional is kept in its own section, named and never recommended, and we have no financial relationship with any provider.
 
@@ -33,7 +33,7 @@ Most face-rating apps give you a different number every time you upload the same
 
 For adults 18 and over.
 
-**Pro**: weekly, annual with a 3-day free trial, or lifetime. Includes all measurements with values and reference ranges, measurement overlays on your capture, profile analysis, the complete plan, and re-scans with deltas. Subscriptions renew automatically unless cancelled at least 24 hours before the period ends. Manage in Settings › Apple ID › Subscriptions.
+**Pro**: weekly or yearly. It shows your number for every measurement, the typical range for each, and what each one means. Subscriptions renew automatically unless cancelled at least 24 hours before the period ends. Manage in Settings › Apple ID › Subscriptions.
 
 Terms: {terms_url}
 Privacy: {privacy_url}
@@ -43,7 +43,7 @@ Biometric data policy: {policy_url}
 `First release. Guided capture, ~35 measurements with cited reference ranges, evidence-graded plan, eight-week path.`
 
 ## Screenshots (6.9" and 6.5", 10 max): in this order, captions as overlay text
-1. Reveal (`6.4 · likely 5.9–6.9 · HTN`) caption: *A score with its uncertainty, every time.*
+1. Reveal (`6.4 · likely 5.9 to 6.9 · HTN`) caption: *A score with its uncertainty, every time.*
 2. Capture with gates: *The shutter waits until the measurement will be valid.*
 3. Metric detail with overlay (gonial angle). *Every number shown on your own face, with its reference range.*
 4. Evidence badges on the results overview. *What the research actually supports.*

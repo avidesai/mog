@@ -2,34 +2,23 @@
   {
     "itemId": "pro.annual",
     "title": "Pro, yearly",
-    "description": "Every measurement, overlays, profile analysis, the full plan and both re-scans.",
+    "description": "Your number for every measurement, with its typical range.",
     "type": "subscription",
     "price": { "currency": "USD", "value": "34.99" },
     "displayPrice": "$34.99",
     "subscriptionPeriod": "P1Y",
-    "freeTrialPeriod": "P3D",
     "familyShareable": false,
     "apple": { "type": "autoRenewable", "subscriptionGroupID": "mog.pro" }
   },
   {
     "itemId": "pro.weekly",
     "title": "Pro, weekly",
-    "description": "Every measurement, overlays, profile analysis, the full plan and both re-scans.",
+    "description": "Your number for every measurement, with its typical range.",
     "type": "subscription",
     "price": { "currency": "USD", "value": "4.99" },
     "displayPrice": "$4.99",
     "subscriptionPeriod": "P1W",
     "familyShareable": false,
     "apple": { "type": "autoRenewable", "subscriptionGroupID": "mog.pro" }
-  },
-  {
-    "itemId": "pro.lifetime",
-    "title": "Pro, lifetime",
-    "description": "Every measurement, overlays, profile analysis, the full plan and both re-scans, once.",
-    "type": "product",
-    "price": { "currency": "USD", "value": "59.99" },
-    "displayPrice": "$59.99",
-    "familyShareable": false,
-    "apple": { "type": "nonConsumable" }
   }
 ]

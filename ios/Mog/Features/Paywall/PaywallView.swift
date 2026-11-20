@@ -28,7 +28,7 @@ struct PaywallView: View {
                 }
                 VStack(spacing: Tokens.Space.s3) {
                     ForEach(offerings) { o in
-                        OptionRow(title: title(o), subtitle: o.kind == .annualTrial ? Copy.f("paywall.plan_annual_trial", ["price_annual": o.priceString]) : nil,
+                        OptionRow(title: title(o), subtitle: "\(o.priceString) \(Copy.s(o.kind == .annual ? "paywall.per_year" : "paywall.per_week"))",
                                   selected: chosen?.id == o.id) { chosen = o }
                     }
                 }
@@ -49,15 +49,14 @@ struct PaywallView: View {
         .task {
             app.analytics.track(.paywallViewed(placement: placement))
             offerings = await app.purchases.offerings()
-            chosen = offerings.first { $0.kind == .annualTrial }
+            chosen = offerings.first { $0.kind == .annual }
         }
     }
 
     private func title(_ o: Offering) -> String {
         switch o.kind {
-        case .weekly: return Copy.f("paywall.plan_weekly", ["price_weekly": o.priceString])
-        case .annualTrial: return Copy.f("paywall.plan_annual", ["price_annual": o.priceString])
-        case .lifetime: return Copy.f("paywall.plan_lifetime", ["price_lifetime": o.priceString])
+        case .weekly: return Copy.s("paywall.plan_weekly")
+        case .annual: return Copy.s("paywall.plan_annual")
         }
     }
 

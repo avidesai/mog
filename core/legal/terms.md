@@ -26,7 +26,7 @@ Sign in with Apple is the only sign-in. Keep your device secure. Don't reverse-e
 
 ## 5. Purchases
 
-Pro is sold as an auto-renewing weekly or annual subscription, or as a one-time lifetime purchase, through Apple. Prices, periods and renewal terms are shown on the purchase screen. Subscriptions renew automatically until cancelled at least 24 hours before the end of the current period, in your Apple ID settings. Free trials convert to paid subscriptions unless cancelled before they end. Refunds are handled by Apple under its policies. Restore purchases is available on every purchase screen.
+Pro is sold as an auto-renewing weekly or annual subscription through Apple. Prices, periods and renewal terms are shown on the purchase screen. Subscriptions renew automatically until cancelled at least 24 hours before the end of the current period, in your Apple ID settings. Refunds are handled by Apple under its policies. Restore purchases is available on every purchase screen.
 
 The free version includes your real score and tier, your strongest and most improvable measurement, and the streak and plan. We never show a different number before and after purchase.
 

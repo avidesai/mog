@@ -66,6 +66,10 @@ const cardView = (c: PlanCard) => ({
   effort: c.effort, weeksLow: c.timelineWeeks[0], weeksHigh: c.timelineWeeks[1], professional: c.safetyTier === 3 || c.safetyTier === 4,
 });
 
+// The measurements this audience asks about first lead the paywall's sentence.
+const ASKED_FIRST = ['canthal_tilt_deg', 'bigonial_to_bizygomatic', 'midface_ratio', 'symmetry_index', 'gonial_angle_deg', 'facial_thirds_lower'];
+const rank = (id: string): number => { const i = ASKED_FIRST.indexOf(id); return i < 0 ? ASKED_FIRST.length : i; };
+
 function view(s: Saved, today: string, isPro: boolean): View {
   const scan = s.scans[s.scans.length - 1];
   if (!scan) return emptyView();
@@ -89,8 +93,12 @@ function view(s: Saved, today: string, isPro: boolean): View {
     }];
   });
   const habit = s.habit ? new HabitEngine(s.habit) : null;
+  const locked = metrics.filter((m) => !m.free && m.suppressed === '');
+  const named = [...locked].sort((x, y) => rank(x.id) - rank(y.id)).slice(0, 3).map((m) => m.short);
   return {
     hasScan: true, scanDate: scan.date, nMetrics: metrics.length,
+    nLocked: locked.length, lockedMore: locked.length - named.length,
+    lockedNames: named.map((n, i) => (i === 0 || n === 'fWHR' ? n : n[0].toLowerCase() + n.slice(1))).join(', '),
     nMovable: r.metrics.filter((m) => m.value !== null && reg.metrics.get(m.id)!.modifiable).length,
     score: r.score.toFixed(1), low: r.scoreLow.toFixed(1), high: r.scoreHigh.toFixed(1), lowN: r.scoreLow, highN: r.scoreHigh,
     pct: ordinal(Math.round(r.percentile)),
@@ -143,7 +151,7 @@ function summaryView(e: HabitEngine, today: string): View['summary'] {
 }
 
 const emptyView = (): View => ({
-  hasScan: false, scanDate: '', nMetrics: 0, nMovable: 0, score: '', low: '', high: '', lowN: 0, highN: 0, pct: '', tier: '', modelVersion: '',
+  hasScan: false, scanDate: '', nMetrics: 0, nLocked: 0, lockedMore: 0, lockedNames: '', nMovable: 0, score: '', low: '', high: '', lowN: 0, highN: 0, pct: '', tier: '', modelVersion: '',
   strength: '', improvable: '', metrics: [], plan: [], professional: [], info: [], dailyMinutes: 0, tasks: [], summary: emptySummary(),
 });
 

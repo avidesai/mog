@@ -41,7 +41,7 @@
   "rules": [
     {
       "id": "adiposity_high_cervicomental_obtuse",
-      "version": 3,
+      "version": 4,
       "triggers": [
         {
           "metric": "facial_adiposity",
@@ -85,12 +85,12 @@
       "copy": {
         "headline": "Lower body fat gradually",
         "body": "The line between jaw and neck is mostly soft tissue. Losing body fat slowly, about half a percent to one percent of bodyweight a week, with protein and resistance training, sharpens it more than anything done to the jaw.",
-        "why_this": "Your facial adiposity reads high and your jaw-neck angle is wide. Both move as body fat drops."
+        "why_this": "Your facial fat is high and your jaw-neck angle is wide. Both improve as body fat drops."
       }
     },
     {
       "id": "adiposity_moderate_general",
-      "version": 2,
+      "version": 3,
       "triggers": [
         {
           "metric": "facial_adiposity",
@@ -125,13 +125,13 @@
       "task_title": "Hit your protein and movement targets for the day",
       "copy": {
         "headline": "Lean out gradually",
-        "body": "Facial fat is among the most changeable things about a face. Lose slowly, about half a percent to one percent of bodyweight a week, with protein and lifting to keep muscle.",
-        "why_this": "Your facial adiposity reads above the typical range."
+        "body": "Facial fat changes more than almost anything else about a face. Lose it slowly, about half a percent to one percent of bodyweight a week, and keep protein and lifting up so you hold on to muscle.",
+        "why_this": "Your facial fat is above the typical range."
       }
     },
     {
       "id": "resistance_training_weekly",
-      "version": 2,
+      "version": 3,
       "triggers": [
         {
           "metric": "facial_adiposity",
@@ -163,8 +163,8 @@
       "task_title": "Resistance training session",
       "copy": {
         "headline": "Lift three times a week",
-        "body": "Three full-body sessions a week keep fat loss showing as definition, not a drawn look.",
-        "why_this": "Keeping muscle is what makes fat loss look sharp."
+        "body": "Lifting three times a week keeps your muscle while you lose fat. Without it, fat loss can leave a face looking gaunt.",
+        "why_this": "Fat loss looks sharper when you keep your muscle."
       }
     },
     {
@@ -201,7 +201,7 @@
     },
     {
       "id": "spf_daily",
-      "version": 3,
+      "version": 4,
       "triggers": [],
       "always_on": true,
       "goal_match": [
@@ -230,13 +230,13 @@
       "task_title": "Broad-spectrum SPF 30+ on face and neck",
       "copy": {
         "headline": "Daily broad-spectrum SPF",
-        "body": "Sun is the main driver of uneven skin over time. Broad-spectrum SPF 30 or higher every morning, cloudy days included.",
-        "why_this": "Foundational for every skin goal."
+        "body": "Sun exposure causes most uneven skin over time. Put on broad-spectrum SPF 30 or higher every morning, including cloudy days.",
+        "why_this": "Every skin goal depends on it."
       }
     },
     {
       "id": "skin_evenness_low_cleanse_moisturise",
-      "version": 2,
+      "version": 3,
       "triggers": [
         {
           "metric": "skin_evenness",
@@ -269,13 +269,13 @@
       "task_title": "Gentle cleanse and moisturise, morning and night",
       "copy": {
         "headline": "A two-step routine, twice a day",
-        "body": "A gentle, fragrance-free cleanser and a plain moisturiser, morning and night. Most unevenness is irritation and dryness, and the basics clear much of it in a few weeks.",
-        "why_this": "Your skin evenness reads below typical. Basics first; actives once the barrier settles."
+        "body": "Use a gentle, fragrance-free cleanser and a plain moisturiser morning and night. Most unevenness comes from irritation and dryness, and these two clear much of it in a few weeks.",
+        "why_this": "Your skin evenness is below typical. Start with the basics and add actives once your skin has settled."
       }
     },
     {
       "id": "skin_evenness_low_otc_actives",
-      "version": 2,
+      "version": 3,
       "triggers": [
         {
           "metric": "skin_evenness",
@@ -304,16 +304,16 @@
       "cadence": "daily",
       "time_cost_min": 1,
       "opens_week": 3,
-      "task_title": "Evening active (start 2–3 nights a week)",
+      "task_title": "Evening active (start 2 or 3 nights a week)",
       "copy": {
         "headline": "Add one over-the-counter active, slowly",
-        "body": "One evening active: adapalene gel for texture and breakouts, or low-strength azelaic acid for redness and tone. Start two or three nights a week and build up. Some dryness or flaking early on is normal. Stop and see a pharmacist or dermatologist if irritation is more than mild.",
-        "why_this": "Your skin evenness reads low. These have the best evidence of anything sold without a prescription."
+        "body": "Pick one active for the evening: adapalene gel for texture and breakouts, or low-strength azelaic acid for redness and tone. Start two or three nights a week and build up. Some dryness or flaking early on is normal. Stop and see a pharmacist or dermatologist if irritation is more than mild.",
+        "why_this": "Your skin evenness is low. These have the best evidence of anything sold without a prescription."
       }
     },
     {
       "id": "sleep_regular",
-      "version": 2,
+      "version": 3,
       "triggers": [],
       "always_on": true,
       "goal_match": [
@@ -344,12 +344,12 @@
       "copy": {
         "headline": "Protect your sleep",
         "body": "Sleep-deprived faces are rated less healthy in controlled studies, mostly around the eyes. A consistent bedtime does more than any product.",
-        "why_this": "Fast and free. Shows in the eye area first."
+        "why_this": "It's free and it shows quickly, around the eyes first."
       }
     },
     {
       "id": "eye_area_puffiness",
-      "version": 2,
+      "version": 3,
       "triggers": [
         {
           "metric": "skin_evenness",
@@ -376,16 +376,16 @@
       "cadence": "daily",
       "time_cost_min": 1,
       "opens_week": 2,
-      "task_title": "Hydrate; go easy on sodium and alcohol in the evening",
+      "task_title": "Drink water, and go easy on salt and alcohol tonight",
       "copy": {
         "headline": "Reduce morning puffiness",
-        "body": "Evening salt, alcohol and short sleep show under the eyes next morning. Water through the day, less salt late, a regular bedtime. Eye creams are mostly moisturiser.",
-        "why_this": "The low-effort part of the eye area. Sleep is the high-return part."
+        "body": "Salt and alcohol in the evening and short sleep all show under your eyes the next morning. Drink water through the day, eat less salt late and keep a regular bedtime. Most eye creams are moisturiser.",
+        "why_this": "These are the easy changes for the eye area. Sleep does more."
       }
     },
     {
       "id": "brow_grooming",
-      "version": 3,
+      "version": 4,
       "triggers": [],
       "always_on": true,
       "goal_match": [
@@ -410,14 +410,14 @@
       "opens_week": 1,
       "task_title": "Tidy brows: remove strays between and below, keep the shape",
       "copy": {
-        "headline": "Tidy the brows, don't reshape them",
-        "body": "Remove strays between the brows and below the arch; leave the shape alone. Thinned brows read older and more tired.",
-        "why_this": "Immediate and reversible. It frames the whole eye area."
+        "headline": "Tidy your brows and keep their shape",
+        "body": "Remove the stray hairs between your brows and below the arch, and leave the shape alone. Thin brows make a face look older and more tired.",
+        "why_this": "It shows straight away and grows back if you don't like it."
       }
     },
     {
       "id": "haircut_face_shape",
-      "version": 2,
+      "version": 3,
       "triggers": [],
       "always_on": true,
       "goal_match": [
@@ -444,13 +444,13 @@
       "task_title": "Book a haircut",
       "copy": {
         "headline": "Get a cut that works with your proportions",
-        "body": "A good barber shifts how your proportions read. Long forehead: volume at the sides, not height. Short forehead: a little height on top. If the hairline is receding, don't cover it; covering reads as hiding.",
-        "why_this": "Reversible and fast."
+        "body": "A good haircut changes how your proportions look. With a long forehead, ask for volume at the sides and keep the top low. With a short forehead, add a little height on top. If your hairline is receding, keep it short there, because combing hair over it draws attention to it.",
+        "why_this": "It's quick and it grows out."
       }
     },
     {
       "id": "hair_care_daily",
-      "version": 2,
+      "version": 3,
       "triggers": [],
       "always_on": true,
       "goal_match": [
@@ -475,13 +475,13 @@
       "task_title": "Hair: no heat today, condition if you wash, style without pulling",
       "copy": {
         "headline": "Treat the hair you have gently",
-        "body": "None of this regrows hair. It makes the hair you have look fuller: a gentle shampoo, conditioner, little heat, and no tight styles that pull at the hairline.",
-        "why_this": "You asked about hair. Zero risk, and it shows within weeks."
+        "body": "This won't regrow hair, but it makes the hair you have look fuller. Use a gentle shampoo and conditioner, go easy on heat, and avoid tight styles that pull at your hairline.",
+        "why_this": "You picked hair as a goal. There's no risk, and it shows within weeks."
       }
     },
     {
       "id": "hairline_recession_referral",
-      "version": 2,
+      "version": 3,
       "triggers": [
         {
           "metric": "hairline_stage",
@@ -513,13 +513,13 @@
       "task_title": null,
       "copy": {
         "headline": "Hairline recession: treatments exist, and they work best early",
-        "body": "Your hairline reads at a stage where recession is visible. Two treatments have strong evidence: topical minoxidil, sold over the counter, and oral finasteride, prescription-only, with side effects worth a real conversation. A dermatologist or GP can advise in one appointment; earlier is better. We don't recommend procedures or prescriptions and we have no financial relationship with any provider.",
+        "body": "Your hairline is at a stage where recession is visible. Two treatments have strong evidence: topical minoxidil, sold over the counter, and oral finasteride, which is prescription-only and has side effects you should talk through with a doctor. A dermatologist or GP can advise in one appointment, and earlier is better. We don't recommend procedures or prescriptions and we have no financial relationship with any provider.",
         "why_this": "Hairline stage estimated at Norwood 3 or above."
       }
     },
     {
       "id": "hairline_early_monitor",
-      "version": 2,
+      "version": 3,
       "triggers": [
         {
           "metric": "hairline_stage",
@@ -550,13 +550,13 @@
       "task_title": "Take a hairline reference photo in the same light",
       "copy": {
         "headline": "Keep an eye on the hairline",
-        "body": "A mature hairline is normal, not recession. Time tells the difference: the same reference photo, a few weeks apart. If it moves, have the treatment conversation early.",
+        "body": "A mature hairline is normal and isn't the same as recession. To tell them apart, take the same reference photo every few weeks. If the hairline moves, talk to a doctor about treatment early.",
         "why_this": "Hairline estimated at Norwood 2, within normal adult variation."
       }
     },
     {
       "id": "photo_distance_lens",
-      "version": 2,
+      "version": 3,
       "triggers": [],
       "always_on": true,
       "goal_match": [
@@ -582,13 +582,13 @@
       "task_title": "Retake your best photo from further back with 2× zoom",
       "copy": {
         "headline": "Shoot from further back",
-        "body": "At arm's length a phone makes the nose read about thirty percent wider and shrinks the ears and jaw. Step back a metre or more and zoom in, or have someone else shoot.",
+        "body": "At arm's length a phone makes your nose look about thirty percent wider and shrinks your ears and jaw. Step back a metre or more and zoom in, or have someone else take the photo.",
         "why_this": "Measured in a 2018 JAMA study."
       }
     },
     {
       "id": "photo_lighting",
-      "version": 2,
+      "version": 3,
       "triggers": [],
       "always_on": true,
       "goal_match": [
@@ -613,13 +613,13 @@
       "task_title": "Find your window: soft light from slightly above and to one side",
       "copy": {
         "headline": "Use soft, slightly directional light",
-        "body": "Flat frontal light erases structure; hard overhead light exaggerates it. Use window light from slightly above and to one side, and face it.",
-        "why_this": "After distance, light matters most in how structure photographs."
+        "body": "Flat light from the front hides the structure of a face, and hard light from overhead exaggerates it. Use window light from slightly above and to one side, and face it.",
+        "why_this": "After distance, light changes how your face photographs more than anything else."
       }
     },
     {
       "id": "posture_head_position",
-      "version": 2,
+      "version": 3,
       "triggers": [],
       "goal_match": [
         "sharper_jawline",
@@ -644,14 +644,14 @@
       "task_title": "Posture check: ears over shoulders, chin level",
       "copy": {
         "headline": "Bring your head back over your shoulders",
-        "body": "Forward head posture softens the jaw-neck line. Ears over shoulders, chin level, not lifted. Nothing structural changes; how it is seen does, at once.",
-        "why_this": "Free and immediate. If your jaw-neck angle reads wide, some of that is posture."
+        "body": "Holding your head forward softens the line between jaw and neck. Bring your ears back over your shoulders and keep your chin level. Your bone structure stays the same, but the line looks sharper straight away.",
+        "why_this": "It's free and works straight away. If your jaw-neck angle is wide, part of that is posture."
       },
       "always_on": true
     },
     {
       "id": "beard_shape_jaw",
-      "version": 2,
+      "version": 3,
       "triggers": [
         {
           "metric": "beard_presence",
@@ -687,14 +687,14 @@
       "opens_week": 1,
       "task_title": "Shape the beard: keep length along the jaw, fade the cheeks and neck",
       "copy": {
-        "headline": "Let the beard do the jaw's work",
+        "headline": "Shape your beard to widen the jaw",
         "body": "Facial hair can widen and square the lower face. Keep density and a little length along the jaw and chin, fade the cheeks, and set the neckline a finger above the Adam's apple.",
-        "why_this": "Your jaw reads narrower than typical against the cheekbones. The beard can carry the line."
+        "why_this": "Your jaw is narrower than typical next to your cheekbones, and a beard adds width there."
       }
     },
     {
       "id": "cleanshaven_jaw_note",
-      "version": 2,
+      "version": 3,
       "triggers": [
         {
           "metric": "beard_presence",
@@ -730,13 +730,13 @@
       "task_title": "Try growing stubble along the jaw for two weeks",
       "copy": {
         "headline": "Consider stubble along the jaw",
-        "body": "Stubble along the jaw and chin adds visual width where your face is narrowest. Two weeks shows whether it suits you.",
-        "why_this": "Jaw width reads narrow against the cheekbones, and you are clean-shaven."
+        "body": "Stubble along the jaw and chin adds visual width where your face is narrowest. Give it two weeks to see whether it suits you.",
+        "why_this": "Your jaw is narrow next to your cheekbones, and you are clean-shaven."
       }
     },
     {
       "id": "mewing_myth",
-      "version": 2,
+      "version": 3,
       "triggers": [
         {
           "metric": "facial_convexity_deg",
@@ -768,13 +768,13 @@
       "is_info_card": true,
       "copy": {
         "headline": "About mewing",
-        "body": "Tongue-posture routines are promoted for a profile like yours. The British Orthodontic Society and the American Association of Orthodontists both said in 2025 there is no scientific evidence they change adult facial shape. Good head posture is worth having; expecting bone to move is not.",
-        "why_this": "Your profile convexity reads outside the typical range, the finding these routines are marketed to."
+        "body": "Tongue-posture routines are promoted for a profile like yours. The British Orthodontic Society and the American Association of Orthodontists both said in 2025 there is no scientific evidence they change adult facial shape. Good head posture is still worth having, but it won't move bone.",
+        "why_this": "Your profile convexity is outside the typical range, which is the finding these routines are marketed to."
       }
     },
     {
       "id": "convexity_orthodontic_referral",
-      "version": 2,
+      "version": 3,
       "triggers": [
         {
           "metric": "facial_convexity_deg",
@@ -807,13 +807,13 @@
       "task_title": null,
       "copy": {
         "headline": "Profile convexity: an orthodontist can tell you what it is",
-        "body": "Your profile reads markedly convex. That can be jaw position, teeth or soft tissue, and only a clinical assessment can tell which. An orthodontic consultation is often free or inexpensive. We don't recommend procedures or prescriptions and we have no financial relationship with any provider.",
+        "body": "Your profile is markedly convex. That can come from jaw position, teeth or soft tissue, and only a clinical assessment can tell which. An orthodontic consultation is often free or inexpensive. We don't recommend procedures or prescriptions and we have no financial relationship with any provider.",
         "why_this": "Soft-tissue facial convexity measured well below the typical range."
       }
     },
     {
       "id": "chin_retruded_surgical_note",
-      "version": 2,
+      "version": 3,
       "triggers": [
         {
           "metric": "chin_projection_eline_mm",
@@ -845,13 +845,13 @@
       "task_title": null,
       "copy": {
         "headline": "Chin projection",
-        "body": "Your chin sits well behind the nose-to-chin reference line. A board-certified facial plastic or maxillofacial surgeon could assess it. Posture and facial hair change how it reads without changing anything. We don't recommend procedures or prescriptions and we have no financial relationship with any provider.",
+        "body": "Your chin sits well behind the nose-to-chin reference line. A board-certified facial plastic or maxillofacial surgeon could assess it. Posture and facial hair change how it looks without changing the chin itself. We don't recommend procedures or prescriptions and we have no financial relationship with any provider.",
         "why_this": "Soft-tissue chin measured more than 6 mm behind the E-line."
       }
     },
     {
       "id": "nasolabial_acute_info",
-      "version": 2,
+      "version": 3,
       "triggers": [
         {
           "metric": "nasolabial_angle_deg",
@@ -884,13 +884,13 @@
       "is_info_card": true,
       "copy": {
         "headline": "Nose-lip angle: a camera note",
-        "body": "Your nose-lip angle reads more acute than typical. That is structure. How it photographs can change: keep the camera at or slightly above eye level.",
+        "body": "Your nose-lip angle is sharper than typical. That comes from structure and won't change, but it photographs better with the camera at or slightly above eye level.",
         "why_this": "Nasolabial angle below the typical range."
       }
     },
     {
       "id": "nose_width_photo_note",
-      "version": 2,
+      "version": 3,
       "triggers": [
         {
           "metric": "nasal_width_to_intercanthal",
@@ -922,13 +922,13 @@
       "is_info_card": true,
       "copy": {
         "headline": "Nose width and camera distance",
-        "body": "Your nose base reads wide against your eye spacing. Close-up phones distort this most, about thirty percent at arm's length, so photos from further back will differ from selfies. This was measured at a controlled distance.",
+        "body": "Your nose base is wide next to your eye spacing. Close-up phone photos exaggerate this most, by about thirty percent at arm's length, so photos from further back will look different from selfies. Your scan was taken at a controlled distance.",
         "why_this": "Nasal base width above the typical range."
       }
     },
     {
       "id": "symmetry_lighting_note",
-      "version": 2,
+      "version": 3,
       "triggers": [
         {
           "metric": "symmetry_index",
@@ -959,14 +959,14 @@
       "opens_week": 2,
       "task_title": "Find your better side in soft, even light",
       "copy": {
-        "headline": "Everyone is asymmetric; light decides how much it shows",
-        "body": "Every face is asymmetric, and uneven light exaggerates it. Even frontal light minimises it. Most people have a side that photographs better; find yours.",
-        "why_this": "Symmetry reads a little below typical. The lighting check passed, so this is not a capture artefact."
+        "headline": "Every face is asymmetric, and light changes how much it shows",
+        "body": "Every face is asymmetric, and uneven light exaggerates it. Even light from the front shows it least. Most people have a side that photographs better, so find yours.",
+        "why_this": "Your symmetry is a little below typical. The lighting check passed, so the capture didn't cause it."
       }
     },
     {
       "id": "lip_care",
-      "version": 2,
+      "version": 3,
       "triggers": [
         {
           "metric": "skin_evenness",
@@ -996,14 +996,14 @@
       "opens_week": 2,
       "task_title": "Lip balm with SPF",
       "copy": {
-        "headline": "Don't forget the lips",
-        "body": "Chapped lips read as unhealthy and are the easiest thing here to change. A plain balm with SPF, when you apply sunscreen.",
+        "headline": "Look after your lips",
+        "body": "Chapped lips look unhealthy and are the easiest thing on this list to fix. Put on a plain balm with SPF when you do your sunscreen.",
         "why_this": "A small addition to the skin routine."
       }
     },
     {
       "id": "hydration_general",
-      "version": 2,
+      "version": 3,
       "triggers": [],
       "always_on": true,
       "goal_match": [
@@ -1029,12 +1029,12 @@
       "copy": {
         "headline": "Drink water with meals",
         "body": "The evidence that hydration changes skin is weaker than the internet says. Mild dehydration does show in the face by evening, and ruling it out costs nothing.",
-        "why_this": "Supporting habit. It costs nothing."
+        "why_this": "It backs up the other habits."
       }
     },
     {
       "id": "alcohol_evening",
-      "version": 2,
+      "version": 3,
       "triggers": [
         {
           "metric": "facial_adiposity",
@@ -1067,13 +1067,13 @@
       "task_title": "No alcohol tonight",
       "copy": {
         "headline": "Cut back on alcohol",
-        "body": "Alcohol adds calories, disrupts sleep and causes next-day puffiness. Fewer drinking days is the version people keep.",
-        "why_this": "Facial adiposity reads high. Alcohol is a common hidden contributor."
+        "body": "Alcohol adds calories, disrupts sleep and causes puffiness the next day. Cutting the number of days you drink is easier to stick to than quitting.",
+        "why_this": "Your facial fat is high, and alcohol often adds to it without people noticing."
       }
     },
     {
       "id": "tretinoin_referral",
-      "version": 2,
+      "version": 3,
       "triggers": [
         {
           "metric": "skin_evenness",
@@ -1105,13 +1105,13 @@
       "task_title": null,
       "copy": {
         "headline": "Prescription retinoids: worth asking about",
-        "body": "Your skin evenness reads well below typical. The best-evidenced treatment for texture and tone is prescription tretinoin, and persistent breakouts have prescription options too. A dermatologist or GP, often by telehealth, can prescribe. We don't recommend procedures or prescriptions and we have no financial relationship with any provider.",
+        "body": "Your skin evenness is well below typical. The best-evidenced treatment for texture and tone is prescription tretinoin, and persistent breakouts have prescription options too. A dermatologist or GP, often by telehealth, can prescribe. We don't recommend procedures or prescriptions and we have no financial relationship with any provider.",
         "why_this": "Skin evenness index below 0.50."
       }
     },
     {
       "id": "weekly_progress_photo",
-      "version": 2,
+      "version": 3,
       "triggers": [],
       "always_on": true,
       "goal_match": [
@@ -1143,8 +1143,8 @@
       "task_title": "Reference photo: same spot, same light, same distance",
       "copy": {
         "headline": "One reference photo a week",
-        "body": "Not a scan. A plain photo in the same spot, light and distance each week. It stays on your phone and is never analysed.",
-        "why_this": "Keeps the eight weeks honest without daily re-scanning."
+        "body": "Take a plain photo in the same spot, light and distance each week. It stays in your camera roll and the app never reads it.",
+        "why_this": "It shows change over the eight weeks without scanning every day."
       }
     }
   ]

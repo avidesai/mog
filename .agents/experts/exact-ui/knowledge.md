@@ -33,3 +33,7 @@ Controls, bars, type and dark mode are the platform's; emphasis is a *part*, not
 - Pushed screens say `navigationBar="none"` and draw their own bar with a `button id="back"`, which the edge swipe presses. Not yet seen on iOS.
 - `verify web` is clean but for one deliberate finding: the score numeral stays 104 px inside its fixed ring.
 - `ink.mute` and `flame.text` are a shade darker than tokens.json so they hold 4.5:1 on the raised and wash grounds.
+- Motion (`docs/recipes/motion.md`): `keyframes` are declared at file scope with literal values; `animation=` takes them on SVG geometry (`cx`, `cy`) and on `translate`, where a percentage is of the element's own size. A full-width child animated from `translate="0% 0px"` to `"100% 0px"` therefore sweeps its parent, which is how the band's marker moves between two data-driven ends. Gate every animation on `exactViewport().prefersReducedMotion`. `clock settle` ends motion in tests.
+- Prices: `ItemDetails.price.value` is a string, so `parseNumber` it. `formatNumber(n, "currency", "USD")` needs a literal currency code, so the weekly equivalent shows for USD only; the saving is a ratio and shows for any currency.
+- A display title with a long word spills at the largest text size when it is sized in rem. `font-size="min(-exact-large-title, 44px)"` caps it.
+- The paywall offers two plans, yearly first, with no trial and no lifetime tier (owner's decision, 20 Nov). On a host with no store the buy button stays and says purchases work in the iPhone app.
