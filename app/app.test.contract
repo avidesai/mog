@@ -1,13 +1,119 @@
-test "opens on Today with the scan empty state"
-  expect state nav.tab == "today"
-  expect tree has "content-today"
-
-test "each tab opens its own screen"
-  tap "tab-plan"
+test "first session: onboarding, consent, capture, reveal, results, plan"
+  expect tree has "start"
+  expect state onboarded == false
+  tap "start"
+  clock settle
+  expect disabled "goals-next"
+  tap "goal-better_skin"
+  tap "goal-sharper_jawline"
+  expect state goals.0 == "better_skin"
+  expect state goals.1 == "sharper_jawline"
+  tap "goals-next"
+  clock settle
+  expect disabled "about-next"
+  tap "sex-male"
+  tap "age-25-34"
+  tap "adult"
+  tap "about-next"
+  clock settle
+  tap "time-15"
+  tap "time-next"
+  clock settle
+  tap "consent"
+  clock settle
+  expect tree has "capture-hint"
+  clock +6000
+  clock data
+  clock settle
+  expect state onboarded == true
+  expect text "reveal-band" == "likely 3.3–6.7"
+  expect text "reveal-tier" == "Mid-tier normie · roughly the 50th percentile of the reference distribution"
+  tap "see-results"
+  clock settle
+  expect tree has "strength"
+  expect tree has "improvable"
+  tap "see-plan"
+  clock settle
   expect state nav.tab == "plan"
-  tap "tab-path"
-  expect text "path-intro" == "Eight weeks. A week banks at five of seven days. Scans at weeks four and eight."
-  tap "tab-you"
-  expect tree has "content-you"
+  expect tree has "plan-list"
+
+test "declining consent says what it means and captures nothing"
+  tap "start"
+  clock settle
+  tap "goal-general"
+  tap "goals-next"
+  clock settle
+  tap "sex-female"
+  tap "age-18-24"
+  tap "adult"
+  tap "about-next"
+  clock settle
+  tap "time-next"
+  clock settle
+  tap "decline"
+  expect text "declined" == "Without this, the app can't measure anything. Your account stays; nothing is captured."
+  expect state onboarded == false
+
+test "a day's tasks count toward the streak and survive a relaunch"
+  tap "start"
+  clock settle
+  tap "goal-general"
+  tap "goals-next"
+  clock settle
+  tap "sex-male"
+  tap "age-18-24"
+  tap "adult"
+  tap "about-next"
+  clock settle
+  tap "time-next"
+  clock settle
+  tap "consent"
+  clock settle
+  clock +6000
+  clock data
+  clock settle
+  tap "see-results"
+  clock settle
+  tap "see-plan"
+  clock settle
   tap "tab-today"
-  expect tree has "content-today"
+  clock settle
+  expect tree has "today-list"
+  expect tree has "countdown"
+  reload
+  clock data
+  expect state onboarded == true
+  expect tree has "today-list"
+
+test "delete everything wipes the measurements and returns to the start"
+  tap "start"
+  clock settle
+  tap "goal-general"
+  tap "goals-next"
+  clock settle
+  tap "sex-male"
+  tap "age-18-24"
+  tap "adult"
+  tap "about-next"
+  clock settle
+  tap "time-next"
+  clock settle
+  tap "consent"
+  clock settle
+  clock +6000
+  clock data
+  clock settle
+  tap "see-results"
+  clock settle
+  tap "see-plan"
+  clock settle
+  tap "tab-you"
+  clock settle
+  tap "delete"
+  clock settle
+  tap "wipe-confirm"
+  clock data
+  clock settle
+  expect state onboarded == false
+  expect state app.hasScan == false
+  expect tree has "start"
