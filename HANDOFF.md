@@ -110,7 +110,7 @@ modules/apple/      MogCapture.swift — ExactModule + ExactNativeFactory for <m
 strings/en.json     generated from core/copy/strings.json (write a 20-line script; keep the JSON the source of truth)
 ```
 
-**Design-system reconciliation.** Keep: the palette as tamber tokens, the five colour-meaning rules (blue = measurement, green = done, amber = streak flame only, gold = week-8 finish only, nothing encodes score quality), one light register with only the capture viewport dark, evidence badges as `Badge`, the score band as a content part, the path as content. Drop: 4 px lips, custom tab/nav chrome, any styled platform control. Decide fonts in the spike; if Exact's answer is the system font, that is the answer. Re-render the 28 artboards in your head as "same screens, platform chrome" — the information architecture and copy do not change.
+**Design-system reconciliation (revised 20 Nov).** The app is drawn to the artboards: tokens in `app/app.tamber`, type styles and parts in `app/ui.contract`, bundled Inter Tight and Instrument Serif, lipped buttons, the drawn tab bar (Today / Path / Metrics / You; the plan opens from Today). The five colour-meaning rules hold. The 13 Nov line ("platform chrome wins; drop the lips") is superseded; see `.agents/experts/exact-ui/decisions.md`.
 
 **Fallback.** If Exact cannot ship an App Store build by week 10 (check `docs/recipes/eas-ios.md` and `porting-and-release.md` early), the SwiftUI app in `ios/` ships v1 and Exact becomes v1.1. Decide this by the end of week 3, not week 10.
 
