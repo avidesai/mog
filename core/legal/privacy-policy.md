@@ -21,6 +21,7 @@ Your face is measured on your phone. The images and face geometry never leave it
 
 - Facial measurements derived from guided camera captures. How these are handled (captured, processed, deleted, retained) is set out in full in the Biometric Data Policy. In summary: frames, depth data and landmarks exist for seconds and never leave the device; named measurements are kept on the device; they are synced to your account only if you turn that on.
 - A score, a tier, a plan of recommendations, and your habit data (which days you completed your plan, your streak, which weeks you banked).
+- If you turn on the evening reminder, the app asks iOS to show a notification at 7 pm with your streak count. It can appear on your lock screen. Turning the reminder off, or Delete everything, cancels it.
 
 **We collect automatically**
 

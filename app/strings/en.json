@@ -353,5 +353,6 @@
   "reminder.setting_body": "At 7 pm, on days the plan isn't done.",
   "reminder.title": "Your plan for today",
   "reminder.body_streak": "Your streak is at {n} days.",
-  "reminder.body_start": "One task starts your streak."
+  "reminder.body_start": "One task starts your streak.",
+  "reminder.denied": "Notifications are off for this app in Settings."
 }

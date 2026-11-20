@@ -405,6 +405,7 @@
     "setting_body": "At 7 pm, on days the plan isn't done.",
     "title": "Your plan for today",
     "body_streak": "Your streak is at {n} days.",
-    "body_start": "One task starts your streak."
+    "body_start": "One task starts your streak.",
+    "denied": "Notifications are off for this app in Settings."
   }
 }

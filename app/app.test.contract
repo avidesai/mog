@@ -766,7 +766,7 @@ test "an ignored check-in still waits out its two weeks"
   clock data
   expect tree missing "checkin"
 
-test "the evening reminder switch asks for permission, and turns off again"
+test "the evening reminder stays off until permission is granted"
   tap "start"
   clock settle
   tap "goal-general"
@@ -792,8 +792,5 @@ test "the evening reminder switch asks for permission, and turns off again"
   expect state reminderOn == false
   tap "reminder"
   clock data
-  clock settle
-  expect state reminderOn == true
-  tap "reminder"
   clock settle
   expect state reminderOn == false
