@@ -2,7 +2,7 @@ import Foundation
 import os
 
 /// A closed allowlist of events. Nothing else can be sent. Payloads carry no score, no metric
-/// value, no image or derivative, no goal text — only categorical state (eng doc, "Privacy").
+/// value, no image or derivative, no goal text, only categorical state (eng doc, "Privacy").
 /// The transport is a no-op logger until PostHog is wired in week 7; the allowlist is the point.
 enum AnalyticsEvent {
     case onboardingStep(String)

@@ -1,4 +1,4 @@
-"""Appearance heads — the cheap, deterministic path (spike 5).
+"""Appearance heads: the cheap, deterministic path (spike 5).
 
 Two indices feed metrics.json's `skin_evenness` and `facial_adiposity` without any trained
 model: simple, documented image and geometry statistics, normalised so they are stable under

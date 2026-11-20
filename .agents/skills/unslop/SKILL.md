@@ -1,6 +1,6 @@
 ---
 name: unslop
-description: Remove generated-looking code from a diff without changing behaviour — comments that restate the code, filler doc comments, defensive checks for impossible cases, one-caller helpers, vague names, hedge words in prose. Run as the last step of any change in this repo (Swift, TypeScript, Python, Contract, Markdown).
+description: Remove generated-looking code from a diff without changing behaviour. Comments that restate the code, filler doc comments, defensive checks for impossible cases, one-caller helpers, vague names, hedge words in prose. Run as the last step of any change in this repo (Swift, TypeScript, Python, Contract, Markdown).
 source: adapted from vercel-labs/ui .agents/skills/ui-sdk-unslop
 ---
 

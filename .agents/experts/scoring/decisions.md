@@ -1,4 +1,4 @@
-# Scoring — settled
+# Scoring: settled
 
 - Rules-only at launch; no learned component before peer-rating data exists (11 Nov).
 - Never train on SCUT-FBP5500 (non-commercial, biased).

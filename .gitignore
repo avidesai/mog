@@ -13,7 +13,7 @@ xcuserdata/
 *.xcuserstate
 .swiftpm/
 Packages/
-# Secrets — never commit
+# Secrets: never commit
 ios/Mog/Config/Secrets.xcconfig
 *.p8
 *.p12

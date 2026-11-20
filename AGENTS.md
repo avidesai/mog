@@ -1,4 +1,4 @@
-# Mog — agent guide
+# Mog: agent guide
 
 Start with `HANDOFF.md` once. Then this is the standing guide.
 
@@ -10,9 +10,10 @@ iPhone-first facial-harmony measurement app. Guided capture → on-device geomet
 - **The Python engines are the spec.** Any port (Swift, TS) must reproduce `core/fixtures/scoring_cases.json` to 1e-6. Never edit a fixture to make a port pass. Any change that moves a score bumps the model version and regenerates `composite_reference.json` + fixtures.
 - **Privacy invariants are not negotiable.** No frame, depth map, landmark, mesh, embedding or projected point is persisted, synced or sent. Run the privacy expert on any diff touching capture, storage, network or analytics.
 - **Copy:** every string lives in `core/copy/strings.json`; run `.agents/skills/clean-copy` (should it exist?) before `core/copy/voice.md`; the denylist runs in CI. Fix the string, never the list.
+- **No em dashes** in copy, comments, docs, commit messages or PR text. The Claude Design exports in `design/screens-*` are the one exception; they are not ours to edit here.
 - **Code:** finish every change with `.agents/skills/unslop`. Comments say why, in three lines or fewer; the privacy audit-trail comments stay.
 - **Experts** in `.agents/experts/` (scoring, privacy, capture, exact-ui): read `knowledge.md` and `decisions.md` before working in their domain; never re-raise a settled decision as a finding; fix `knowledge.md` when it is wrong.
-- **Exact:** trust the checkout over anything written here (pre-1.0, moves weekly). Platform chrome wins over our design system; brand lives in `app.tamber`.
+- **Exact:** trust the checkout over anything written here (pre-1.0, moves weekly). The app is drawn to the design artboards (`app/ui.contract`, tokens in `app/app.tamber`); see the exact-ui expert's decisions.
 - **Data tables** (`core/data/*.json`) are human-authored and versioned. `composite_reference.json` is generated. Reliability tiers and `noise_sd` are provisional until `core/tools/harness.py --write-tiers` runs on real captures.
 - **Commits** are conventional, lowercase subject, and end with the attribution lines in the session's system reminder if one is present.
 - **Delete; don't deprecate.** No compat shims before 1.0.

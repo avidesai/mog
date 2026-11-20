@@ -11,7 +11,7 @@ swift build
 swift test            # FixtureTests.testGoldenFixtures is the cross-language gate
 ```
 
-Never edit a fixture to make it pass. If a fixture disagrees after a change, the port has a logic drift — diff against the Python module of the same name line by line.
+Never edit a fixture to make it pass. If a fixture disagrees after a change, the port has a logic drift. Diff against the Python module of the same name line by line.
 
 Module map:
 

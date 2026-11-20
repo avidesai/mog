@@ -1,4 +1,4 @@
-# backend — Supabase
+# backend: Supabase
 
 Postgres schema, RLS and the deletion path. Edge Functions come in week 7/8.
 
@@ -22,7 +22,7 @@ Written; pure logic in each `logic.ts` is tested with Node (`node --experimental
 |---|---|---|
 | `revenuecat-webhook` | RevenueCat → HTTP | Upserts `entitlements` (service role, verifies the webhook secret) |
 | `process-deletions` | cron, hourly | For each `deletion_queue` row older than 24 h: delete `auth.users` (cascades the tombstoned profile), mark processed. Purge `consents` older than 3 years past user deletion. |
-| `phrase` | app → HTTP (only if on-device Foundation Models fail) | Receives goal ids, rule ids, static copy and finding *categories* — the validator refuses any value, score, landmark or coordinate; calls the model at temperature 0 with a fixed system prompt; enforces same-ids-same-order, length caps, no exclamation marks, no dose/weight/calorie figures, then the denylist; returns text or **204** (client falls back to static copy) |
+| `phrase` | app → HTTP (only if on-device Foundation Models fail) | Receives goal ids, rule ids, static copy and finding *categories*. The validator refuses any value, score, landmark or coordinate; calls the model at temperature 0 with a fixed system prompt; enforces same-ids-same-order, length caps, no exclamation marks, no dose/weight/calorie figures, then the denylist; returns text or **204** (client falls back to static copy) |
 
 ## Apply to a real project
 

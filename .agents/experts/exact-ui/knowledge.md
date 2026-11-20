@@ -1,4 +1,4 @@
-# Exact UI — what I know (verified 13 Nov 2026 against expo/exact 513d10f; it moves weekly)
+# Exact UI: what I know (verified 13 Nov 2026 against expo/exact 513d10f; it moves weekly)
 
 - Exact = Contract (`app.contract`: view/state/actions/resources/mutations/derive) + data module (`app.ts`, TypeScript on Hermes; grants for net/files/sqlite/secrets) + `app.json` manifest + optional `app.tamber` brand tokens + `modules/apple/*.swift` native modules and native views.
 - **The data module can import pure-JS npm packages** (ESM or CommonJS) and its own `.ts`; anything needing Node, the DOM or a native addon is refused by name. (Earlier notes said "types only"; the checkout's `docs/start-here.md` says otherwise.) The MogCore port stays dependency-free regardless. `Date.now()` and randomness are refused in the data module: time comes in as an argument.

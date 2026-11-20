@@ -13,7 +13,7 @@ import simd
 struct Reading { let value: Double; let confidence: Double; let iqr: Double }
 
 /// Anatomical points in the face anchor's coordinate space (metres): +Y up, +Z out of the face
-/// toward the camera, X across the face. Which side is "left" is a display concern only — every
+/// toward the camera, X across the face. Which side is "left" is a display concern only. Every
 /// metric below is either symmetric or uses both sides.
 struct AnatomicalPoints {
     var p: [String: SIMD3<Float>] = [:]
@@ -157,7 +157,7 @@ struct Heuristics {
         let band = v.filter { $0.y < n.y && $0.y > sn.y && $0.x * sign > 0 }
         return band.max { $0.x * sign < $1.x * sign }
     }
-    /// Widest point of the lower face at the height band just above the menton — the soft-tissue jaw angle.
+    /// Widest point of the lower face at the height band just above the menton. The soft-tissue jaw angle.
     func gonion(sign: Float) -> SIMD3<Float>? {
         guard let m = menton, let st = stomion else { return nil }
         let band = v.filter { $0.y > m.y + 0.010 && $0.y < st.y && $0.x * sign > 0 }
@@ -202,7 +202,7 @@ struct Heuristics {
 /// Pure functions from anatomical points to the metric ids in core/data/metrics.json.
 /// Everything is computed in the face anchor frame, which is already pose-normalised and metric,
 /// so there is no perspective or scale step. Frontal metrics use (x, y); profile angles use the
-/// midline's (y, z) — which means the ARKit mesh yields profile angles from the FRONT capture.
+/// midline's (y, z), which means the ARKit mesh yields profile angles from the FRONT capture.
 /// Whether those are reliable enough to replace a separate profile capture is a spike-2 question.
 enum MetricFunctions {
 
@@ -252,7 +252,7 @@ enum MetricFunctions {
             let w = (dist2(a["canthus_inner_l"]!, a["canthus_outer_l"]!) + dist2(a["canthus_inner_r"]!, a["canthus_outer_r"]!)) / 2
             return w / interc!
         }
-        // facial thirds need trichion (hairline) — not in the ARKit mesh. Suppressed until the appearance layer supplies it.
+        // facial thirds need trichion (hairline), not in the ARKit mesh. Suppressed until the appearance layer supplies it.
         put("lower_third_split", ["subnasale", "stomion", "menton"]) { dy(a["subnasale"]!, a["stomion"]!) / dy(a["subnasale"]!, a["menton"]!) }
         put("midface_ratio", ["pupil_l", "pupil_r", "upper_lip_top"]) {
             let line = mid(a["pupil_l"]!, a["pupil_r"]!)
@@ -314,7 +314,7 @@ enum MetricFunctions {
 
 // Port of core/appearance (skin.py, adiposity.py). Same algorithm, same constants.
 // Skin evenness works directly on the 420f buffer's Y and CbCr planes inside a skin mask built by
-// projecting cheek and forehead regions of the mesh — no RGB conversion, no pixels retained.
+// projecting cheek and forehead regions of the mesh, no RGB conversion, no pixels retained.
 
 enum SkinEvenness {
     static let wTexture = 6.0, wChroma = 0.045, largeSigma = 9.0, smallSigma = 1.2

@@ -5,7 +5,7 @@ t=json.load(open("design/design-system/tokens.json"))
 def camel(s):
     p=s.split("-"); return p[0]+"".join(x.capitalize() for x in p[1:])
 def hx(h): return f'0x{h[1:]}'
-out=["// GENERATED from design/design-system/tokens.json by tools/gen_tokens.py — do not edit by hand.","import SwiftUI","","public enum Tokens {","    // MARK: Colours (light / dark)","    public enum Colors {"]
+out=["// GENERATED from design/design-system/tokens.json by tools/gen_tokens.py. Do not edit by hand.","import SwiftUI","","public enum Tokens {","    // MARK: Colours (light / dark)","    public enum Colors {"]
 for c in t["color"]["tokens"]:
     out.append(f'        /// {c["usage"]}'); out.append(f'        public static let {camel(c["name"])} = Color(light: {hx(c["value"]["light"])}, dark: {hx(c["value"]["dark"])})')
 out+=["    }","    // MARK: Spacing","    public enum Space {"]

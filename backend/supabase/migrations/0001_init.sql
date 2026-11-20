@@ -1,4 +1,4 @@
--- Mog backend — initial schema (eng doc, "Backend" + "Habit-layer data model").
+-- Mog backend: initial schema (eng doc, "Backend" + "Habit-layer data model").
 --
 -- Principles encoded here:
 --   * The server never sees face data. There is no column that could hold an image, a landmark,
@@ -55,7 +55,7 @@ create table public.entitlements (
   primary key (user_id, product)
 );
 
--- A JSON object whose every value is a number. No arrays, no nested objects, no strings —
+-- A JSON object whose every value is a number. No arrays, no nested objects, no strings. 
 -- nothing that could smuggle coordinates or a template.
 create or replace function public.is_flat_scalar_map(j jsonb) returns boolean
 language sql immutable as $$
@@ -226,7 +226,7 @@ alter table public.deletion_queue enable row level security;   -- no policies: s
 -- ------------------------------------------------------- delete everything
 -- Called by the app (as the user). Hard-deletes every row the user owns, tombstones the profile,
 -- and schedules the auth user for removal. Consent rows are retained (3 years, legal evidence) but
--- stripped of everything except kind/version/timestamps — they already hold nothing else.
+-- stripped of everything except kind/version/timestamps: they already hold nothing else.
 create or replace function public.delete_everything() returns void
 language plpgsql security definer set search_path = public as $$
 declare uid uuid := auth.uid();

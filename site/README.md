@@ -1,6 +1,6 @@
-# site — public policies
+# site: public policies
 
-Static build of `core/legal/*.md`. Versioned URLs (`/biometric-data-policy/v1.0/`), a stable alias per policy, and a versions index — prior versions are never removed, which is what the biometric policy promises.
+Static build of `core/legal/*.md`. Versioned URLs (`/biometric-data-policy/v1.0/`), a stable alias per policy, and a versions index. Prior versions are never removed, which is what the biometric policy promises.
 
 ```
 pip install -r core/requirements-tools.txt  # once

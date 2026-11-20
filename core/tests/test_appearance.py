@@ -40,7 +40,7 @@ def test_clean_skin_reads_high_and_blotchy_reads_low():
 
 def test_lighting_gradient_barely_moves_the_index():
     """A 30% left-to-right brightness ramp is lighting, not skin. The illumination normalisation
-    must make the index insensitive to it — this is the property the luma gate relies on."""
+    must make the index insensitive to it. This is the property the luma gate relies on."""
     flat = skin_evenness(*_patch(seed=3, texture=2.0, blotch=0.4)).evenness
     lit = skin_evenness(*_patch(seed=3, texture=2.0, blotch=0.4, gradient=0.30)).evenness
     assert abs(flat - lit) < 0.04, (flat, lit)

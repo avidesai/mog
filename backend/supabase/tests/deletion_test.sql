@@ -55,7 +55,7 @@ do $$ begin
   end;
 end $$;
 
--- guard 3: RLS — user 1 cannot see user 2's profile
+-- guard 3: RLS: user 1 cannot see user 2's profile
 do $$ begin
   if exists (select 1 from public.users where id = '00000000-0000-0000-0000-000000000002') then
     raise exception 'GUARD FAILED: RLS leaked another user''s row';

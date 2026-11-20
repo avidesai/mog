@@ -1,12 +1,12 @@
-# Mog — Design Language Bible and UI Kit
+# Mog: Design Language Bible and UI Kit
 
 Nov 11, 2026 · @Avi
 
-The app should look like a measurement instrument that occasionally becomes beautiful. Monochrome, dense and precise everywhere, with a single accent reserved for the measurement under discussion — and a serif display face permitted in exactly two places, the score reveal and the share card. This document is the source of truth for every visual decision, and is written to be handed to a design tool as a brief.
+The app should look like a measurement instrument that occasionally becomes beautiful. Monochrome, dense and precise everywhere, with a single accent reserved for the measurement under discussion, and a serif display face permitted in exactly two places, the score reveal and the share card. This document is the source of truth for every visual decision, and is written to be handed to a design tool as a brief.
 
-## Decision record — 11 November 2026
+## Decision record: 11 November 2026
 
-This section supersedes the sections below wherever they disagree. The 28-screen canvas **Mog — Gamified Direction** and the Mog design system (v3 tokens) are the current reference; the sections that follow are the original instrument-direction draft, kept for the reasoning.
+This section supersedes the sections below wherever they disagree. The 28-screen canvas **Mog: Gamified Direction** and the Mog design system (v3 tokens) are the current reference; the sections that follow are the original instrument-direction draft, kept for the reasoning.
 
 **The direction is warm and pressable, not clinical.** The instrument draft read as lab software. What survives from it: ivory and warm neutrals, Inter Tight with tabular numerals, Instrument Serif for the big numbers, blue meaning *measurement* only, no colour encoding score quality, the measured face as hero, and every one of the honesty rules. What changed:
 
@@ -20,7 +20,7 @@ This section supersedes the sections below wherever they disagree. The 28-screen
 | Results-first home | Today-first home: the day count, three tasks from the plan, the week's banking progress, the scan countdown |
 | Nothing to return for between scans | The streak, and a path of eight weeks that banks at 5 of 7 days with scans at weeks 4 and 8 |
 
-**One mechanic.** The streak is the only reward system. XP, levels, badges, leagues and a clean-capture bonus were all built and then cut: each was a second currency with no meaning tied to the product, and together they were the Duolingo failure mode. The streak counts days the plan was done — never scans or opens — and a missed day offers one earned repair a month, never a purchasable one. Banked weeks never reset.
+**One mechanic.** The streak is the only reward system. XP, levels, badges, leagues and a clean-capture bonus were all built and then cut: each was a second currency with no meaning tied to the product, and together they were the Duolingo failure mode. The streak counts days the plan was done (never scans or opens) and a missed day offers one earned repair a month, never a purchasable one. Banked weeks never reset.
 
 **Onboarding is three questions**, not eight: goals, sex and age band (the screen says these are the only things the reference ranges depend on), and realistic time. The self-rating question was cut because it primes the comparison frame; the distress signal comes from rescan behaviour instead.
 
@@ -40,7 +40,7 @@ Six rules, in priority order. When two screens disagree, the higher rule wins.
 
 **3. Nothing fake, anywhere.** No teaser scores, no placeholder numbers behind blur, no invented social proof, no fabricated activity counters. Locked content shows its real label and a blurred value, so the user knows exactly what exists. This rule is absolute and has no design exceptions.
 
-**4. Density is respect.** This audience reads specifications for fun. They want the value, the reference range, the evidence grade and the method. Do not protect them from information — structure it so a glance gets the headline and a scroll gets the depth.
+**4. Density is respect.** This audience reads specifications for fun. They want the value, the reference range, the evidence grade and the method. Do not protect them from information. Structure it so a glance gets the headline and a scroll gets the depth.
 
 **5. Low scores are facts, never verdicts.** The interface states percentiles and measurements. It never editorializes about the person. No red for a low score, no frowning iconography, no "needs work" language. Neutral color, neutral type, actionable next step.
 
@@ -54,7 +54,7 @@ A precision measurement instrument, rendered in near-monochrome with a single bl
 
 ### What it rejects, deliberately
 
-The category has one look: near-black ground, neon or chrome gradient, glow, heavy drop shadows, scanning-grid motifs, aggressive italics. Umax, LooksMax AI and the long clone tail all run variants of it. Adopting it would make the app visually indistinguishable from products whose core failing is that they are not credible — and it raises the odds of being read as another variant under Apple's June 2026 warning about opportunistic clones of popular app categories.
+The category has one look: near-black ground, neon or chrome gradient, glow, heavy drop shadows, scanning-grid motifs, aggressive italics. Umax, LooksMax AI and the long clone tail all run variants of it. Adopting it would make the app visually indistinguishable from products whose core failing is that they are not credible, and it raises the odds of being read as another variant under Apple's June 2026 warning about opportunistic clones of popular app categories.
 
 So: **no gradients as decoration, no glow, no chrome, no scan-line motifs, no drop shadows beyond a 1px hairline border.** Depth comes from borders and spacing, not from blur or shadow.
 
@@ -70,7 +70,7 @@ So: **no gradients as decoration, no glow, no chrome, no scan-line motifs, no dr
 
 ### What is deliberately not borrowed
 
-Oura's atmospheric warmth was considered and rejected for v1. It is the better model for the harm-reduction framing, and it is also closest to the category default, which makes differentiation harder. The relevant framing axis — body-as-machine versus body-as-temple — is handled in the copy rules instead, which is where it actually belongs.
+Oura's atmospheric warmth was considered and rejected for v1. It is the better model for the harm-reduction framing, and it is also closest to the category default, which makes differentiation harder. The relevant framing axis (body-as-machine versus body-as-temple) is handled in the copy rules instead, which is where it actually belongs.
 
 ### The two registers
 
@@ -115,7 +115,7 @@ The background is warm off-white rather than pure white, and the dark mode groun
 
 ### The rule that matters most
 
-**No color encodes score quality.** A 3.1 and an 8.4 are set in the same `--ink-900` at the same weight. Semantic color is reserved for system state — capture quality, evidence strength, change over time — and never for a judgement about the person.
+**No color encodes score quality.** A 3.1 and an 8.4 are set in the same `--ink-900` at the same weight. Semantic color is reserved for system state (capture quality, evidence strength, change over time) and never for a judgement about the person.
 
 This is a deliberate departure from every competitor, which use red-to-green ramps on facial metrics. Those ramps are why screenshots of those apps read as cruel, and they are the single easiest thing to point at in a critical article.
 
@@ -141,15 +141,15 @@ Deltas and history use a single hue: `--accent` for the series, `--ink-300` for 
 
 | Role | Family | Fallback | Licensing |
 | --- | --- | --- | --- |
-| UI and body | **Inter Tight** | SF Pro | Open, SIL — free, which matters at this budget |
+| UI and body | **Inter Tight** | SF Pro | Open, SIL. Free, which matters at this budget |
 | Numerals | Inter Tight, tabular figures enabled | SF Pro tabular | Same |
-| Display, reveal only | **Instrument Serif** | New York | Open, SIL — free |
+| Display, reveal only | **Instrument Serif** | New York | Open, SIL. Free |
 
 Both families are free and open-licensed. A paid pairing such as Söhne with Tiempos Headline would be marginally better, and is the first upgrade to make once revenue exists.
 
 ### The serif rule
 
-Instrument Serif appears in exactly two places: the score numeral on the reveal screen, and the score numeral on the share card. Nowhere else — not in headings, not in the paywall, not in onboarding. Every additional use costs the reveal its impact.
+Instrument Serif appears in exactly two places: the score numeral on the reveal screen, and the score numeral on the share card. Nowhere else, not in headings, not in the paywall, not in onboarding. Every additional use costs the reveal its impact.
 
 ### Scale
 
@@ -171,7 +171,7 @@ Tight tracking throughout is the signature; it gives body copy an editorial dens
 
 ### Numerals
 
-Tabular figures everywhere a number appears — metric values, scores, ranges, dates, deltas. Proportional figures cause values to shift horizontally between re-renders, which on a screen full of measurements reads as instability. In an app whose promise is that numbers do not move, numerals that visibly jitter undermine the claim at the typographic level.
+Tabular figures everywhere a number appears. Metric values, scores, ranges, dates, deltas. Proportional figures cause values to shift horizontally between re-renders, which on a screen full of measurements reads as instability. In an app whose promise is that numbers do not move, numerals that visibly jitter undermine the claim at the typographic level.
 
 ### Writing numbers
 
@@ -184,7 +184,7 @@ Tabular figures everywhere a number appears — metric values, scores, ranges, d
 
 ### Constraints
 
-Support Dynamic Type to at least `accessibilityMedium`; the metric card must reflow rather than truncate. Never set body copy below 13pt. Never use italics for emphasis — use `--ink-900` against `--ink-700`. No all-caps except in `label` tokens, and never on a tier name.
+Support Dynamic Type to at least `accessibilityMedium`; the metric card must reflow rather than truncate. Never set body copy below 13pt. Never use italics for emphasis: use `--ink-900` against `--ink-700`. No all-caps except in `label` tokens, and never on a tier name.
 
 ## Space, grid, radius, elevation
 
@@ -255,7 +255,7 @@ Five variants per the color section. `label` type, 2pt vertical and 6pt horizont
 
 ### CaptureFrame
 
-The live camera surface with the gating system. A full-bleed preview, a `radius-lg` mask with the area outside at 60% `--ink-max`, and a thin `--line-200` alignment guide. Gate status renders as a stack of at most three active chips at the top — never all nine at once, which would be unusable. The progress ring is the only `radius-full` element in the app, stroked 3pt in `--accent`, filling as gates pass. The shutter is disabled until all gates pass, with the single permitted shadow.
+The live camera surface with the gating system. A full-bleed preview, a `radius-lg` mask with the area outside at 60% `--ink-max`, and a thin `--line-200` alignment guide. Gate status renders as a stack of at most three active chips at the top, never all nine at once, which would be unusable. The progress ring is the only `radius-full` element in the app, stroked 3pt in `--accent`, filling as gates pass. The shutter is disabled until all gates pass, with the single permitted shadow.
 
 **Gate chip states:** pending (`--ink-500` text, `--line-200` border) · passing (`--accent` text and border) · failing (`--caution` text and border, plus a corrective instruction such as "Move a little further away").
 
@@ -288,13 +288,13 @@ This is the signature component and the one thing no competitor does well. It is
 
 ### Behaviour
 
-The user's own capture, with the geometry for one metric drawn over it. One metric at a time, never several at once — a face covered in simultaneous measurement lines is the aesthetic of the apps this one is competing against, and it communicates nothing.
+The user's own capture, with the geometry for one metric drawn over it. One metric at a time, never several at once. A face covered in simultaneous measurement lines is the aesthetic of the apps this one is competing against, and it communicates nothing.
 
 ### Rendering
 
 | Element | Treatment |
 | --- | --- |
-| Photo | Full width, `radius-md`, unmodified — never beautified, never filtered, never smoothed |
+| Photo | Full width, `radius-md`, unmodified, never beautified, never filtered, never smoothed |
 | Inactive geometry | 1pt `--line-200` at 40% opacity, showing the landmark scaffold faintly |
 | Active measurement | 2pt `--accent`, full opacity |
 | Measurement endpoints | 4pt `--accent` filled circles |
@@ -308,7 +308,7 @@ The photo is never retouched, brightened, smoothed or warmed. If the capture loo
 
 ### Interaction
 
-Tap a metric card, and the overlay animates from the previous metric's geometry to this one — endpoints translating, lines redrawing over 240ms. The transition between measurements is the single most satisfying moment in the product after the reveal, and it is also what makes the system legible: users learn what the measurements *are* by watching them move.
+Tap a metric card, and the overlay animates from the previous metric's geometry to this one. Endpoints translating, lines redrawing over 240ms. The transition between measurements is the single most satisfying moment in the product after the reveal, and it is also what makes the system legible: users learn what the measurements *are* by watching them move.
 
 Pinch to zoom up to 3×, with the measurement scaling with the image. Long-press hides all overlay geometry to show the unmarked photo, which users will want constantly and which builds trust in the photo's authenticity.
 
@@ -318,7 +318,7 @@ Same system, applied to the profile capture. The Frankfort horizontal renders as
 
 ### Export
 
-The overlay is the most shareable artifact in the app after the score. An export renders the photo, one measurement, the value, and a small wordmark — at the user's explicit action only, and never with the score attached, which belongs to the share card.
+The overlay is the most shareable artifact in the app after the score. An export renders the photo, one measurement, the value, and a small wordmark, at the user's explicit action only, and never with the score attached, which belongs to the share card.
 
 ## Motion
 
@@ -342,7 +342,7 @@ No parallax, no spring bounce above 0.9 damping, no scale-on-press beyond 0.98, 
 The only sequence in the product that earns real time. Roughly 2.2 seconds total, skippable by tap from the first frame.
 
 1. **0–400ms.** Ground crossfades from `--paper` to `--ink-max`. The capture, already on screen, dims to 30% and scales to 0.96.
-2. **400–900ms.** The landmark scaffold draws on over the dimmed photo — a genuine render of the actual landmarks, not a decorative animation. This is a real moment of proof.
+2. **400–900ms.** The landmark scaffold draws on over the dimmed photo. A genuine render of the actual landmarks, not a decorative animation. This is a real moment of proof.
 3. **900–1400ms.** Scaffold fades. The score numeral in Instrument Serif scales from 0.92 to 1.0 with an opacity fade. **It does not count up.** A counting animation implies the number was arrived at by searching, and the whole product claim is that it was computed.
 4. **1400–1800ms.** The confidence band draws outward from the point estimate to its endpoints. The band appearing *after* the number, and visibly extending, is the design doing the honesty work.
 5. **1800–2200ms.** Tier chip and the first two insight rows fade in at 60ms intervals.
@@ -351,7 +351,7 @@ Then the screen is static. No looping ambient motion, no pulsing.
 
 ### Capture feedback
 
-Gate chips cross-fade between states over 100ms with no movement, since a jumping chip during careful head positioning is actively hostile. The progress ring fills continuously rather than stepping. When all gates pass, a single light haptic fires and the shutter becomes enabled — the only haptic in the capture flow.
+Gate chips cross-fade between states over 100ms with no movement, since a jumping chip during careful head positioning is actively hostile. The progress ring fills continuously rather than stepping. When all gates pass, a single light haptic fires and the shutter becomes enabled. The only haptic in the capture flow.
 
 ### Reduce Motion
 
@@ -361,7 +361,7 @@ With Reduce Motion enabled, the reveal becomes a 200ms crossfade to the final co
 
 ### The register
 
-Native with guardrails. The app uses the audience's vocabulary — harmony, PSL tiers, softmaxxing and hardmaxxing, canthal tilt, midface — because using euphemisms instead would mark it immediately as an outsider product and forfeit forum credibility. It does not use the vocabulary of ranking people against each other.
+Native with guardrails. The app uses the audience's vocabulary (harmony, PSL tiers, softmaxxing and hardmaxxing, canthal tilt, midface) because using euphemisms instead would mark it immediately as an outsider product and forfeit forum credibility. It does not use the vocabulary of ranking people against each other.
 
 The voice is a technician's: precise, unsentimental, slightly dry, never hyped and never consoling. It states what was measured and what follows from it.
 
@@ -370,18 +370,18 @@ The voice is a technician's: precise, unsentimental, slightly dry, never hyped a
 | Use | Never use |
 | --- | --- |
 | Harmony, proportion, projection | Subhuman, failo, cope, rope |
-| PSL tier names — LTN, MTN, HTN, Chadlite | Mogged, mogging, mogger, anything comparative |
+| PSL tier names: LTN, MTN, HTN, Chadlite | Mogged, mogging, mogger, anything comparative |
 | Softmaxxing, hardmaxxing | Looksmatch, SMV, any market-value framing |
 | Canthal tilt, gonial angle, midface ratio | Bone smashing, any excluded intervention, even to dismiss unprompted |
 | Percentile, reference range, confidence band | Rating out of other people, "better than X% of men" |
 
-That last exclusion is structural. The percentile is stated against a reference distribution, never as a comparison against other users — "68th percentile of the reference distribution" rather than "you beat 68% of guys." The second framing is what makes a product a ranking engine, and the ranking frame is both the dysmorphia risk and the reputational one.
+That last exclusion is structural. The percentile is stated against a reference distribution, never as a comparison against other users. "68th percentile of the reference distribution" rather than "you beat 68% of guys." The second framing is what makes a product a ranking engine, and the ranking frame is both the dysmorphia risk and the reputational one.
 
 ### Score and tier copy
 
 - Score: **"6.4"**, with **"likely 5.9–6.9"** directly beneath. Never "your score is," never an exclamation mark.
 - Tier: **"HTN"** with the subline **"High-tier normie · roughly the 68th percentile of our reference distribution"**.
-- Low scores, stated flat: **"4.1 · likely 3.7–4.5 · LTN"** and then straight into the most improvable finding. No softening preamble, no encouragement — both read as pity to this audience and both undercut the instrument voice.
+- Low scores, stated flat: **"4.1 · likely 3.7–4.5 · LTN"** and then straight into the most improvable finding. No softening preamble, no encouragement, both read as pity to this audience and both undercut the instrument voice.
 - What the score is, always one tap away: **"This estimates how an average rater would score this capture. About half of what makes a face appealing to any specific person is personal taste no model can measure."**
 
 ### Finding copy
@@ -396,7 +396,7 @@ Never: "weak jaw," "poor," "needs improvement," "unfortunately."
 
 Exactly these five strings, and no variants: *Well supported by research* · *Reasonable support* · *Limited evidence* · *Community metric, little evidence* · *Research points the other way*.
 
-The last one will appear on FWHR, and the explanation should be direct about it: the community treats a higher ratio as desirable, while the meta-analytic evidence associates it with lower rated attractiveness. Saying so plainly is a credibility asset, not a liability — it is the clearest available proof that the app reports findings rather than telling the audience what it wants to hear.
+The last one will appear on FWHR, and the explanation should be direct about it: the community treats a higher ratio as desirable, while the meta-analytic evidence associates it with lower rated attractiveness. Saying so plainly is a credibility asset, not a liability. It is the clearest available proof that the app reports findings rather than telling the audience what it wants to hear.
 
 ### Locked-state copy
 
@@ -414,7 +414,7 @@ State what is included and what it costs. No scarcity, no countdown, no "X peopl
 
 Calm, short, non-clinical, no accent color, no icon:
 
-> If you're finding yourself checking this a lot, that's worth paying attention to. Appearance preoccupation is common and treatable. If it's weighing on you, talking to someone helps — 988 connects you to support any time.
+> If you're finding yourself checking this a lot, that's worth paying attention to. Appearance preoccupation is common and treatable. If it's weighing on you, talking to someone helps. 988 connects you to support any time.
 
 Never A/B tested. Never styled to draw attention. Never used as an engagement surface.
 
@@ -422,7 +422,7 @@ Never A/B tested. Never styled to draw attention. Never used as an engagement su
 
 &#91;embedded content: v1 screen flow · 23 screens, two visual registers\]
 
-Two things in this flow are load-bearing. The paywall sits after a real, honest free result rather than before the scan, which is the structural decision that separates the product from the category. And the reveal register appears at only two nodes in the entire graph — everything else is instrument register, which is what makes those two moments land.
+Two things in this flow are load-bearing. The paywall sits after a real, honest free result rather than before the scan, which is the structural decision that separates the product from the category. And the reveal register appears at only two nodes in the entire graph. Everything else is instrument register, which is what makes those two moments land.
 
 ## Screen specs
 
@@ -438,24 +438,24 @@ Eight screens, one question each. Identical structure: progress bar at top (2pt,
 
 | # | Question | Input |
 | --- | --- | --- |
-| 2 | Sex | Two options — drives every reference distribution |
+| 2 | Sex | Two options: drives every reference distribution |
 | 3 | Age | Four bands, 18–24 through 45+, plus the age attestation |
 | 4 | What do you want to improve? | Multi-select, six goals |
-| 5 | What matters most? | Single select from what they chose above — sets primary goal weight |
+| 5 | What matters most? | Single select from what they chose above. Sets primary goal weight |
 | 6 | Current routine | Multi-select: skincare, training, hair treatment, none |
-| 7 | How do you think you look now? | 1–10 slider — used for the distress signal, never shown back |
-| 8 | Time you can realistically put in | Three options — drives effort filtering in the plan |
+| 7 | How do you think you look now? | 1–10 slider: used for the distress signal, never shown back |
+| 8 | Time you can realistically put in | Three options: drives effort filtering in the plan |
 | 9 | What you'll get | Three lines, no imagery, then Continue |
 
 Screen 9 is not a value-proposition sell. It is a plain statement of what the next two minutes involve, which suits the instrument voice and sets up the consent screen.
 
 ### 10. Consent
 
-Deliberately visually distinct — `ConsentPanel` on `--surface-50` with a 1px `--ink-900` border. Plain-English body covering what is captured, that it is processed on the device, that nothing is uploaded, what is kept, for how long, and how to delete it. Link to the full policy. The affirmative control is labelled with the action itself, not "Continue." Never bundled with terms or the paywall.
+Deliberately visually distinct: `ConsentPanel` on `--surface-50` with a 1px `--ink-900` border. Plain-English body covering what is captured, that it is processed on the device, that nothing is uploaded, what is kept, for how long, and how to delete it. Link to the full policy. The affirmative control is labelled with the action itself, not "Continue." Never bundled with terms or the paywall.
 
 ### 11. Capture intro
 
-Two illustrated steps — front, then profile — with a plain-language note on why positioning matters: the app can only be consistent if the captures are. Sets the expectation for gating before the user hits a failing gate.
+Two illustrated steps (front, then profile) with a plain-language note on why positioning matters: the app can only be consistent if the captures are. Sets the expectation for gating before the user hits a failing gate.
 
 ### 12. Front capture
 
@@ -471,7 +471,7 @@ The landmark scaffold rendering progressively over the actual capture. Real prog
 
 ### 15. Reveal
 
-Reveal register. `--ink-max` ground. Score numeral in Instrument Serif, `ScoreBand` beneath, `TierChip`, then two insight rows — the top strength and the most fixable finding. A single tertiary "What this means" link. Bottom-anchored primary action to see the full breakdown.
+Reveal register. `--ink-max` ground. Score numeral in Instrument Serif, `ScoreBand` beneath, `TierChip`, then two insight rows. The top strength and the most fixable finding. A single tertiary "What this means" link. Bottom-anchored primary action to see the full breakdown.
 
 ### 16. Results
 
@@ -503,7 +503,7 @@ Account · subscription · consent management with each consent independently re
 
 ### 23. Methodology
 
-The credibility screen, linked from the reveal and from settings. States how the score is computed, what the panel is, the published test-retest figure, how fairness is checked, and what the app explicitly does not claim. No competitor ships anything like this, and it is the single best asset for forum credibility — it should be written to be screenshotted and posted.
+The credibility screen, linked from the reveal and from settings. States how the score is computed, what the panel is, the published test-retest figure, how fairness is checked, and what the app explicitly does not claim. No competitor ships anything like this, and it is the single best asset for forum credibility. It should be written to be screenshotted and posted.
 
 ## States
 
@@ -524,7 +524,7 @@ Every component needs all of these specified, because the states are where a des
 
 ### The suppressed state matters most
 
-It is the state that proves the product works as advertised. Every competitor returns a number for every metric regardless of whether the capture supported it. Showing a metric as unmeasurable, with the specific reason and a retake path, is more convincing than any marketing copy about accuracy — and it is the direct visual expression of the determinism promise.
+It is the state that proves the product works as advertised. Every competitor returns a number for every metric regardless of whether the capture supported it. Showing a metric as unmeasurable, with the specific reason and a retake path, is more convincing than any marketing copy about accuracy, and it is the direct visual expression of the determinism promise.
 
 ### Score change across versions
 
@@ -543,13 +543,13 @@ When a model version bump changes a stored score, the app says so explicitly rat
 | VoiceOver | Metric cards announce as "name, value unit, within/outside typical range, evidence grade." Overlays carry a text description of the measurement |
 | Reduce Motion | Reveal becomes a 200ms crossfade; overlay transitions become cuts |
 | Reduce Transparency | Capture mask becomes solid rather than translucent |
-| Color independence | Nothing is communicated by color alone — evidence badges use border style and label, deltas use sign |
+| Color independence | Nothing is communicated by color alone. Evidence badges use border style and label, deltas use sign |
 
 The color-independence rule falls out of the design anyway, since no color encodes score quality. That principle does double duty as an accessibility property.
 
 ### Liquid Glass
 
-Apple shipped Liquid Glass with iOS 26, and from April 28, 2026 every App Store Connect upload must be built with Xcode 26 and the iOS 26 SDK — which means standard SwiftUI components adopt the new material automatically on recompile.
+Apple shipped Liquid Glass with iOS 26, and from April 28, 2026 every App Store Connect upload must be built with Xcode 26 and the iOS 26 SDK, which means standard SwiftUI components adopt the new material automatically on recompile.
 
 **The posture: adopt it for system chrome, reject it for content.**
 
@@ -567,7 +567,7 @@ The practical consequence for the build: audit every screen on an iOS 26 device 
 
 ### Wordmark
 
-Inter Tight, 600 weight, tracking −0.03em, lowercase, `--ink-900`. No logotype drawing, no icon lockup, no custom letterforms in v1 — a typographic wordmark is free, appropriate to the instrument character, and trivially revisable once the name settles.
+Inter Tight, 600 weight, tracking −0.03em, lowercase, `--ink-900`. No logotype drawing, no icon lockup, no custom letterforms in v1. A typographic wordmark is free, appropriate to the instrument character, and trivially revisable once the name settles.
 
 The one permitted flourish: a 2pt `--accent` measurement tick above the wordmark, echoing the overlay system. It ties the identity to the product's actual mechanic rather than being decoration.
 
@@ -583,7 +583,7 @@ The working name is **Mog**, and it is carried throughout this document so nothi
 
 - **It is three letters**, which is excellent for a wordmark and for an icon that could eventually be a letterform. Short names are a real typographic asset.
 - **It collides in the store.** *Mogged* and *MogMax* already exist in this category. A wordmark that is hard to distinguish from competitors at thumbnail size gives away the differentiation the icon direction above is trying to buy.
-- **It fights the voice rules.** The copy section excludes comparative vocabulary — mogging, mogger, mogged — because the ranking frame is the dysmorphia and reputational risk. A name drawn from that exact vocabulary sits in tension with every copy rule in this document, and that tension will be visible to anyone reading the app closely.
+- **It fights the voice rules.** The copy section excludes comparative vocabulary (mogging, mogger, mogged) because the ranking frame is the dysmorphia and reputational risk. A name drawn from that exact vocabulary sits in tension with every copy rule in this document, and that tension will be visible to anyone reading the app closely.
 
 If the name holds, the design response is to lean the wordmark hard toward the instrument character so the typography argues against the name's connotation. If it changes, the stronger directions are measurement words or a short invented mark that reads as native without being a community verb. Either way the wordmark is one line of type and costs nothing to redo.
 
@@ -608,7 +608,7 @@ That constraint paragraph is the important part. A design tool asked to make som
 1. **MetricCard, all four variants.** It appears more than anything else and sets the character. Get it right before anything else is drawn.
 2. **The measurement overlay.** The signature component and the hardest to get right.
 3. **Results screen**, composed from the two above.
-4. **Reveal screen** — the only place the second register appears, so design it immediately after the instrument register is settled, while the contrast is deliberate.
+4. **Reveal screen**: the only place the second register appears, so design it immediately after the instrument register is settled, while the contrast is deliberate.
 5. **Capture screen** with all gate states.
 6. **Onboarding**, as one template plus eight content fills.
 7. **Paywall**, **Plan**, **Share card**.
@@ -629,7 +629,7 @@ The last question is the one that matters commercially. If a generated screen co
 
 ### What to pair this with
 
-Hand over this document and the engineering design doc together. The screen specs assume behaviours defined there — gate thresholds, suppression rules, confidence bands, safety tiers — and a designer working from this document alone will produce screens that cannot hold the real data.
+Hand over this document and the engineering design doc together. The screen specs assume behaviours defined there (gate thresholds, suppression rules, confidence bands, safety tiers) and a designer working from this document alone will produce screens that cannot hold the real data.
 
 ### Still open
 

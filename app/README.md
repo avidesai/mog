@@ -1,4 +1,4 @@
-# app — the Exact app
+# app: the Exact app
 
 `app.contract` (screens), `ui.contract` (the design system's styles and parts), `app.tamber` (colour tokens), `app.ts` (data module), `app.test.contract` (tests), `app.json` (manifest). `strings/en.json` and `data/` are generated from `core/` by `node scripts/sync-app.mjs`; never hand-edit them. Views read it with `t("screen.key")`.
 

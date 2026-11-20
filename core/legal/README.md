@@ -1,4 +1,4 @@
-# Legal set — status and what to do with it
+# Legal set: status and what to do with it
 
 | Document | Status | Hosting |
 |---|---|---|

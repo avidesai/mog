@@ -1,4 +1,4 @@
-// Pure logic for the phrase function. No Deno, no network — testable with Node (tests/phrase.test.mjs).
+// Pure logic for the phrase function. No Deno, no network. Testable with Node (tests/phrase.test.mjs).
 
 import type { Denylist } from "../_shared/denylist.ts";
 

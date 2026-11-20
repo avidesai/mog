@@ -1,4 +1,4 @@
-# Capture — settled
+# Capture: settled
 
 - Shutter never enabled until every gate passes; gates are not adjustable by the user (11 Nov).
 - 10-frame median; IQR feeds the band.
@@ -9,4 +9,4 @@
 ## Revisit
 - Luma gate floor 0.30 → 0.35 if the week-9 fairness smoke shows the skin index's residual luma dependence on real faces.
 - Occlusion gate: Vision-based check if spike 1 shows hair/glasses leaking through.
-- Whether a separate profile capture is needed at all — decided by the week-1 CV of the mesh-derived profile angles.
+- Whether a separate profile capture is needed at all. Decided by the week-1 CV of the mesh-derived profile angles.

@@ -156,8 +156,8 @@ Keep body analysis for v2. Shirtless photos, often from teens, multiply privacy,
 | Finasteride | Male pattern hair loss | Strong efficacy; Rx; side-effect controversy | ⚠️ Inform + refer only |
 | Fillers, Botox, rhinoplasty, genioplasty, implants, orthognathic surgery, canthoplasty | Chin, profile, etc. | Real effects; medical risk | ⚠️ "Options a board-certified surgeon may discuss." 18+ only, no clinic affiliate links |
 | **Mewing** | "Forward growth" | **No adult evidence.** In a 23 May 2025 statement signed by President Dr Robbie Lawson, the British Orthodontic Society said: "There is no scientific evidence to suggest patients can change the shape of their face… by chewing or holding teeth and the tongue in a closed position." AAO warned similarly (March 2025). Mike Mew was erased from the UK dental register in November 2024. | ❌ Not a structural fix. Optional myth-busting card. |
-| Bone smashing | — | Dangerous, no evidence | ❌ Exclude and warn |
-| Steroids/SARMs, unregulated peptides, DNP, stimulant diet pills, black-market hormones | — | Serious harm. California's AB 2030 restricts minors' diet-pill purchases, citing looksmaxxing. | ❌ Exclude. Clavicular sells "research-grade peptides," so a partnership imports this risk. |
+| Bone smashing | - | Dangerous, no evidence | ❌ Exclude and warn |
+| Steroids/SARMs, unregulated peptides, DNP, stimulant diet pills, black-market hormones | - | Serious harm. California's AB 2030 restricts minors' diet-pill purchases, citing looksmaxxing. | ❌ Exclude. Clavicular sells "research-grade peptides," so a partnership imports this risk. |
 | GLP-1s for aesthetics | Adiposity | Effective Rx; misuse risk | ⚠️ Doctor only |
 | Leg-lengthening | Height | Major surgery | ❌ Exclude |
 
@@ -177,14 +177,14 @@ US App Store ratings and prices below are from Real World Appeal's 17 Oct 2026 a
 | **Umax** (Improvement Tech; Blake Anderson) | Selfie → jawline, cheekbones, masculinity, skin, "potential"; partly powered by OpenAI tech (Fortune) | 4.56 (51,646) | June 2024 | Founder: $6M ARR in 3.5 months; Fortune ~$500K/mo (2024); founder later "350 to 400(k) a month." "7M downloads" unverified. | Fast, shareable default / inconsistent, weekly price, buggy, referral failed |
 | **LooksMax AI** (Mnkybrain Labs) | Ratings + tips; one-off AI hairstyle pack; "mog battle" | 4.52 (42,725) | April 2024 | AppMagic ~$488K lifetime at its report; other estimates $15K–$55K/mo (low confidence) | Sample results up front / paywall before analysis, live "people just revealed" counter |
 | **PSL – Looksmax & Ascend** (IQ Labs) | PSL-framed rating | 4.70 (11,997) | July 2026 | Est. ~$55K/mo (low confidence) | Maintained; uses community vocabulary |
-| **Mogged**, **LooksLab** | Glow-up rating; credits | 4.73 (3,234); 4.68 (1,875) | July/Aug 2026 | n/a | — |
+| **Mogged**, **LooksLab** | Glow-up rating; credits | 4.73 (3,234); 4.68 (1,875) | July/Aug 2026 | n/a | - |
 | Long tail: AscendMax, Lookist, Blackpill AI, RateByFresh, ModelMax, Pryme AI, GlowMax, MogMax, Areum, Potential AI, Glowvia, PSL AI-Morph, Appeal | Selfie → score → tips; image/haircut packs | 3.2–4.8, mostly < 1,000 ratings | 2026 | n/a | Clone saturation means low barriers and Apple 4.3 risk |
 | **Face Harmony by Clavicular** (seller Nathan Kest; ID 6781068829) | Symmetry, jawline/midface, canthal tilt, side profile, history, suggestions | **2.3 (106–108)** | v1.1.2, July 28, 2026 | Developer: "top 10… first day" (unverified) | Fake pre-paywall score, $9.99/week, AI-generic look, privacy allegations, 4+ age rating |
 | **Face Harmony: Face Rating** (Stuke Digital) | Clone launched April 2026 as "Clavicular – LooksMax AI." **Not Clavicular's.** | 4.6 (101) | 2026 | n/a | Name-squatting shows the value of creator association |
-| **QOVES** (web) | Detailed "clinical" structure reports | n/a | — | $150/yr; add-ons to $435 in year one | Deep but expensive |
-| **FaceIQ Labs** (web) | Partial free analysis | n/a | — | $24.99/mo | Cited by forum users as an incumbent |
-| **Photofeeler** (web) | Real human votes | n/a | — | Free with voting | The only real-rater product; worth borrowing from |
-| PrettyScale, SoftMaxx, Real World Appeal, many SEO sites (web) | Free scans, $5–$20 reports | n/a | — | Tiny (one site shows $85 in 30-day Stripe revenue, per TrustMRR) | Compete on "honesty" positioning |
+| **QOVES** (web) | Detailed "clinical" structure reports | n/a | - | $150/yr; add-ons to $435 in year one | Deep but expensive |
+| **FaceIQ Labs** (web) | Partial free analysis | n/a | - | $24.99/mo | Cited by forum users as an incumbent |
+| **Photofeeler** (web) | Real human votes | n/a | - | Free with voting | The only real-rater product; worth borrowing from |
+| PrettyScale, SoftMaxx, Real World Appeal, many SEO sites (web) | Free scans, $5–$20 reports | n/a | - | Tiny (one site shows $85 in 30-day Stripe revenue, per TrustMRR) | Compete on "honesty" positioning |
 
 The adjacent playbook comes from RizzGPT (Anderson's earlier app) and Cal AI: an AI camera app, weekly paywall, and a creator army.
 
@@ -218,17 +218,17 @@ The adjacent playbook comes from RizzGPT (Anderson's earlier app) and Cal AI: an
 
 | App | Weekly | Monthly | Annual | Lifetime / one-off | Paywall mechanic |
 |---|---|---|---|---|---|
-| Umax | $3.99–$9.99 | $9.99–$24.99 | — | "You as a 10/10" $6.99 | Results locked after upload; "invite 3 friends" waiver |
-| LooksMax AI | $3.99 | — | — | Boosts $2.99–$5.99; hairstyles $4.99 | Paywall before analysis + results paywall with live counter |
+| Umax | $3.99–$9.99 | $9.99–$24.99 | - | "You as a 10/10" $6.99 | Results locked after upload; "invite 3 friends" waiver |
+| LooksMax AI | $3.99 | - | - | Boosts $2.99–$5.99; hairstyles $4.99 | Paywall before analysis + results paywall with live counter |
 | PSL (IQ Labs) | $4.99 | $9.99–$29.99 | $19.99–$29.99 | $49.99; single scan $4.99–$9.99 | Subscriptions + pay-per-scan |
-| Mogged | $3.99–$7.99 | — | $19.99–$39.99 | — | Score locked |
+| Mogged | $3.99–$7.99 | - | $19.99–$39.99 | - | Score locked |
 | LooksLab | $9.99 | $9.99 | $19.99–$49.99 | Credits $8.99–$17.99 | Sub + credits |
-| Blackpill AI | $4.99 | $12.99 | $29.99 | — | — |
+| Blackpill AI | $4.99 | $12.99 | $29.99 | - | - |
 | RateByFresh | $4.99–$6.99 | $14.99 | $29.99–$59.99 | Tokens | Sub + tokens |
-| Pryme AI | $9.99 | 3 mo $39.99 | — | Haircut/outfit packs $4.99 | — |
-| MogMax | — | — | $49.99 | "Reveal your score" $0.99 | Micro-unlock |
-| Face Harmony | $9.99 | $9.99; Pro $19.99 | — | $49.99 | Teaser score then paywall (reviews) |
-| QOVES / FaceIQ (web) | — | — / $24.99 | $150 / — | Add-ons to $435 | Report-based / partial free |
+| Pryme AI | $9.99 | 3 mo $39.99 | - | Haircut/outfit packs $4.99 | - |
+| MogMax | - | - | $49.99 | "Reveal your score" $0.99 | Micro-unlock |
+| Face Harmony | $9.99 | $9.99; Pro $19.99 | - | $49.99 | Teaser score then paywall (reviews) |
+| QOVES / FaceIQ (web) | - | - / $24.99 | $150 / - | Add-ons to $435 | Report-based / partial free |
 
 Price ranges reflect price testing and regional variants shown on listings.
 

@@ -1,4 +1,4 @@
-"""Renders the v1 artboards to PNG with the bundled fonts — for the App Store, for visual QA, and
+"""Renders the v1 artboards to PNG with the bundled fonts, for the App Store, for visual QA, and
 for anyone who can't open the Claude Design canvas.
 
     python tools/render_screens.py                      # all boards → design/renders/<name>.png @3x (1170×2532)

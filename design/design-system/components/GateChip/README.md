@@ -8,9 +8,9 @@ A selfie taken at roughly 12 inches makes the nasal base appear about 30% wider 
 
 ## Chip states
 
-- **pending** — `ink-500` text, `line-200` border
-- **passing** — `accent` text and border, with a check
-- **failing** — `caution` text and border, plus a corrective instruction below the frame ("Move a little further away")
+- **pending**: `ink-500` text, `line-200` border
+- **passing**: `accent` text and border, with a check
+- **failing**: `caution` text and border, plus a corrective instruction below the frame ("Move a little further away")
 
 ## Rules
 
@@ -18,7 +18,7 @@ A selfie taken at roughly 12 inches makes the nasal base appear about 30% wider 
 - Chips cross-fade between states over 100ms **with no movement**. A chip that jumps while someone is carefully positioning their head is actively hostile.
 - The shutter is disabled until every gate for that pose passes. It carries the single permitted shadow in the product.
 - The progress ring is the only `radius-full` element in the app. It fills continuously, never in steps.
-- One light haptic when all gates pass — the only haptic in the capture flow.
+- One light haptic when all gates pass. The only haptic in the capture flow.
 - No filters, no beauty mode, no mirror toggle. An app that beautifies the photo it measures has invalidated its own measurement.
 
 ## Corrective copy

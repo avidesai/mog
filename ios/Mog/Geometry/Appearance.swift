@@ -5,7 +5,7 @@ import simd
 
 // Port of core/appearance (skin.py, adiposity.py). Same algorithm, same constants.
 // Skin evenness works directly on the 420f buffer's Y and CbCr planes inside a skin mask built by
-// projecting cheek and forehead regions of the mesh — no RGB conversion, no pixels retained.
+// projecting cheek and forehead regions of the mesh, no RGB conversion, no pixels retained.
 
 enum SkinEvenness {
     static let wTexture = 6.0, wChroma = 0.045, largeSigma = 9.0, smallSigma = 1.2

@@ -2,7 +2,7 @@ import SwiftUI
 import MogCore
 import simd
 
-// Measurement overlays — "one measurement at a time, drawn on your own capture, long-press to
+// Measurement overlays: "one measurement at a time, drawn on your own capture, long-press to
 // hide the geometry" (bible). Privacy decision, recorded here:
 //   * Nothing geometric is persisted. Not the still, not the landmarks, not the projected points.
 //   * During the session in which a capture happened, the still and the projected anatomical

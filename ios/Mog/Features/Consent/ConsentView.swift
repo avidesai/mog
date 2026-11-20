@@ -27,10 +27,10 @@ struct ConsentView: View {
                 }
                 .overlay(RoundedRectangle(cornerRadius: Tokens.Radius.lg, style: .continuous).strokeBorder(Tokens.Colors.ink900, lineWidth: Tokens.Border.emphasis))
 
-                // State attestation gate (IL/TX/WA excluded at launch — legal/README.md)
+                // State attestation gate (IL/TX/WA excluded at launch; see legal/README.md)
                 VStack(alignment: .leading, spacing: Tokens.Space.s2) {
                     SectionLabel(text: "US state of residence")
-                    TextField("e.g. CA — leave blank outside the US", text: $state)
+                    TextField("e.g. CA (leave blank outside the US)", text: $state)
                         .textInputAutocapitalization(.characters).autocorrectionDisabled()
                         .padding(Tokens.Space.s4)
                         .background(RoundedRectangle(cornerRadius: Tokens.Radius.lg).fill(Tokens.Colors.surface50)

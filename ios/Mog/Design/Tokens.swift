@@ -1,4 +1,4 @@
-// GENERATED from design/design-system/tokens.json by tools/gen_tokens.py — do not edit by hand.
+// GENERATED from design/design-system/tokens.json by tools/gen_tokens.py. Do not edit by hand.
 import SwiftUI
 
 public enum Tokens {
@@ -10,7 +10,7 @@ public enum Tokens {
         public static let surface50 = Color(light: 0xFFFFFF, dark: 0x1E1B16)
         /// Quiet grounds: locked cards, info panels, the scan countdown. Depth without shadow.
         public static let raised = Color(light: 0xF3EFE6, dark: 0x272319)
-        /// Empty progress — range tracks, week pips, unfilled rings.
+        /// Empty progress: range tracks, week pips, unfilled rings.
         public static let track = Color(light: 0xEFE9DD, dark: 0x2E2920)
         /// Primary text, score numerals, the dark primary button. Every score uses this, high or low.
         public static let ink900 = Color(light: 0x1A1714, dark: 0xF5F1EA)
@@ -22,7 +22,7 @@ public enum Tokens {
         public static let ink300 = Color(light: 0xB5ADA2, dark: 0x6B6457)
         /// Hairline borders and dividers, 1.5px on cards. Carries all depth in place of shadow.
         public static let line200 = Color(light: 0xE6E0D6, dark: 0x332E25)
-        /// Measurement — the overlay line, metric markers, the current path node — and the primary button. One accent element per card.
+        /// Measurement (the overlay line, metric markers, the current path node) and the primary button. One accent element per card.
         public static let accent = Color(light: 0x2E5BFF, dark: 0x8AA5FF)
         /// The 4px bottom lip on a primary button, and link hover.
         public static let accentDeep = Color(light: 0x1F44CC, dark: 0x6A86E6)
@@ -30,7 +30,7 @@ public enum Tokens {
         public static let accentWash = Color(light: 0xE8EDFF, dark: 0x1F2742)
         /// Text for done and improved: 'Done today', a delta that moved the right way. 5.4:1 on white. Never means a good score.
         public static let positive = Color(light: 0x157A49, dark: 0x6FC294)
-        /// Filled check circles, banked path nodes, the day-complete ring. Graphical only — fails as small text.
+        /// Filled check circles, banked path nodes, the day-complete ring. Graphical only: fails as small text.
         public static let positiveFill = Color(light: 0x1C9D5F, dark: 0x5FB885)
         /// Ground behind a done or improved state.
         public static let positiveWash = Color(light: 0xE6F4EC, dark: 0x16301F)
@@ -72,7 +72,7 @@ public enum Tokens {
     // MARK: Border
     public enum Border {
         public static let hairline: CGFloat = 1.5  // Every card and row edge.
-        public static let lip: CGFloat = 4  // The bottom edge of anything pressable — primary and secondary buttons, option rows, tappable task rows. A chunky button is hairline on three sides and lip on the bottom, in a darker shade of its fill.
+        public static let lip: CGFloat = 4  // The bottom edge of anything pressable. Primary and secondary buttons, option rows, tappable task rows. A chunky button is hairline on three sides and lip on the bottom, in a darker shade of its fill.
         public static let emphasis: CGFloat = 2  // A selected option, the consent panel, the model-updated card.
     }
     // MARK: Motion (seconds)
