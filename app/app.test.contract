@@ -21,10 +21,10 @@ test "first session: onboarding, consent, capture, the reveal, then Today"
   clock data
   clock settle
   expect state onboarded == true
-  expect text "reveal-score" == "5.0"
-  expect text "reveal-band" == "likely 3.3 to 6.7"
-  expect text "reveal-tier" == "MTN"
-  expect text "reveal-pct" == "· 50th percentile"
+  expect text "reveal-score" == "6.7"
+  expect text "reveal-band" == "likely 5.2 to 8.0"
+  expect text "reveal-tier" == "HTN"
+  expect text "reveal-pct" == "· 67th percentile"
   tap "start-week"
   clock settle
   expect state nav.tab == "today"
@@ -132,8 +132,8 @@ test "the four tabs: the path, the metrics with the band, and settings"
   expect text "path-week" == "Week 1 of 8"
   tap "tab-metrics"
   clock settle
-  expect text "metrics-score" == "5.0"
-  expect text "results-band" == "likely 3.3 to 6.7"
+  expect text "metrics-score" == "6.7"
+  expect text "results-band" == "likely 5.2 to 8.0"
   expect tree has "strength"
   tap "tab-you"
   clock settle
@@ -435,7 +435,7 @@ test "the paywall: two plans, yearly first, and with no store the button says wh
   expect state nav.tab == "metrics"
   tap "metric-canthal_tilt_deg"
   clock settle
-  expect text "paywall-intro" == "Canthal tilt, jaw width, midface and 31 more are already measured. Pro shows your number for each one and whether it's in the typical range."
+  expect text "paywall-intro" == "Canthal tilt, jaw width, midface and 21 more are already measured. Pro shows your number for each one and whether it's in the typical range."
   expect tree has "plan-pro.annual"
   expect tree has "plan-pro.weekly"
   expect tree missing "plan-pro.lifetime"
@@ -514,7 +514,7 @@ test "how the score works: three visuals, and the band is your own"
   clock settle
   expect tree has "how-frames"
   expect tree has "how-range"
-  expect text "how-band-range" == "likely 3.3 to 6.7"
+  expect text "how-band-range" == "likely 5.2 to 8.0"
 
 test "metrics for a free user leads with what is locked"
   tap "start"
@@ -539,7 +539,7 @@ test "metrics for a free user leads with what is locked"
   clock settle
   expect state nav.tab == "metrics"
   expect tree has "pro-prompt"
-  expect state app.nLocked == 34
+  expect state app.nLocked == 24
   expect tree has "strength"
 
 test "opening the results ten times in a day brings a plain check-in, once"

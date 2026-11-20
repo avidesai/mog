@@ -23,12 +23,14 @@ def test_tier_x_never_appears(reg):
     assert "jaw_exercise_devices" not in {t.rule_id for t in p.tasks}
 
 
-def test_adiposity_rule_excludes_the_weaker_duplicate(reg):
-    p, _ = _plan(reg, ["sharper_jawline"], facial_adiposity=1.8, cervicomental_angle_deg=2.0)
-    ids = [c.rule_id for c in p.plan]
-    assert "adiposity_high_cervicomental_obtuse" in ids
-    assert "adiposity_moderate_general" not in ids
-    assert p.excluded_by["adiposity_moderate_general"] == "adiposity_high_cervicomental_obtuse"
+def test_profile_triggered_rules_stay_out_of_the_frontal_panel(reg):
+    """rules-1.2.0 scores the frontal panel only, so a rule that needs a profile metric never fires,
+    even when a profile reading is present. Facial fat alone carries the jawline goal."""
+    p, _ = _plan(reg, ["sharper_jawline"], facial_adiposity=1.8, cervicomental_angle_deg=2.0, facial_convexity_deg=-2.5)
+    ids = [c.rule_id for c in p.plan] + [c.rule_id for c in p.professional] + [c.rule_id for c in p.info]
+    assert "adiposity_moderate_general" in ids
+    for rid in ("adiposity_high_cervicomental_obtuse", "mewing_myth", "convexity_orthodontic_referral"):
+        assert rid not in ids
 
 
 def test_professional_section_is_separate_from_plan(reg):
@@ -40,16 +42,17 @@ def test_professional_section_is_separate_from_plan(reg):
 
 
 def test_professional_cards_never_create_tasks(reg):
-    p, _ = _plan(reg, ["sharper_jawline", "general"], chin_projection_eline_mm=-3.0, facial_convexity_deg=-2.5)
+    p, _ = _plan(reg, ["hair", "better_skin", "general"], hairline_stage=4, skin_evenness=-2.6)
     pro_ids = {c.rule_id for c in p.professional}
     assert pro_ids
     assert not pro_ids & {t.rule_id for t in p.tasks}
 
 
-def test_mewing_myth_card_is_info_not_plan(reg):
-    p, _ = _plan(reg, ["sharper_jawline"], facial_convexity_deg=-1.5)
-    assert "mewing_myth" in [c.rule_id for c in p.info]
-    assert "mewing_myth" not in [c.rule_id for c in p.plan]
+def test_info_cards_never_enter_the_plan(reg):
+    p, _ = _plan(reg, ["better_photos", "general"], symmetry_index=-1.2, nasal_width_to_intercanthal=1.6)
+    info = {c.rule_id for c in p.info}
+    assert info
+    assert not info & {c.rule_id for c in p.plan}
 
 
 def test_goal_match_gates_rules(reg):

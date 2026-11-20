@@ -16,7 +16,9 @@ public enum ScoringConstants {
         "bigonial_to_bizygomatic", "chin_width_to_mouth", "gonial_angle_deg", "ramus_to_mandible_ratio",
         "cervicomental_angle_deg", "chin_projection_eline_mm", "mentolabial_angle_deg",
     ]
-    public static let modelVersion = "rules-1.1.0"
+    public static let modelVersion = "rules-1.2.0"
+    /// The v1 panel: only frontal metrics are scored; a profile reading is reported as needing a profile capture.
+    public static let panelPose: Pose = .frontal
     /// (upper percentile bound, short, long). Nothing below LTN by design.
     public static let tiers: [(Double, String, String)] = [
         (45.0, "LTN", "Low-tier normie"), (65.0, "MTN", "Mid-tier normie"), (85.0, "HTN", "High-tier normie"),
@@ -147,8 +149,8 @@ public func score(_ inp: ScoreInput, _ reg: Registry) throws -> ScoreResult {
             MetricResult(id: mid, value: nil, z: nil, category: nil, quality: nil, weight: 0, display: .suppressed,
                          suppressedReason: reason, confidence: conf, refMean: norm.mean, refSD: norm.sd, metric: m)
         }
-        guard let r = inp.readings[mid] else {
-            results.append(suppressed(m.pose == .profile && !inp.profileCaptured ? "pose_missing" : "not_measured", conf: nil))
+        guard m.pose == ScoringConstants.panelPose, let r = inp.readings[mid] else {
+            results.append(suppressed(m.pose != ScoringConstants.panelPose ? "pose_missing" : "not_measured", conf: nil))
             continue
         }
         var conf = r.confidence

@@ -57,7 +57,12 @@ TIERS: tuple[tuple[float, str, str], ...] = (
     (100.1, "Chad", "Chad"),
 )
 
-SCORING_MODEL_VERSION = "rules-1.1.0"
+SCORING_MODEL_VERSION = "rules-1.2.0"
+
+# The v1 panel (rules-1.2.0): only frontal metrics are scored. A profile reading, including one derived
+# from the front mesh, is reported as needing a profile capture and never scored. A profile capture
+# would be a new model version with its own reference, never mixed into this one.
+PANEL_POSE = "frontal"
 
 
 def tier_for_percentile(p: float) -> tuple[str, str]:
@@ -84,7 +89,7 @@ class ScoreInput:
     sex: str
     age_band: str
     readings: dict[str, MetricReading]
-    profile_captured: bool = True
+    profile_captured: bool = True   # recorded with the scan; rules-1.2.0 scores the frontal panel either way
 
 
 @dataclass
@@ -245,8 +250,8 @@ def score(inp: ScoreInput, reg: Registry, reference: dict[str, Any] | None = Non
                     reliability_tier=m.reliability_tier, direction=m.direction, pose=m.pose,
                     weight=0.0, quality=None)
 
-        if r is None:
-            reason = "pose_missing" if (m.pose == "profile" and not inp.profile_captured) else "not_measured"
+        if m.pose != PANEL_POSE or r is None:
+            reason = "pose_missing" if m.pose != PANEL_POSE else "not_measured"
             results.append(MetricResult(value=None, z=None, category=None, display="suppressed",
                                         suppressed_reason=reason, confidence=None, **base))
             continue
