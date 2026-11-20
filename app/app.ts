@@ -9,6 +9,7 @@ import { loadRegistry, type Sex } from './core/registry.ts';
 import { score, type CompositeReference, type MetricReading, type ScoreResult } from './core/scoring.ts';
 import { buildPlan, type PlanCard } from './core/planner.ts';
 import { HabitEngine, daysBetween, newHabitState, type HabitState } from './core/habit.ts';
+import { compare } from './core/progress.ts';
 import { acknowledge, unfinishedPurchases } from '@exact/purchases';
 
 // Privacy invariant: this file holds named measurements and plan state only. No frame, depth map,
@@ -21,9 +22,11 @@ const ref = compositeJson as unknown as CompositeReference;
 const copyOf = new Map<string, { short: string; plain: string }>((metricsJson as any).metrics.map((m: any) => [m.id, m]));
 
 interface Scan { id: string; date: string; sex: Sex; ageBand: string; profileCaptured: boolean; readings: Record<string, MetricReading> }
-interface Saved { scans: Scan[]; habit: HabitState | null; goals: string[]; timeBudget: number }
+// `usage` counts how often Metrics was opened today, for the check-in card (habit.ts, distress). A count only.
+interface Usage { date: string; resultsOpens: number }
+interface Saved { scans: Scan[]; habit: HabitState | null; goals: string[]; timeBudget: number; usage: Usage }
 
-const EMPTY: Saved = { scans: [], habit: null, goals: [], timeBudget: 15 };
+const EMPTY: Saved = { scans: [], habit: null, goals: [], timeBudget: 15, usage: { date: '', resultsOpens: 0 } };
 
 async function load(storage: Storage): Promise<Saved> {
   try {
@@ -55,6 +58,13 @@ function fmt(v: number, unit: string): string {
 }
 
 type View = Result<'loadApp'>;
+
+const MINUS = '\u2212';
+// A signed change in the metric's own format: "+3°", "\u22120.08".
+function fmtDelta(d: number, unit: string): string {
+  const body = fmt(Math.abs(d), unit).replace(/^[+\u2212]/, '');
+  return `${d >= 0 ? '+' : MINUS}${body}`;
+}
 
 const ordinal = (n: number): string => {
   const teen = n % 100 >= 11 && n % 100 <= 13;
@@ -93,6 +103,8 @@ function view(s: Saved, today: string, isPro: boolean): View {
     }];
   });
   const habit = s.habit ? new HabitEngine(s.habit) : null;
+  const opens = s.usage?.date === today ? s.usage.resultsOpens : 0;
+  const distress = habit !== null && habit.shouldShowDistress(today, { resultsOpensToday: opens, rescanAttemptsInWindow: 0 });
   const locked = metrics.filter((m) => !m.free && m.suppressed === '');
   const named = [...locked].sort((x, y) => rank(x.id) - rank(y.id)).slice(0, 3).map((m) => m.short);
   return {
@@ -108,9 +120,52 @@ function view(s: Saved, today: string, isPro: boolean): View {
     plan: p.plan.map(cardView), professional: p.professional.map(cardView), info: p.info.map(cardView),
     dailyMinutes: p.dailyMinutes,
     tasks: habit ? habitTasks(habit, today, new Map(p.plan.map((c) => [c.ruleId, c.findingRefs]))) : [],
-    summary: habit ? summaryView(habit, today) : emptySummary(),
+    summary: habit ? { ...summaryView(habit, today), distress, opensToday: opens } : emptySummary(),
+    nScans: s.scans.length,
+    progress: progressView(s, metrics),
   };
 }
+
+// The latest scan against the one before it. Only modifiable metrics are listed; a locked one keeps its name
+// and its direction of travel but shows no numbers.
+function progressView(s: Saved, shown: { id: string; free: boolean }[]): View['progress'] {
+  if (s.scans.length < 2) return emptyProgress();
+  const [a, b] = s.scans.slice(-2);
+  const input = (x: Scan) => ({ sex: x.sex, ageBand: x.ageBand, readings: x.readings, profileCaptured: x.profileCaptured });
+  const c = compare(input(a), input(b), reg, ref);
+  const free = new Map(shown.map((m) => [m.id, m.free]));
+  const days = daysBetween(b.date, a.date);
+  const lead = c.metrics.find((m) => !m.withinNoise);
+  return {
+    comparable: c.comparable,
+    delta: c.scoreDelta.toFixed(1) === '0.0' || c.scoreDelta.toFixed(1) === '-0.0' ? '0.0' : `${c.scoreDelta >= 0 ? '+' : MINUS}${Math.abs(c.scoreDelta).toFixed(1)}`,
+    up: c.scoreDelta > 0,
+    withinNoise: c.scoreWithinNoise,
+    before: c.scoreBefore.toFixed(1), after: c.scoreAfter.toFixed(1),
+    days, weeks: Math.round(days / 7), sinceDate: a.date,
+    lead: lead ? copyOf.get(lead.id)!.short : '',
+    rows: c.metrics.map((m) => {
+      const unit = reg.metrics.get(m.id)!.unit;
+      const open = free.get(m.id) ?? false;
+      return {
+        id: m.id, short: copyOf.get(m.id)!.short, locked: !open,
+        delta: open ? fmtDelta(m.delta, unit) : '', before: open ? fmt(m.before, unit) : '', after: open ? fmt(m.after, unit) : '',
+        withinNoise: m.withinNoise, better: m.better,
+        // Where each reading sits on a ±3 SD track; a locked row gets the middle, so nothing leaks.
+        posA: open ? pos(m.before, m.id, b.sex) : 0.5, posB: open ? pos(m.after, m.id, b.sex) : 0.5,
+      };
+    }),
+  };
+}
+
+function pos(v: number, id: string, sex: Sex): number {
+  const { mean, sd } = reg.metrics.get(id)!.ref(sex);
+  return Math.min(1, Math.max(0, ((v - mean) / sd + 3) / 6));
+}
+
+const emptyProgress = (): View['progress'] => ({
+  comparable: true, delta: '', up: false, withinNoise: true, before: '', after: '', days: 0, weeks: 0, sinceDate: '', lead: '', rows: [],
+});
 
 // Tasks are named task_<rule id> by the planner; the card behind each gives its why, effort and findings.
 function habitTasks(e: HabitEngine, today: string, findings: Map<string, string[]>): View['tasks'] {
@@ -133,10 +188,10 @@ function habitTasks(e: HabitEngine, today: string, findings: Map<string, string[
 
 const emptySummary = (): View['summary'] => ({
   day: 0, week: 0, currentDays: 0, longestDays: 0, thisWeekDays: 0, banked: [], scanWindow: 0, daysUntilScan: -1,
-  repairAvailable: false, atRisk: false, dayComplete: false, finished: false,
+  repairAvailable: false, atRisk: false, dayComplete: false, finished: false, distress: false, opensToday: 0,
 });
 
-function summaryView(e: HabitEngine, today: string): View['summary'] {
+function summaryView(e: HabitEngine, today: string): Omit<View['summary'], 'distress' | 'opensToday'> {
   // Ask before reconciling: reconcile zeroes a lapsed streak, after which nothing is at risk to repair.
   // While the month's repair can still bridge yesterday, the streak stands.
   const atRisk = e.streakAtRisk(today);
@@ -153,6 +208,7 @@ function summaryView(e: HabitEngine, today: string): View['summary'] {
 const emptyView = (): View => ({
   hasScan: false, scanDate: '', nMetrics: 0, nLocked: 0, lockedMore: 0, lockedNames: '', nMovable: 0, score: '', low: '', high: '', lowN: 0, highN: 0, pct: '', tier: '', modelVersion: '',
   strength: '', improvable: '', metrics: [], plan: [], professional: [], info: [], dailyMinutes: 0, tasks: [], summary: emptySummary(),
+  nScans: 0, progress: emptyProgress(),
 });
 
 const ok = { ok: true, error: '' };
@@ -201,9 +257,16 @@ const sources: Sources = {
   // Stands in for <mog-capture> until the native module lands: a sample face's readings from the
   // golden fixtures. The real module hands over the same named measurements and nothing else.
   // Stands in for <mog-capture> where there is no TrueDepth camera (the web): a sample face's readings.
-  saveSampleScan: ([today, sex, ageBand, goals, timeBudget], _store, storage) => {
+  // From the second scan on, two soft-tissue readings drop by one reference SD, so Progress has a change to show.
+  saveSampleScan: async ([today, sex, ageBand, goals, timeBudget], _store, storage) => {
     const sample = (fixtures as any[]).find((c) => c.name === (sex === 'female' ? 'average_female_full' : 'average_male_full'));
-    return storeScan(storage, today, sex, ageBand, goals, timeBudget, sample.readings, true);
+    const readings: Record<string, MetricReading> = { ...sample.readings };
+    if ((await load(storage)).scans.length > 0 && (sex === 'male' || sex === 'female')) {
+      for (const id of ['facial_adiposity', 'cervicomental_angle_deg']) {
+        readings[id] = { ...readings[id], value: readings[id].value - reg.metrics.get(id)!.ref(sex).sd };
+      }
+    }
+    return storeScan(storage, today, sex, ageBand, goals, timeBudget, readings, true);
   },
 
   // <mog-capture>'s readings. Only known metric ids with finite numbers are kept; anything else in the
@@ -233,6 +296,23 @@ const sources: Sources = {
     else e.uncompleteTask(taskId, today);
     await save(storage, s);
     return { ok: true, error: '', dayCompleted: !was && e.dayStatus(today).complete };
+  },
+
+  noteResultsOpen: async ([today], _store, storage) => {
+    const s = await load(storage);
+    if (!s.habit) return ok;
+    const n = s.usage?.date === today ? s.usage.resultsOpens + 1 : 1;
+    await save(storage, { ...s, usage: { date: today, resultsOpens: n } });
+    return ok;
+  },
+
+  // Either button on the check-in card: it stays away for the cooldown (habit.ts).
+  dismissCheckin: async ([today], _store, storage) => {
+    const s = await load(storage);
+    if (!s.habit) return ok;
+    new HabitEngine(s.habit).markDistressShown(today);
+    await save(storage, s);
+    return ok;
   },
 
   repairStreak: async ([today], _store, storage) => {
