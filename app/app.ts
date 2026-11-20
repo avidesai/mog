@@ -17,6 +17,7 @@ export const grants = `fs.read ${FILE}\nfs.write ${FILE}`;
 
 const reg = loadRegistry({ metrics: metricsJson, rules: rulesJson, references: referencesJson, denylist: denylistJson });
 const ref = compositeJson as unknown as CompositeReference;
+const copyOf = new Map<string, { short: string; plain: string }>((metricsJson as any).metrics.map((m: any) => [m.id, m]));
 
 interface Scan { id: string; date: string; sex: Sex; ageBand: string; profileCaptured: boolean; readings: Record<string, MetricReading> }
 interface Saved { scans: Scan[]; habit: HabitState | null; goals: string[]; timeBudget: number }
@@ -75,11 +76,11 @@ function view(s: Saved, today: string, isPro: boolean): View {
     const free = isPro || m.id === r.topStrength || m.id === r.mostImprovable;
     const unit = def.unit;
     return [{
-      id: m.id, name: def.name, short: (metricsJson as any).metrics.find((x: any) => x.id === m.id).short, group: groupOf.get(m.id)!,
+      id: m.id, name: def.name, short: copyOf.get(m.id)!.short, group: groupOf.get(m.id)!,
       value: m.value === null || !free ? '' : fmt(m.value, unit),
       category: m.category === null || !free ? '' : m.category,
       suppressed: m.suppressedReason ?? '', evidence: m.evidenceGrade, reliability: m.reliabilityTier,
-      free, plain: free ? (metricsJson as any).metrics.find((x: any) => x.id === m.id).plain : '',
+      free, plain: free ? copyOf.get(m.id)!.plain : '',
       refLow: unit === 'category' ? '' : fmt(m.refMean - m.refSd, unit), refHigh: unit === 'category' ? '' : fmt(m.refMean + m.refSd, unit),
       contradicted: m.evidenceGrade === 'contradicted', community: m.evidenceGrade === 'community',
     }];
@@ -93,21 +94,27 @@ function view(s: Saved, today: string, isPro: boolean): View {
     metrics,
     plan: p.plan.map(cardView), professional: p.professional.map(cardView), info: p.info.map(cardView),
     dailyMinutes: p.dailyMinutes,
-    tasks: habit ? habitTasks(habit, today) : [],
+    tasks: habit ? habitTasks(habit, today, new Map(p.plan.map((c) => [c.ruleId, c.findingRefs]))) : [],
     summary: habit ? summaryView(habit, today) : emptySummary(),
   };
 }
 
-function habitTasks(e: HabitEngine, today: string): View['tasks'] {
+// Tasks are named task_<rule id> by the planner; the card behind each gives its why, effort and findings.
+function habitTasks(e: HabitEngine, today: string, findings: Map<string, string[]>): View['tasks'] {
   const wk = e.weekIndex(today);
   const done = e.s.completions[today] ?? [];
   const weekly = e.weeklyProgress(wk);
-  const titles = new Map([...reg.rules.values()].map((r) => [`task_${r.id}`, r.taskTitle ?? '']));
-  return e.openTasks(wk).map((t) => ({
-    id: t.taskId, title: titles.get(t.taskId) ?? t.taskId, cadence: t.cadence,
-    done: t.cadence === 'once' ? Object.values(e.s.completions).some((ids) => ids.includes(t.taskId)) : done.includes(t.taskId),
-    weeklyDone: weekly[t.taskId]?.[0] ?? 0, weeklyTarget: weekly[t.taskId]?.[1] ?? 0,
-  }));
+  return e.openTasks(wk).map((t) => {
+    const rule = reg.rules.get(t.taskId.replace(/^task_/, ''));
+    return {
+      id: t.taskId, title: rule?.taskTitle ?? t.taskId, cadence: t.cadence,
+      done: t.cadence === 'once' ? Object.values(e.s.completions).some((ids) => ids.includes(t.taskId)) : done.includes(t.taskId),
+      weeklyDone: weekly[t.taskId]?.[0] ?? 0, weeklyTarget: weekly[t.taskId]?.[1] ?? 0,
+      headline: rule?.copy.headline ?? '', whyThis: rule?.copy.why_this ?? '', effort: rule?.effort ?? 'low',
+      weeksLow: rule?.expectedTimelineWeeks[0] ?? 0, weeksHigh: rule?.expectedTimelineWeeks[1] ?? 0,
+      basedOn: (findings.get(rule?.id ?? '') ?? []).map((id) => copyOf.get(id)?.short ?? id).join(', '),
+    };
+  });
 }
 
 const emptySummary = (): View['summary'] => ({
@@ -116,12 +123,15 @@ const emptySummary = (): View['summary'] => ({
 });
 
 function summaryView(e: HabitEngine, today: string): View['summary'] {
-  e.reconcile(today);
+  // Ask before reconciling: reconcile zeroes a lapsed streak, after which nothing is at risk to repair.
+  // While the month's repair can still bridge yesterday, the streak stands.
+  const atRisk = e.streakAtRisk(today);
+  if (!(atRisk && e.repairAvailable(today))) e.reconcile(today);
   const p = e.pathSummary(today);
   return {
     week: p.weekIndex, currentDays: p.currentDays, longestDays: p.longestDays, thisWeekDays: p.thisWeekDays,
     banked: p.bankedWeeks, scanWindow: p.scanWindow ?? 0, daysUntilScan: p.daysUntilScan ?? -1,
-    repairAvailable: p.repairAvailable, atRisk: e.streakAtRisk(today) && p.repairAvailable,
+    repairAvailable: p.repairAvailable, atRisk,
     dayComplete: e.dayStatus(today).complete, finished: p.finished,
   };
 }

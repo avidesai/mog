@@ -16,6 +16,7 @@ routes nav
     results "/results"
     metric "/metric/:id"
     paywall "/pro"
+    task "/task/:id"
   tab plan "/plan"
     card "/plan/:id"
   tab path "/path"
@@ -61,6 +62,12 @@ shape Task
   done: bool
   weeklyDone: number
   weeklyTarget: number
+  headline: string
+  whyThis: string
+  effort: string
+  weeksLow: number
+  weeksHigh: number
+  basedOn: string
 
 shape Summary
   week: number
@@ -125,6 +132,7 @@ component App
   state timeBudget = 15 persist
   state region = "" persist
   state consentedOn = "" persist
+  state streakSeenOn = "" persist
   state consentedAt = 0 persist
   state consentPolicy = "" persist
   state adultAt = 0 persist
@@ -210,6 +218,8 @@ component App
     send taskSet = setTask(id, today, done)
   action repair
     send repaired = repairStreak(today)
+  action letReset
+    streakSeenOn = today
   action askWipe
     showModal("wipe")
   action wipe
@@ -291,13 +301,25 @@ component App
                           progress=some(app.summary.thisWeekDays / 5),
                           symbol=none
                         )
-                      if app.summary.atRisk
-                        section testId="streak-save"
-                          header
-                            text t("streak.save_title")
-                          text t("streak.save_body")
-                          button press=repair testId="repair"
-                            text t("streak.save_cta")
+                      if app.summary.atRisk and streakSeenOn != today
+                        if app.summary.repairAvailable
+                          section testId="streak-save"
+                            header
+                              text t("streak.save_title")
+                            text t("streak.save_body")
+                            button press=repair testId="repair"
+                              text t("streak.save_cta")
+                            button press=letReset testId="let-reset"
+                              text t("streak.save_decline")
+                            footer
+                              text t("streak.repair_note")
+                        else
+                          section testId="streak-used"
+                            header
+                              text t("streak.save_unavailable_title")
+                            text t("streak.save_unavailable_body")
+                            button press=letReset testId="streak-okay"
+                              text t("streak.save_unavailable_cta")
                       section
                         header
                           text t("today.tasks_header")
@@ -308,11 +330,13 @@ component App
                               change=setTask(k.id)
                               aria-label=k.title
                               testId=`task-${k.id}`
-                            RowText(
-                              title=k.title,
-                              detail=(k.cadence == "weekly" ? t("task_detail.weekly_progress", done=`${k.weeklyDone}`, target=`${k.weeklyTarget}`) : ""),
-                              value=none
-                            )
+                            link href=path("task", k.id) testId=`open-${k.id}` flex=1 min-width=0
+                              RowText(
+                                title=k.title,
+                                detail=(k.cadence == "weekly" ? t("task_detail.weekly_progress", done=`${k.weeklyDone}`, target=`${k.weeklyTarget}`) : ""),
+                                value=none
+                              )
+                              image "symbol:forward-chevron"
                         footer
                           text (app.summary.dayComplete ? t("today.all_done_title", streak=`${app.summary.currentDays}`) : "") testId="day-done"
                       section
@@ -652,6 +676,41 @@ component App
                       if m.plain != ""
                         section
                           text m.plain
+              else if e.name == "task"
+                column navigationKey=`${e.id}`
+                  navigationScroll=`content-${e.id}`
+                  position="absolute"
+                  inset=0
+                  for k in app.tasks.filter(x => x.id == e.params.id) key=k.id
+                    header
+                      text k.title role="heading" aria-level=2
+                    list id=`content-${e.id}`
+                      appearance="auto"
+                      listStyle="inset-grouped"
+                      flex=1
+                      min-height=0
+                      section
+                        header
+                          text t("task_detail.why_this")
+                        text k.whyThis testId="task-why"
+                      section
+                        if k.basedOn != ""
+                          row
+                            text t("task_detail.based_on") flex=1
+                            text k.basedOn color="-exact-secondary-label"
+                        row
+                          text t("task_detail.effort") flex=1
+                          text effortLabel(k.effort) color="-exact-secondary-label"
+                        if k.cadence == "weekly"
+                          row
+                            text t("task_detail.weekly_progress", done=`${k.weeklyDone}`, target=`${k.weeklyTarget}`)
+                        footer
+                          text t("task_detail.how_long", low=`${k.weeksLow}`, high=`${k.weeksHigh}`)
+                    button press=setTask(k.id, not k.done)
+                      buttonStyle=(k.done ? "bordered" : "filled")
+                      margin=16
+                      testId="task-toggle"
+                      text (k.done ? t("task_detail.mark_undone") : t("task_detail.mark_done"))
               else if e.name == "paywall"
                 column navigationKey=`${e.id}`
                   navigationPresentation="modal"
