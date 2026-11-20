@@ -18,10 +18,11 @@ final class AggregatorTests: XCTestCase {
 }
 
 final class CopyTests: XCTestCase {
-    func testStringsLoadAndSubstitute() {
-        XCTAssertEqual(Copy.s("today.title"), "Today")
-        XCTAssertEqual(Copy.f("today.scan_countdown", ["days": "12"]), "Next scan opens in 12 days")
-        XCTAssertFalse(Copy.s("consent.affirm_label").contains("{app_name}"))
+    func testGateKeysResolve() {
+        let report = GateReport.allFailing
+        for label in report.chips.map(\.label) + [report.hint, Copy.s("capture.hint_ready")] {
+            XCTAssertFalse(label.isEmpty || label.hasPrefix("⟨"), label)
+        }
     }
 }
 

@@ -1,4 +1,5 @@
-# XcodeGen spec. Generate the project with:  brew install xcodegen && cd ios && xcodegen generate
+# XcodeGen spec for the spike tools (vertex picker, landmark dump). Dev only: the product is the Exact app in app/.
+# Generate the project with:  brew install xcodegen && cd ios && xcodegen generate
 # The .xcodeproj is gitignored on purpose; this file is the source of truth.
 name: Mog
 options:
@@ -24,13 +25,6 @@ configFiles:
 packages:
   MogCore:
     path: ../core/swift/MogCore
-  # Added in week 5 (paywall). Keep commented until then so the spike builds with zero network deps.
-  # RevenueCat:
-  #   url: https://github.com/RevenueCat/purchases-ios
-  #   from: "5.0.0"
-  # Superwall:
-  #   url: https://github.com/superwall/Superwall-iOS
-  #   from: "4.0.0"
 
 targets:
   Mog:
@@ -38,11 +32,9 @@ targets:
     platform: iOS
     sources:
       - path: Mog
-        excludes: ["Config/*.xcconfig", "Fonts/README.md"]
-      # shared tables and copy, bundled read-only
+        excludes: ["Config/*.xcconfig"]
+      # the gate labels and hints, bundled read-only
       - path: ../core/copy/strings.json
-        buildPhase: resources
-      - path: ../core/data/metrics.json
         buildPhase: resources
       - path: Mog/Geometry/landmark_map.json
         buildPhase: resources
@@ -56,23 +48,15 @@ targets:
         CFBundleVersion: "1"
         UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
-        UIUserInterfaceStyle: Light
         ITSAppUsesNonExemptEncryption: false
         NSCameraUsageDescription: "Used to measure facial proportions on this device. Images are processed here and deleted in seconds; they never leave your phone."
         NSFaceIDUsageDescription: "Not used. Face ID is never requested."
         UIRequiredDeviceCapabilities: [arkit, front-facing-camera]
-        UIAppFonts:
-          - InterTight-Regular.ttf
-          - InterTight-Medium.ttf
-          - InterTight-SemiBold.ttf
-          - InterTight-Bold.ttf
-          - InstrumentSerif-Regular.ttf
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.avidesai.mog
+        PRODUCT_BUNDLE_IDENTIFIER: com.avidesai.mog.spike   # the Exact app owns com.avidesai.mog; both sit on one phone in spike 1
         TARGETED_DEVICE_FAMILY: "1"
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
-        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
     preBuildScripts:
       - name: Sync MogCore data
         script: |

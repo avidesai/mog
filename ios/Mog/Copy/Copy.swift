@@ -1,15 +1,10 @@
 import Foundation
 
-/// All user-facing strings come from core/copy/strings.json (bundled). Nothing is hard-coded
-/// in views, so the copy deck (and its denylist test) is the single source of truth.
+/// The capture gates read their labels and hints from core/copy/strings.json (bundled), the same
+/// deck the Exact app uses, so the spike tools show the wording a person will see.
 ///
-///     Copy.s("today.title")                                   → "Today"
-///     Copy.f("today.scan_countdown", ["days": "12"])          → "Next scan opens in 12 days"
-///
-/// `{app_name}` is substituted everywhere from `Copy.appName`.
+///     Copy.s("capture.hint_ready")
 enum Copy {
-    static var appName: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String ?? "Mog"
-
     private static let table: [String: Any] = {
         guard let url = Bundle.main.url(forResource: "strings", withExtension: "json"),
               let data = try? Data(contentsOf: url),
@@ -27,12 +22,6 @@ enum Copy {
             assertionFailure("missing copy key \(key)")
             return "⟨\(key)⟩"
         }
-        return str.replacingOccurrences(of: "{app_name}", with: appName)
-    }
-
-    static func f(_ key: String, _ args: [String: String]) -> String {
-        var out = s(key)
-        for (k, v) in args { out = out.replacingOccurrences(of: "{\(k)}", with: v) }
-        return out
+        return str
     }
 }

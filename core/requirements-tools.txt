@@ -1,5 +1,5 @@
 -r requirements.txt
 markdown>=3.6        # site/build.py
 playwright>=1.45     # tools/render_screens.py (plus: playwright install chromium)
-fonttools>=4.50      # font conversion (ios/Mog/Fonts/README.md)
+fonttools>=4.50      # font conversion (design/fonts/README.md)
 brotli>=1.1
