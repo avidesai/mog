@@ -7,3 +7,10 @@
 - Appearance heads, cheap path: skin evenness = sqrt-illumination-scaled texture + chroma spread in a cheek/forehead mask (≈0.05 residual luma dependence); adiposity = geometric proxy (lower-face width, cheek fullness, submental bulge). Python prototype tested; Swift port wired.
 - Spike tooling: Settings › Debug › Vertex picker, Landmark dump → `core/tools/cv_analysis.py` (per-metric CV, provisional tiers) and `core/tools/harness.py` (per-person test–retest, fairness smoke, `--write-tiers` writes `reliability_tier` + `noise_sd`).
 - None of the Swift has run on a device yet. Euler sign conventions and the buffer orientation are the first things to verify.
+
+## The Exact capture module (20 Nov)
+- `app/modules/apple/MogCapture.swift` + `MogGeometry.swift` are `<mog-capture>`: an ExactNativeInstance owning an ARSCNView. ARKit's delegate is a private NSObject `FrameSink` (ExactNativeInstance is not an NSObject). MogGeometry is assembled from `ios/Mog/Geometry` + FrameAggregator: keep the two in step.
+- Pose is measured in face space (camera position seen from the face → yaw, pitch) and roll against the phone's portrait up (camera −x), because ARCamera.transform is fixed to the sensor's landscape axes. The old decomposition on camera axes would have read an upright face as ~90° roll. Signs unconfirmed on a device.
+- The landmark map ships via app.json `host.ios.resources` (`app/geometry/` → `ExactResources/Resources/geometry`), generated from `ios/Mog/Geometry/landmark_map.json` by `scripts/sync-app.mjs`.
+- Abort names the first failing check in reference priority (distance before lighting); a face lost mid-burst names clear view.
+- Never compiled. Spike 1 runbook: `core/plan/spike-1.md`.

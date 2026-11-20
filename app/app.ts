@@ -9,14 +9,16 @@ import { loadRegistry, type Sex } from './core/registry.ts';
 import { score, type CompositeReference, type MetricReading, type ScoreResult } from './core/scoring.ts';
 import { buildPlan, type PlanCard } from './core/planner.ts';
 import { HabitEngine, newHabitState, type HabitState } from './core/habit.ts';
+import { acknowledge, unfinishedPurchases } from '@exact/purchases';
 
 // Privacy invariant: this file holds named measurements and plan state only. No frame, depth map,
 // landmark, mesh or embedding is ever passed in, stored or sent; there is no net grant.
 const FILE = 'app:/data/mog.json';
-export const grants = `fs.read ${FILE}\nfs.write ${FILE}`;
+export const grants = `fs.read ${FILE}\nfs.write ${FILE}\ndevice.camera capture.camera_purpose`;
 
 const reg = loadRegistry({ metrics: metricsJson, rules: rulesJson, references: referencesJson, denylist: denylistJson });
 const ref = compositeJson as unknown as CompositeReference;
+const copyOf = new Map<string, { short: string; plain: string }>((metricsJson as any).metrics.map((m: any) => [m.id, m]));
 
 interface Scan { id: string; date: string; sex: Sex; ageBand: string; profileCaptured: boolean; readings: Record<string, MetricReading> }
 interface Saved { scans: Scan[]; habit: HabitState | null; goals: string[]; timeBudget: number }
@@ -75,11 +77,11 @@ function view(s: Saved, today: string, isPro: boolean): View {
     const free = isPro || m.id === r.topStrength || m.id === r.mostImprovable;
     const unit = def.unit;
     return [{
-      id: m.id, name: def.name, short: (metricsJson as any).metrics.find((x: any) => x.id === m.id).short, group: groupOf.get(m.id)!,
+      id: m.id, name: def.name, short: copyOf.get(m.id)!.short, group: groupOf.get(m.id)!,
       value: m.value === null || !free ? '' : fmt(m.value, unit),
       category: m.category === null || !free ? '' : m.category,
       suppressed: m.suppressedReason ?? '', evidence: m.evidenceGrade, reliability: m.reliabilityTier,
-      free, plain: free ? (metricsJson as any).metrics.find((x: any) => x.id === m.id).plain : '',
+      free, plain: free ? copyOf.get(m.id)!.plain : '',
       refLow: unit === 'category' ? '' : fmt(m.refMean - m.refSd, unit), refHigh: unit === 'category' ? '' : fmt(m.refMean + m.refSd, unit),
       contradicted: m.evidenceGrade === 'contradicted', community: m.evidenceGrade === 'community',
     }];
@@ -93,21 +95,27 @@ function view(s: Saved, today: string, isPro: boolean): View {
     metrics,
     plan: p.plan.map(cardView), professional: p.professional.map(cardView), info: p.info.map(cardView),
     dailyMinutes: p.dailyMinutes,
-    tasks: habit ? habitTasks(habit, today) : [],
+    tasks: habit ? habitTasks(habit, today, new Map(p.plan.map((c) => [c.ruleId, c.findingRefs]))) : [],
     summary: habit ? summaryView(habit, today) : emptySummary(),
   };
 }
 
-function habitTasks(e: HabitEngine, today: string): View['tasks'] {
+// Tasks are named task_<rule id> by the planner; the card behind each gives its why, effort and findings.
+function habitTasks(e: HabitEngine, today: string, findings: Map<string, string[]>): View['tasks'] {
   const wk = e.weekIndex(today);
   const done = e.s.completions[today] ?? [];
   const weekly = e.weeklyProgress(wk);
-  const titles = new Map([...reg.rules.values()].map((r) => [`task_${r.id}`, r.taskTitle ?? '']));
-  return e.openTasks(wk).map((t) => ({
-    id: t.taskId, title: titles.get(t.taskId) ?? t.taskId, cadence: t.cadence,
-    done: t.cadence === 'once' ? Object.values(e.s.completions).some((ids) => ids.includes(t.taskId)) : done.includes(t.taskId),
-    weeklyDone: weekly[t.taskId]?.[0] ?? 0, weeklyTarget: weekly[t.taskId]?.[1] ?? 0,
-  }));
+  return e.openTasks(wk).map((t) => {
+    const rule = reg.rules.get(t.taskId.replace(/^task_/, ''));
+    return {
+      id: t.taskId, title: rule?.taskTitle ?? t.taskId, cadence: t.cadence,
+      done: t.cadence === 'once' ? Object.values(e.s.completions).some((ids) => ids.includes(t.taskId)) : done.includes(t.taskId),
+      weeklyDone: weekly[t.taskId]?.[0] ?? 0, weeklyTarget: weekly[t.taskId]?.[1] ?? 0,
+      headline: rule?.copy.headline ?? '', whyThis: rule?.copy.why_this ?? '', effort: rule?.effort ?? 'low',
+      weeksLow: rule?.expectedTimelineWeeks[0] ?? 0, weeksHigh: rule?.expectedTimelineWeeks[1] ?? 0,
+      basedOn: (findings.get(rule?.id ?? '') ?? []).map((id) => copyOf.get(id)?.short ?? id).join(', '),
+    };
+  });
 }
 
 const emptySummary = (): View['summary'] => ({
@@ -116,12 +124,15 @@ const emptySummary = (): View['summary'] => ({
 });
 
 function summaryView(e: HabitEngine, today: string): View['summary'] {
-  e.reconcile(today);
+  // Ask before reconciling: reconcile zeroes a lapsed streak, after which nothing is at risk to repair.
+  // While the month's repair can still bridge yesterday, the streak stands.
+  const atRisk = e.streakAtRisk(today);
+  if (!(atRisk && e.repairAvailable(today))) e.reconcile(today);
   const p = e.pathSummary(today);
   return {
     week: p.weekIndex, currentDays: p.currentDays, longestDays: p.longestDays, thisWeekDays: p.thisWeekDays,
     banked: p.bankedWeeks, scanWindow: p.scanWindow ?? 0, daysUntilScan: p.daysUntilScan ?? -1,
-    repairAvailable: p.repairAvailable, atRisk: e.streakAtRisk(today) && p.repairAvailable,
+    repairAvailable: p.repairAvailable, atRisk,
     dayComplete: e.dayStatus(today).complete, finished: p.finished,
   };
 }
@@ -133,24 +144,69 @@ const emptyView = (): View => ({
 
 const ok = { ok: true, error: '' };
 
+async function storeScan(storage: Storage, today: string, sex: string, ageBand: string, goals: string[], timeBudget: number,
+  readings: Record<string, MetricReading>, profileCaptured: boolean) {
+  if (sex !== 'male' && sex !== 'female') return { ok: false, error: 'no reference table' };
+  if (ageBand === '') return { ok: false, error: 'no age band' };
+  const s = await load(storage);
+  const scan: Scan = { id: `scan-${s.scans.length + 1}`, date: today, sex: sex as Sex, ageBand, profileCaptured, readings };
+  let r;
+  try { r = score({ sex: scan.sex, ageBand, readings, profileCaptured }, reg, ref); }
+  catch { return { ok: false, error: 'nothing scorable' }; } // every reading under its floor: the screen offers a retake
+  const plan = buildPlan({ goals, timeBudgetMin: timeBudget, score: r }, reg);
+  const tasks = plan.tasks.map((t) => ({ taskId: t.taskId, cadence: t.cadence as 'daily' | 'weekly' | 'once', opensWeek: t.opensWeek, weeklyTarget: t.weeklyTarget }));
+  const habit = s.habit && s.scans.length ? s.habit : newHabitState(today, tasks);
+  if (s.habit && new HabitEngine(habit).scanWindowOpen(today) !== null) new HabitEngine(habit).recordScan(today, scan.id);
+  await save(storage, { ...s, goals, timeBudget, scans: [...s.scans, scan], habit });
+  return ok;
+}
+
+// The one place a purchase is finished (Exact's purchases recipe): Pro is a subscription or a
+// non-consumable, so each purchased item is acknowledged once; the store redelivers until it is.
+// One run at a time; a request during a run asks it to read the queue again.
+let delivering = false, askedAgain = false;
+async function deliverPurchases(): Promise<typeof ok> {
+  if (delivering) { askedAgain = true; return ok; }
+  delivering = true;
+  try {
+    do {
+      askedAgain = false;
+      for (const p of await unfinishedPurchases()) {
+        if (p.purchaseState !== 'purchased' || !p.itemId.startsWith('pro.')) continue;
+        try { await acknowledge({ purchaseToken: p.purchaseToken }); } catch { /* stays queued; retried */ }
+      }
+    } while (askedAgain);
+    return ok;
+  } finally {
+    delivering = false;
+  }
+}
+
 const sources: Sources = {
   loadApp: async ([today, isPro], _store, storage) => view(await load(storage), today, isPro),
 
   // Stands in for <mog-capture> until the native module lands: a sample face's readings from the
   // golden fixtures. The real module hands over the same named measurements and nothing else.
-  saveSampleScan: async ([today, sex, ageBand, goals, timeBudget], _store, storage) => {
-    if (sex !== 'male' && sex !== 'female') return { ok: false, error: 'no reference table' };
-    if (ageBand === '') return { ok: false, error: 'no age band' };
-    const s = await load(storage);
+  // Stands in for <mog-capture> where there is no TrueDepth camera (the web): a sample face's readings.
+  saveSampleScan: ([today, sex, ageBand, goals, timeBudget], _store, storage) => {
     const sample = (fixtures as any[]).find((c) => c.name === (sex === 'female' ? 'average_female_full' : 'average_male_full'));
-    const scan: Scan = { id: `scan-${s.scans.length + 1}`, date: today, sex: sex as Sex, ageBand, profileCaptured: true, readings: sample.readings };
-    const r = score({ sex: scan.sex, ageBand, readings: scan.readings, profileCaptured: scan.profileCaptured }, reg, ref);
-    const plan = buildPlan({ goals, timeBudgetMin: timeBudget, score: r }, reg);
-    const tasks = plan.tasks.map((t) => ({ taskId: t.taskId, cadence: t.cadence as 'daily' | 'weekly' | 'once', opensWeek: t.opensWeek, weeklyTarget: t.weeklyTarget }));
-    const habit = s.habit && s.scans.length ? s.habit : newHabitState(today, tasks);
-    if (s.habit && new HabitEngine(habit).scanWindowOpen(today) !== null) new HabitEngine(habit).recordScan(today, scan.id);
-    await save(storage, { ...s, goals, timeBudget, scans: [...s.scans, scan], habit });
-    return ok;
+    return storeScan(storage, today, sex, ageBand, goals, timeBudget, sample.readings, true);
+  },
+
+  // <mog-capture>'s readings. Only known metric ids with finite numbers are kept; anything else in the
+  // message (a nested object, a list, an unknown key) is dropped, so nothing geometric can be stored.
+  saveScan: ([today, sex, ageBand, goals, timeBudget, json], _store, storage) => {
+    let raw: unknown;
+    try { raw = JSON.parse(json); } catch { return Promise.resolve({ ok: false, error: 'unreadable capture' }); }
+    const readings: Record<string, MetricReading> = {};
+    for (const [id, r] of Object.entries(raw && typeof raw === 'object' ? raw as Record<string, any> : {})) {
+      if (!reg.metrics.has(id) || !r || typeof r !== 'object') continue;
+      const { value, confidence, iqr } = r;
+      if (![value, confidence, iqr].every((x) => typeof x === 'number' && Number.isFinite(x))) continue;
+      readings[id] = { value, confidence: Math.min(1, Math.max(0, confidence)), iqr: Math.max(0, iqr) };
+    }
+    if (Object.keys(readings).length === 0) return Promise.resolve({ ok: false, error: 'nothing measured' });
+    return storeScan(storage, today, sex, ageBand, goals, timeBudget, readings, false);
   },
 
   setTask: async ([taskId, today, done], _store, storage) => {
@@ -171,6 +227,8 @@ const sources: Sources = {
     await save(storage, s);
     return ok;
   },
+
+  deliverPurchases: () => deliverPurchases(),
 
   deleteEverything: async (_args, _store, storage) => {
     await save(storage, { ...EMPTY });

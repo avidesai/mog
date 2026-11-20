@@ -10,11 +10,30 @@
     "name": "Mog"
   },
   "host": {
-    "web": {}
+    "web": {},
+    "ios": {
+      "minimumOS": "17.0",
+      "deviceFamily": [
+        "iphone"
+      ],
+      "resources": [
+        {
+          "from": "geometry",
+          "to": "Resources/geometry"
+        }
+      ]
+    }
   },
   "deploy": {
     "store": {
-      "web": "0"
+      "web": "0",
+      "ios": "0"
     }
-  }
+  },
+  "purchases": {
+    "catalog": "store/catalog.json"
+  },
+  "modules": [
+    "mog-capture"
+  ]
 }

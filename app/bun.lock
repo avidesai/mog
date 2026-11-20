@@ -1,0 +1,15 @@
+{
+  "lockfileVersion": 2,
+  "configVersion": 1,
+  "workspaces": {
+    "": {
+      "name": "app",
+      "dependencies": {
+        "@exact/purchases": "file:../../ext/exact/packages/purchases",
+      },
+    },
+  },
+  "packages": {
+    "@exact/purchases": ["@exact/purchases@file:../../ext/exact/packages/purchases", {}],
+  }
+}

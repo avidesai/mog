@@ -1,9 +1,9 @@
 // Every string is t() over strings/en.json, which scripts/sync-app.mjs generates from core/copy/strings.json.
-// Capture is a stand-in until the native module lands: it walks the six checks, then saves a sample face's readings.
 use EmptyState from "exact:content"
 use SummaryCard from "exact:content"
 use Badge from "exact:content"
 use RowText from "exact:content"
+use getDetails, listPurchases, unfinishedPurchases, purchase, restorePurchases, purchasesStatus, ItemDetails, PurchaseDetails, PurchasesStatus from "@exact/purchases"
 
 routes nav
   tab today "/"
@@ -16,6 +16,7 @@ routes nav
     results "/results"
     metric "/metric/:id"
     paywall "/pro"
+    task "/task/:id"
   tab plan "/plan"
     card "/plan/:id"
   tab path "/path"
@@ -61,6 +62,12 @@ shape Task
   done: bool
   weeklyDone: number
   weeklyTarget: number
+  headline: string
+  whyThis: string
+  effort: string
+  weeksLow: number
+  weeksHigh: number
+  basedOn: string
 
 shape Summary
   week: number
@@ -112,7 +119,8 @@ fn suppressedLabel(r: string): string = r == "low_confidence" ? t("common.suppre
 fn reliabilityLabel(r: string): string = r == "A" ? t("metric_detail.reliability_A") : r == "B" ? t("metric_detail.reliability_B") : t("metric_detail.reliability_C")
 fn effortLabel(e: string): string = e == "low" ? t("task_detail.effort_low") : e == "medium" ? t("task_detail.effort_medium") : t("task_detail.effort_high")
 fn metricLine(m: Metric): string = m.suppressed != "" ? suppressedLabel(m.suppressed) : m.value == "" ? categoryLabel(m.category) : `${m.value} · ${categoryLabel(m.category)}`
-fn gateLabel(i: number): string = i == 0 ? t("capture.gate_angle") : i == 1 ? t("capture.gate_lighting") : i == 2 ? t("capture.gate_distance") : i == 3 ? t("capture.gate_expression") : i == 4 ? t("capture.gate_clear") : t("capture.gate_sharp")
+fn gateLabel(i: string): string = i == "0" ? t("capture.gate_angle") : i == "1" ? t("capture.gate_lighting") : i == "2" ? t("capture.gate_distance") : i == "3" ? t("capture.gate_expression") : i == "4" ? t("capture.gate_clear") : t("capture.gate_sharp")
+fn hintLabel(k: string): string = k == "capture.hint_closer" ? t("capture.hint_closer") : k == "capture.hint_further" ? t("capture.hint_further") : k == "capture.hint_yaw" ? t("capture.hint_yaw") : k == "capture.hint_pitch_up" ? t("capture.hint_pitch_up") : k == "capture.hint_pitch_down" ? t("capture.hint_pitch_down") : k == "capture.hint_roll" ? t("capture.hint_roll") : k == "capture.hint_lighting_uneven" ? t("capture.hint_lighting_uneven") : k == "capture.hint_lighting_dark" ? t("capture.hint_lighting_dark") : k == "capture.hint_clipping" ? t("capture.hint_clipping") : k == "capture.hint_expression" ? t("capture.hint_expression") : k == "capture.hint_occlusion" ? t("capture.hint_occlusion") : k == "capture.hint_sharp" ? t("capture.hint_sharp") : t("capture.hint_ready")
 fn stepLabel(i: number): string = i == 0 ? t("processing.step_landmarks") : i == 1 ? t("processing.step_normalise") : i == 2 ? t("processing.step_metrics") : t("processing.step_reference")
 fn weekStatus(w: number, s: Summary): string = s.banked.includes(w) ? t("journey.node_banked") : w == s.week ? t("journey.node_current") : w == 4 or w == 8 ? t("journey.node_scan") : ""
 
@@ -125,16 +133,38 @@ component App
   state timeBudget = 15 persist
   state region = "" persist
   state consentedOn = "" persist
+  state streakSeenOn = "" persist
   state consentedAt = 0 persist
   state consentPolicy = "" persist
   state adultAt = 0 persist
   state declined = false
   state capStep = 0
   state capturing = false
+  // What <mog-capture> last said: the six checks as 0/1, the hint key, a check that drifted, the readings.
+  state captureMask = "000000"
+  state captureHint = "capture.hint_yaw"
+  state captureAbort = ""
+  state captureUnsupported = false
+  state captureDenied = false
+  state captureFailed = false
+  state captured = ""
   state now = 0
   resource time = exactTime() as shape Time
   derive today = formatDate(time.epochAtZero + now, time.utcOffset, "iso")
-  resource app = loadApp(today, false) as shape AppView else empty() transient
+  state plan = "pro.annual"
+  state buyNote = ""
+  resource store = purchasesStatus() as shape PurchasesStatus else empty()
+  // A screen gates on what the person holds; delivery reads the store's queue and nothing else.
+  resource owned = listPurchases() as shape PurchaseDetails[] else empty()
+  resource queue = unfinishedPurchases() as shape PurchaseDetails[] else empty()
+  resource plans = getDetails(itemIds=["pro.annual", "pro.weekly", "pro.lifetime"]) as shape ItemDetails[] else empty()
+  mutation bought as shape PurchaseDetails refreshes queue, owned then afterBuy
+  mutation restored as shape PurchaseDetails[] refreshes owned
+  mutation delivered as shape Reply refreshes owned, queue
+  derive isPro = owned.filter(p => p.itemId.startsWith("pro.")).length > 0
+  derive due = queue.filter(p => p.purchaseState == "purchased").map(p => p.purchaseToken).join(",")
+  derive buyError = match failure(bought) { case some(f) => f.code == "AbortError" ? "" : t("paywall.failed"), case none => "" }
+  resource app = loadApp(today, isPro) as shape AppView else empty() transient
   mutation scanned as shape Reply refreshes app then afterScan
   mutation taskSet as shape Reply queue refreshes app
   mutation repaired as shape Reply refreshes app
@@ -148,6 +178,8 @@ component App
     every(60000, step)
   task scanning when capturing
     every(450, advance)
+  task delivering when due != "" key=due
+    after(1, deliver)
 
   action step
     now = performanceNow()
@@ -178,31 +210,70 @@ component App
       consentedAt = time.epochAtZero + performanceNow()
       consentPolicy = policyVersion
       declined = false
-      capStep = 0
-      capturing = true
+      resetCapture()
       nav = push(nav, "/capture")
   action decline
     declined = true
-  action startScan
-    if consentCurrent
+  action resetCapture
+    capStep = 0
+    capturing = false
+    captureMask = "000000"
+    captureHint = "capture.hint_yaw"
+    captureAbort = ""
+    captureUnsupported = false
+    captureDenied = false
+    captureFailed = false
+    captured = ""
+  action onCapture(msg: string)
+    if msg.startsWith("gates ")
+      captureMask = msg.slice(6, 12)
+      captureHint = msg.slice(13)
+    else if msg.startsWith("aborted ")
+      captureAbort = msg.slice(8)
+    else if msg == "unsupported"
+      captureUnsupported = true
+    else if msg == "denied"
+      captureDenied = true
+    else if msg == "sample" or msg.startsWith("readings ")
+      captured = msg
       capStep = 0
       capturing = true
+  action startScan
+    if consentCurrent
+      resetCapture()
       nav = push(nav, "/capture")
     else
       nav = push(nav, "/start/consent")
+  // Withdrawing stops a capture in progress: the camera view unmounts and nothing is saved.
   action withdraw
     consentedOn = ""
     consentedAt = 0
     consentPolicy = ""
+    resetCapture()
+  action openSettings
+    openURL("app-settings:")
+  // The processing steps, once the readings are in; then they are scored and saved.
   action advance
-    if capStep < 10
+    if capStep < 4
       capStep = capStep + 1
     else
       capturing = false
-      send scanned = saveSampleScan(today, sex, ageBand, goals.length == 0 ? ["general"] : goals, timeBudget)
+      if not consentCurrent
+        resetCapture()
+      else if captured == "sample"
+        send scanned = saveSampleScan(today, sex, ageBand, goals.length == 0 ? ["general"] : goals, timeBudget)
+      else
+        send scanned = saveScan(today, sex, ageBand, goals.length == 0 ? ["general"] : goals, timeBudget, captured.slice(9))
   action afterScan
-    onboarded = true
-    nav = replace(nav, "/reveal")
+    match scanned
+      case some(r)
+        if r.ok
+          onboarded = true
+          nav = replace(nav, "/reveal")
+        else
+          captureFailed = true
+      case none
+        captureFailed = true
   action finish
     let home = open(nav, "/")
     nav = open(home, "/plan")
@@ -210,6 +281,27 @@ component App
     send taskSet = setTask(id, today, done)
   action repair
     send repaired = repairStreak(today)
+  action letReset
+    streakSeenOn = today
+  action choosePlan(id: string)
+    plan = id
+  action buy
+    buyNote = ""
+    send bought = purchase(itemId=plan)
+  // The purchase's answer is for this screen; delivery is the queue's.
+  action afterBuy
+    match bought
+      case some(p)
+        if p.purchaseState == "pending"
+          buyNote = t("paywall.pending")
+        else
+          nav = back(nav)
+      case none
+        buyNote = ""
+  action restore
+    send restored = restorePurchases()
+  action deliver
+    send delivered = deliverPurchases()
   action askWipe
     showModal("wipe")
   action wipe
@@ -291,13 +383,25 @@ component App
                           progress=some(app.summary.thisWeekDays / 5),
                           symbol=none
                         )
-                      if app.summary.atRisk
-                        section testId="streak-save"
-                          header
-                            text t("streak.save_title")
-                          text t("streak.save_body")
-                          button press=repair testId="repair"
-                            text t("streak.save_cta")
+                      if app.summary.atRisk and streakSeenOn != today
+                        if app.summary.repairAvailable
+                          section testId="streak-save"
+                            header
+                              text t("streak.save_title")
+                            text t("streak.save_body")
+                            button press=repair testId="repair"
+                              text t("streak.save_cta")
+                            button press=letReset testId="let-reset"
+                              text t("streak.save_decline")
+                            footer
+                              text t("streak.repair_note")
+                        else
+                          section testId="streak-used"
+                            header
+                              text t("streak.save_unavailable_title")
+                            text t("streak.save_unavailable_body")
+                            button press=letReset testId="streak-okay"
+                              text t("streak.save_unavailable_cta")
                       section
                         header
                           text t("today.tasks_header")
@@ -308,17 +412,21 @@ component App
                               change=setTask(k.id)
                               aria-label=k.title
                               testId=`task-${k.id}`
-                            RowText(
-                              title=k.title,
-                              detail=(k.cadence == "weekly" ? t("task_detail.weekly_progress", done=`${k.weeklyDone}`, target=`${k.weeklyTarget}`) : ""),
-                              value=none
-                            )
+                            link href=path("task", k.id) testId=`open-${k.id}` flex=1 min-width=0
+                              RowText(
+                                title=k.title,
+                                detail=(k.cadence == "weekly" ? t("task_detail.weekly_progress", done=`${k.weeklyDone}`, target=`${k.weeklyTarget}`) : ""),
+                                value=none
+                              )
+                              image "symbol:forward-chevron"
                         footer
                           text (app.summary.dayComplete ? t("today.all_done_title", streak=`${app.summary.currentDays}`) : "") testId="day-done"
                       section
                         if app.summary.scanWindow > 0
-                          text t("today.scan_open_title", week=`${app.summary.scanWindow}`) font="-exact-headline"
-                          text t("today.scan_open_body") color="-exact-secondary-label"
+                          row padding-top=8 padding-bottom=8
+                            column gap=4 flex=1 min-width=0
+                              text t("today.scan_open_title", week=`${app.summary.scanWindow}`) font="-exact-headline"
+                              text t("today.scan_open_body") color="-exact-secondary-label"
                           button press=startScan testId="rescan"
                             text t("today.scan_open_cta")
                         else if app.summary.daysUntilScan == 1
@@ -507,17 +615,43 @@ component App
                       text t("capture.front_title") font="-exact-large-title"
                         color="-exact-label"
                         testId="capture-title"
-                      text (capStep < 6 ? t("capture.hint_sharp") : t("capture.hint_ready")) color="-exact-secondary-label"
-                        testId="capture-hint"
+                      if captureUnsupported
+                        text t("capture.unsupported") color="-exact-secondary-label"
+                          testId="capture-unsupported"
+                      else if captureDenied
+                        text t("capture.camera_denied") color="-exact-secondary-label"
+                          testId="capture-denied"
+                        button press=openSettings buttonStyle="bordered" testId="open-settings"
+                          text t("capture.open_settings")
+                      else if captureFailed
+                        text t("capture.aborted_title") font="-exact-headline"
+                          color="-exact-label"
+                          testId="capture-failed"
+                        text t("capture.failed_body") color="-exact-secondary-label"
+                        button press=resetCapture buttonStyle="bordered" testId="retake"
+                          text t("common.retake")
+                      else if captured == "" and consentCurrent
+                        mog-capture message=onCapture
+                          height="20rem"
+                          border-radius=16
+                          aria-label=t("capture.front_title")
+                        if captureAbort != ""
+                          text t("capture.aborted_title") font="-exact-headline"
+                            color="-exact-label"
+                            testId="capture-aborted"
+                          text t("capture.aborted_body", gate=gateLabel(captureAbort)) color="-exact-secondary-label"
+                        text hintLabel(captureHint) color="-exact-secondary-label"
+                          testId="capture-hint"
                       list appearance="auto" listStyle="inset-grouped"
                         section
                           for i in [0, 1, 2, 3, 4, 5] key=i
                             row
-                              text gateLabel(i) flex=1
-                              if capStep > i
-                                image "symbol:checkmark" aria-label=gateLabel(i)
-                      if capStep >= 6
+                              text gateLabel(`${i}`) flex=1
+                              if captured != "" or captureMask.slice(i, i + 1) == "1"
+                                image "symbol:checkmark" aria-label=gateLabel(`${i}`)
+                      if captured != ""
                         text t("processing.title") font="-exact-title2"
+                          -exact-fit="shrink"
                           color="-exact-label"
                           testId="processing"
                         list appearance="auto" listStyle="inset-grouped"
@@ -525,7 +659,7 @@ component App
                             for i in [0, 1, 2, 3] key=i
                               row
                                 text stepLabel(i) flex=1
-                                if capStep > 6 + i
+                                if capStep > i
                                   image "symbol:checkmark" aria-label=stepLabel(i)
                         text t("processing.footnote") font="-exact-footnote"
                           color="-exact-secondary-label"
@@ -652,6 +786,41 @@ component App
                       if m.plain != ""
                         section
                           text m.plain
+              else if e.name == "task"
+                column navigationKey=`${e.id}`
+                  navigationScroll=`content-${e.id}`
+                  position="absolute"
+                  inset=0
+                  for k in app.tasks.filter(x => x.id == e.params.id) key=k.id
+                    header
+                      text k.title role="heading" aria-level=2
+                    list id=`content-${e.id}`
+                      appearance="auto"
+                      listStyle="inset-grouped"
+                      flex=1
+                      min-height=0
+                      section
+                        header
+                          text t("task_detail.why_this")
+                        text k.whyThis testId="task-why"
+                      section
+                        if k.basedOn != ""
+                          row
+                            text t("task_detail.based_on") flex=1
+                            text k.basedOn color="-exact-secondary-label"
+                        row
+                          text t("task_detail.effort") flex=1
+                          text effortLabel(k.effort) color="-exact-secondary-label"
+                        if k.cadence == "weekly"
+                          row
+                            text t("task_detail.weekly_progress", done=`${k.weeklyDone}`, target=`${k.weeklyTarget}`)
+                        footer
+                          text t("task_detail.how_long", low=`${k.weeksLow}`, high=`${k.weeksHigh}`)
+                    button press=setTask(k.id, not k.done)
+                      buttonStyle=(k.done ? "bordered" : "filled")
+                      margin=16
+                      testId="task-toggle"
+                      text (k.done ? t("task_detail.mark_undone") : t("task_detail.mark_done"))
               else if e.name == "paywall"
                 column navigationKey=`${e.id}`
                   navigationPresentation="modal"
@@ -668,21 +837,52 @@ component App
                     flex=1
                     min-height=0
                     section
-                      text t("paywall.intro")
+                      row
+                        text t("paywall.intro") flex=1 min-width=0
                     section
-                      text t("paywall.includes_1", n=`${app.nMetrics}`)
-                      text t("paywall.includes_2")
-                      text t("paywall.includes_3")
-                      text t("paywall.includes_4")
-                      text t("paywall.includes_5")
-                    section
-                      text t("paywall.plan_annual_trial", price_annual="$34.99")
-                      text t("paywall.plan_weekly", price_weekly="$4.99")
-                      text t("paywall.plan_lifetime", price_lifetime="$59.99")
-                      footer
-                        text t("paywall.renewal_terms")
-                  button press=back margin=16 testId="keep-free"
-                    text t("paywall.keep_free")
+                      row
+                        text t("paywall.includes_1", n=`${app.nMetrics}`) flex=1 min-width=0
+                      row
+                        text t("paywall.includes_2") flex=1 min-width=0
+                      row
+                        text t("paywall.includes_3") flex=1 min-width=0
+                      row
+                        text t("paywall.includes_4") flex=1 min-width=0
+                      row
+                        text t("paywall.includes_5") flex=1 min-width=0
+                    // Prices are the store's own strings; where there is no store (the web), the list's.
+                    if plans.length > 0
+                      section
+                        for p in plans key=p.itemId
+                          button role="radio"
+                            aria-checked=(plan == p.itemId)
+                            press=choosePlan(p.itemId)
+                            testId=`plan-${p.itemId}`
+                            text (p.itemId == "pro.annual" ? t("paywall.plan_annual_trial", price_annual=p.displayPrice) : p.itemId == "pro.weekly" ? t("paywall.plan_weekly", price_weekly=p.displayPrice) : t("paywall.plan_lifetime", price_lifetime=p.displayPrice)) flex=1
+                            if plan == p.itemId
+                              image "symbol:checkmark"
+                        footer
+                          text t("paywall.renewal_terms")
+                    else
+                      section
+                        text t("paywall.plan_annual_trial", price_annual="$34.99")
+                        text t("paywall.plan_weekly", price_weekly="$4.99")
+                        text t("paywall.plan_lifetime", price_lifetime="$59.99")
+                        footer
+                          text t("paywall.renewal_terms")
+                  column gap=8 padding=16
+                    if buyNote != "" or buyError != ""
+                      text (buyError != "" and not pending(bought) ? buyError : buyNote) font="-exact-footnote"
+                        color="-exact-secondary-label"
+                        testId="buy-note"
+                    if plans.length > 0
+                      button press=buy buttonStyle="filled" disabled=pending(bought) testId="buy"
+                        text t("paywall.cta")
+                    button press=back testId="keep-free"
+                      text t("paywall.keep_free")
+                    if store.available
+                      button press=restore testId="restore"
+                        text t("common.restore_purchases")
               else if e.name == "plan"
                 column navigationKey=`${e.id}`
                   navigationScroll=`content-${e.id}`
@@ -842,6 +1042,17 @@ component App
                           text t("settings.delete_everything")
                         footer
                           text (consentedOn != "" ? t("settings.consent_revoke_body") : "")
+                    if store.available
+                      section
+                        header
+                          text t("settings.section_plan")
+                        if isPro
+                          link href="https://apps.apple.com/account/subscriptions"
+                            testId="manage-subscription"
+                            text t("settings.manage_subscription") flex=1
+                            image "symbol:forward-chevron"
+                        button press=restore testId="restore-settings"
+                          text t("common.restore_purchases")
                     section
                       header
                         text t("settings.section_about")
