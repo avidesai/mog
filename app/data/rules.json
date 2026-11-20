@@ -1,7 +1,7 @@
 {
   "$schema_version": 1,
   "$notes": [
-    "Human-authored, versioned rules table. A model never decides what to recommend — only how to word it. Every rule ships with static copy so the product works with no LLM.",
+    "Human-authored, versioned rules table. A model never decides what to recommend, only how to word it. Every rule ships with static copy so the product works with no LLM.",
     "Triggers: {metric, op, value} compares the raw metric value; {metric, category} compares the engine-derived z-category ('low' z<-1, 'typical', 'high' z>1) or an appearance category ('low'/'moderate'/'high', or a Norwood stage bucket). All triggers in a rule must fire (AND). min_confidence defaults to the metric's confidence_floor.",
     "safety_tier: 1 self-directed, 2 OTC with irritation profile, 3 clinician territory (named, never dosed), 4 surgical/procedural (named, no links). Tier 3/4 never enter the ranked plan; they render in the 'To discuss with a professional' section.",
     "cadence: 'daily' tasks define day completion; 'weekly' tasks have a target count per week; 'once' tasks are one-off setup. opens_week staggers tasks so week 1 is never overwhelming.",
@@ -385,7 +385,7 @@
     },
     {
       "id": "brow_grooming",
-      "version": 2,
+      "version": 3,
       "triggers": [],
       "always_on": true,
       "goal_match": [
@@ -408,7 +408,7 @@
       "cadence": "once",
       "time_cost_min": 15,
       "opens_week": 1,
-      "task_title": "Tidy brows — remove strays between and below, keep the shape",
+      "task_title": "Tidy brows: remove strays between and below, keep the shape",
       "copy": {
         "headline": "Tidy the brows, don't reshape them",
         "body": "Remove strays between the brows and below the arch; leave the shape alone. Thinned brows read older and more tired.",

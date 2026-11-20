@@ -34,6 +34,14 @@ def test_no_exclamation_marks_or_your_score_is():
         assert "unlock your" not in text.lower(), key
 
 
+def test_no_em_dashes_in_anything_a_person_reads():
+    core = COPY.parent.parent
+    files = [COPY, core / "data" / "rules.json", core / "data" / "metrics.json", core / "appstore" / "listing.md"]
+    files += sorted((core / "legal").glob("*.md"))
+    for path in files:
+        assert "\u2014" not in path.read_text(encoding="utf-8"), path.name
+
+
 def test_evidence_badge_strings_are_exact():
     with open(COPY, encoding="utf-8") as f:
         c = json.load(f)["common"]
