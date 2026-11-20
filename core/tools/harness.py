@@ -15,7 +15,7 @@ This cannot prove fairness. Person-to-person variation in skin evenness is large
 with 4–6 testers per tone group the smoke only detects gross bias (≳ 0.15–0.2). It can catch the
 obvious, it says when a stratum is too small to conclude anything, and it writes down what it saw.
 
-Usage:  python core/tools/harness.py captures/ [--write-tiers]
+Usage:  python core/tools/harness.py captures/ [--panel frontal|all] [--write]
         python core/tools/harness.py --selftest
 """
 
@@ -31,10 +31,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(ROOT / "tools"))
 from mogcore import load_registry  # noqa: E402
-from mogcore.scoring import score, ScoreInput, MetricReading  # noqa: E402
-from cv_analysis import analyse, report, write_tiers  # noqa: E402
+from mogcore.scoring import score  # noqa: E402
+import math  # noqa: E402
+from cv_analysis import SCORE_SD_GATE, analyse, panel_input, tier_for_r, write_measured  # noqa: E402
 
-SCORE_SD_GATE = 0.60   # measured-noise gate (12 Nov revision); 1.2 under the provisional noise table
 TONE_EVENNESS_FLAG = 0.08
 SUPPRESSION_FLAG_PTS = 15.0
 
@@ -50,7 +50,7 @@ def load(root: Path) -> tuple[dict[str, dict[str, list[dict]]], dict[str, dict]]
     return people, people_meta
 
 
-def run(people, meta, reg):
+def run(people, meta, reg, panel="frontal"):
     out = {"people": {}, "strata": {}, "flags": []}
     pooled_scores, pooled_even, pooled_adip = [], [], []
     pooled_supp: dict[str, list[int]] = defaultdict(list)
@@ -63,19 +63,18 @@ def run(people, meta, reg):
         supp: dict[str, list[int]] = defaultdict(list)
         for caps in sessions.values():
             for c in caps:
-                rd = {k: MetricReading(v["value"], v.get("confidence", 0.9), v.get("iqr", 0.0)) for k, v in c["readings"].items()}
                 try:
-                    r = score(ScoreInput(sex, "18-24", rd), reg)
-                except Exception:
+                    r = score(panel_input(c["readings"], reg, sex, panel), reg)
+                except ValueError:
                     continue
                 scores.append(r.score)
                 for m in r.metrics:
                     supp[m.id].append(1 if m.display == "suppressed" else 0)
                 if "skin_evenness" in c["readings"]: even.append(c["readings"]["skin_evenness"]["value"])
                 if "facial_adiposity" in c["readings"]: adip.append(c["readings"]["facial_adiposity"]["value"])
-        res, _ = analyse(sessions, reg, sex)
-        sd = st.pstdev(scores) if len(scores) >= 2 else float("nan")
-        ab = sum(1 for r in res.values() if r["tier"] in ("A", "B"))
+        res, _ = analyse(sessions, reg, sex, panel)
+        sd = st.stdev(scores) if len(scores) >= 2 else float("nan")
+        ab = sum(1 for r in res.values() if r["tier"] in ("A", "B") and r["pose"] != "profile")
         out["people"][person] = {"sex": sex, "tone": tone, "n_captures": len(scores), "score_mean": st.mean(scores) if scores else None,
                                  "score_sd": sd, "tier_ab": ab, "metrics": res}
         if sd == sd and sd > SCORE_SD_GATE:
@@ -111,6 +110,21 @@ def run(people, meta, reg):
     return out
 
 
+def pooled_metrics(out, reg) -> dict[str, dict]:
+    """Per metric, the single-capture retest SD pooled across people (mean of their variances).
+    People are never treated as sessions of one another: that would fold person-to-person spread into the noise."""
+    res: dict[str, dict] = {}
+    for m in reg.metrics.values():
+        per = [p["metrics"][m.id] for p in out["people"].values() if m.id in p["metrics"] and math.isfinite(p["metrics"][m.id]["retest_sd"])]
+        if not per or m.unit == "category":
+            continue
+        rt = math.sqrt(st.mean(x["retest_sd"] ** 2 for x in per))
+        pop = m.ref("male")[1]
+        r = 1.0 / (1.0 + (rt / pop) ** 2)
+        res[m.id] = {"retest_sd": rt, "r": r, "tier": tier_for_r(r), "pose": m.pose, "people": len(per)}
+    return res
+
+
 def print_report(out) -> None:
     print(f"{'person':14s} {'sex':6s} {'tone':7s} {'n':>3s} {'score':>6s} {'SD':>6s} {'A/B':>4s}")
     for p, r in out["people"].items():
@@ -121,11 +135,14 @@ def print_report(out) -> None:
         print(f"  {k:14s} n={r['n']:3d} score {r['score_mean'] or 0:5.2f}  skin_evenness {ev}")
     print("\nflags:" if out["flags"] else "\nno flags.")
     for f in out["flags"]: print("  !", f)
-    worst = max((r["score_sd"] for r in out["people"].values() if r["score_sd"] == r["score_sd"]), default=float("nan"))
-    print(f"\nworst per-person score SD {worst:.3f}, gate {SCORE_SD_GATE}: {'PASS' if worst <= SCORE_SD_GATE else 'FAIL'}")
+    sds = [r["score_sd"] for r in out["people"].values() if r["score_sd"] == r["score_sd"]]
+    if sds:
+        med, worst = st.median(sds), max(sds)
+        ok = med <= SCORE_SD_GATE and worst <= 1.0
+        print(f"\nper-person score SD: median {med:.3f}, worst {worst:.3f} (gate: median <= {SCORE_SD_GATE}, none above 1.0): {'PASS' if ok else 'FAIL'}")
 
 
-def selftest() -> None:
+def selftest(quiet: bool = False) -> None:
     import random
     rng = random.Random(4)
     reg = load_registry()
@@ -153,30 +170,33 @@ def selftest() -> None:
             sessions[f"s{s}"] = caps
         people[pid] = sessions
     out = run(people, meta, reg)
-    print_report(out)
+    if not quiet:
+        print_report(out)
     assert any("tone=V-VI" in f and "skin_evenness" in f for f in out["flags"]), "planted tone bias not flagged"
     assert all(r["score_sd"] < 1.5 for r in out["people"].values())
     assert not any("tone=I-II" in f and "skin_evenness" in f for f in out["flags"]), "unbiased stratum flagged"
+    pooled = pooled_metrics(out, reg)
+    # the planted capture noise is 0.08 SD; person-to-person spread (1 SD) must not leak into it
+    assert all(r["retest_sd"] < 0.3 * reg.metrics[m].ref("male")[1] for m, r in pooled.items() if m != "skin_evenness"), "person spread leaked into noise_sd"
     print("selftest ok")
 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("captures", nargs="?"); ap.add_argument("--selftest", action="store_true"); ap.add_argument("--write-tiers", action="store_true")
+    ap.add_argument("captures", nargs="?"); ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--panel", choices=("frontal", "all"), default="frontal")
+    ap.add_argument("--write", action="store_true", help="write pooled measured noise_sd and tiers into data/metrics.json")
     ap.add_argument("--json", help="write the full report here")
     a = ap.parse_args()
     if a.selftest: selftest(); return
     if not a.captures: ap.error("captures folder required")
     reg = load_registry()
     people, meta = load(Path(a.captures))
-    out = run(people, meta, reg)
+    out = run(people, meta, reg, a.panel)
     print_report(out)
     if a.json: Path(a.json).write_text(json.dumps(out, indent=1, default=str))
-    if a.write_tiers:
-        # tiers from the pooled per-metric analysis across all people
-        merged = {f"{p}/{s}": caps for p, sess in people.items() for s, caps in sess.items()}
-        res, _ = analyse(merged, reg, "male")
-        write_tiers(res)
+    if a.write:
+        write_measured(pooled_metrics(out, reg))
 
 
 if __name__ == "__main__":

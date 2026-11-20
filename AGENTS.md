@@ -15,7 +15,7 @@ iPhone-first facial-harmony measurement app. Guided capture → on-device geomet
 - **Code:** finish every change with `.agents/skills/unslop`. Comments say why, in three lines or fewer; the privacy audit-trail comments stay.
 - **Experts** in `.agents/experts/` (scoring, privacy, capture, exact-ui): read `knowledge.md` and `decisions.md` before working in their domain; never re-raise a settled decision as a finding; fix `knowledge.md` when it is wrong.
 - **Exact:** trust the checkout over anything written here (pre-1.0, moves weekly). The app is drawn to the design artboards (`app/ui.contract`, tokens in `app/app.tamber`); see the exact-ui expert's decisions.
-- **Data tables** (`core/data/*.json`) are human-authored and versioned. `composite_reference.json` is generated. Reliability tiers and `noise_sd` are provisional until `core/tools/harness.py --write-tiers` runs on real captures.
+- **Data tables** (`core/data/*.json`) are human-authored and versioned. `composite_reference.json` is generated. Reliability tiers and `noise_sd` are provisional until `core/tools/harness.py --write` runs on real captures (it writes measured single-capture `noise_sd` and the tier graded on r).
 - **Commits** are conventional, lowercase subject, and end with the attribution lines in the session's system reminder if one is present.
 - **Delete; don't deprecate.** No compat shims before 1.0.
 

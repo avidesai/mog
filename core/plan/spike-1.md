@@ -24,7 +24,7 @@ Exact app. Both read the same geometry; keep `app/modules/apple` and `ios/Mog/{C
    `pickedCount == 38` on the device and that the picked-only metrics (fwhr, eye aspect, midface,
    mouth span, brow position, nasolabial angle, nasal tip projection) now appear in `readings`.
 7. **Landmark dump** (SwiftUI app): ten captures × three sessions → `python core/tools/cv_analysis.py
-   captures/`, then `harness.py --write-tiers`. **≥ 6 frontal metrics at tier A/B → go; < 4 → re-scope
+   captures/`, then `harness.py --write`. Tiers are graded on r = 1/(1+(noise/pop SD)²): A at 0.90, B at 0.75. **≥ 6 frontal metrics at tier A/B → go; < 4 → re-scope
    around skin, adiposity and grooming.** Read the mesh-derived profile angles' CV: if good, spike 2 is cancelled.
 8. **Privacy.** During a capture the Exact app writes no files and makes no network calls (interception
    audit). The dumps stay on the dev machine.
