@@ -1,6 +1,7 @@
 // Every string is t() over strings/en.json, which scripts/sync-app.mjs generates from core/copy/strings.json.
 // The look is ui.contract's parts over app.tamber's tokens, after design/screens-gamified.
 use Primary, Secondary, Quiet, Option, PlanOption, Label, Chip, Gate, Mark, StreakPill, Chevron, Lock, Check, Pips, Track, Ring, NavBar, StepBar, Tile, FaceArt, Display, T1, T2, T3, RowTitle, Body, Detail, Caption, LabelText, Value, CardBox, LipBox, RaisedBox, WashBox from "./ui.contract"
+use showNotification, closeNotification, requestNotificationPermission, notificationStatus, NotificationStatus from "@exact/notifications"
 use getDetails, listPurchases, unfinishedPurchases, purchase, restorePurchases, purchasesStatus, ItemDetails, PurchaseDetails, PurchasesStatus from "@exact/purchases"
 
 routes nav
@@ -218,6 +219,7 @@ component App
   state consentedOn = "" persist
   state streakSeenOn = "" persist
   state checkinSeenOn = "" persist
+  state reminderOn = false persist
   state consentedAt = 0 persist
   state consentPolicy = "" persist
   state adultAt = 0 persist
@@ -261,8 +263,11 @@ component App
   mutation repaired as shape Reply refreshes app
   mutation wiped as shape Reply refreshes app then afterWipe
   mutation opened as shape Reply refreshes app
+  mutation permitted as shape NotificationStatus then afterPermit
   resource media = exactViewport() as shape Media
   resource page = exactPage() as shape Page
+  // Read again whenever the app comes to the front, so a change in Settings shows at once.
+  resource notif = notificationStatus() as shape NotificationStatus
   derive still = media.prefersReducedMotion
   // The band on a 0 to 10 track; before a scan, the example from the old copy.
   derive bandLow = app.hasScan ? app.low : "5.0"
@@ -287,6 +292,10 @@ component App
   // Each time Metrics comes to the front, count it once for the check-in card.
   task countOpen when onboarded and top(nav).name == "metrics"
     after(1, noteOpen)
+  // The evening reminder: re-armed whenever the day's state changes, for 7 pm tonight, or tomorrow once today is done.
+  // Only while permission is granted: the press is the one place that may ask.
+  task remind when onboarded and reminderOn and notif.state == "granted" and app.hasScan key=`${today}-${app.summary.dayComplete}-${app.summary.currentDays}`
+    after(1, scheduleReminder)
   // The reveal lands with one haptic, once the numeral has risen.
   task landed when top(nav).name == "reveal" and app.hasScan
     after(650, buzz)
@@ -416,6 +425,30 @@ component App
   action callHelp
     openURL("tel:988")
     checkinSeenOn = today
+  action setReminder(on: bool)
+    if on
+      send permitted = requestNotificationPermission()
+    else
+      reminderOn = false
+      closeNotification(tag="evening")
+  // Nothing about the face or the score goes on the lock screen: the plan and the streak only.
+  action afterPermit
+    match permitted
+      case some(st)
+        reminderOn = st.state == "granted"
+      case none
+        reminderOn = false
+  action scheduleReminder
+    let at = time.epochAtZero + performanceNow()
+    let local = (at + time.utcOffset * 60000) % 86400000
+    let tonight = at - local + 68400000
+    showNotification(
+      title=t("reminder.title"),
+      body=(app.summary.currentDays > 0 ? t("reminder.body_streak", n=`${app.summary.currentDays}`) : t("reminder.body_start")),
+      tag="evening",
+      showTrigger=(app.summary.dayComplete or tonight <= at + 60000 ? tonight + 86400000 : tonight),
+      navigate="/"
+    )
   action buzz
     haptic("success")
   action chooseShare(k: string)
@@ -481,6 +514,8 @@ component App
     consentPolicy = ""
     streakSeenOn = ""
     checkinSeenOn = ""
+    closeNotification(tag="evening")
+    reminderOn = false
     resetCapture()
     nav = open(nav, "/")
 
@@ -1450,6 +1485,20 @@ component App
 
                         testId="done-title"
                       text t("day_done.sub") class=T3 color="ink.soft" margin-top=12
+                      if [7, 14, 30, 60, 100].includes(app.summary.currentDays)
+                        row align-items="center"
+                          gap=8
+                          margin-top=16
+                          padding="8px 16px"
+                          border-radius=999
+                          background-color="flame.wash"
+                          testId="milestone"
+                          svg width=14 height=18 viewBox="0 0 24 32" aria-hidden=true
+                            path d="M12 2C12 2 4 12 4 20a8 8 0 0016 0C20 12 12 2 12 2z"
+                              fill="flame.icon"
+                          text t("day_done.milestone", n=`${app.summary.currentDays}`) font-size="min(-exact-subheadline, 20px)"
+                            font-weight=700
+                            color="flame.text"
                       row gap=10 margin-top=28 width="100%" flex-wrap="wrap"
                         Tile(
                           value=`${app.summary.currentDays}`,
@@ -2117,6 +2166,27 @@ component App
                           flex-wrap="wrap"
                           text t("settings.time_budget") class=RowTitle flex="1 1 8rem"
                           text timeLabel(timeBudget) class=Detail
+                      row class=CardBox
+                        align-items="center"
+                        gap=12
+                        padding="13px 16px"
+                        margin-top=4
+                        column flex=1 min-width=0 gap=1
+                          text t("reminder.setting") class=RowTitle
+                          text t("reminder.setting_body") class=Detail
+                        input type="checkbox" switch
+                          checked=(reminderOn and notif.state == "granted")
+                          change=setReminder
+                          aria-label=t("reminder.setting")
+                          testId="reminder"
+                      if reminderOn and notif.state == "denied"
+                        row align-items="center" gap=12 padding="0 4px" flex-wrap="wrap"
+                          text t("reminder.denied") class=Detail flex="1 1 10rem"
+                          Quiet(
+                            label=t("capture.open_settings"),
+                            go=openSettings,
+                            id="reminder-settings"
+                          )
                       if consentedOn != ""
                         view margin-top=14
                           Label(label=t("settings.agreed_label"))
