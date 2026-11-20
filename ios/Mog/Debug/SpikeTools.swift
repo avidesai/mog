@@ -15,12 +15,12 @@ struct VertexPickerView: View {
     @State private var label = ""
 
     var body: some View {
-        VStack(spacing: Tokens.Space.s3) {
+        VStack(spacing: 12) {
             MeshPickerARView(onPick: { lastIndex = $0 })
-                .clipShape(RoundedRectangle(cornerRadius: Tokens.Radius.xl))
+                .clipShape(RoundedRectangle(cornerRadius: 20))
                 .aspectRatio(3 / 4, contentMode: .fit)
             HStack {
-                Text(lastIndex.map { "vertex \($0)" } ?? "tap a point on the mesh").style(TypeStyle.value)
+                Text(lastIndex.map { "vertex \($0)" } ?? "tap a point on the mesh").font(.headline.monospacedDigit())
                 Spacer()
                 TextField("landmark key", text: $label).textInputAutocapitalization(.never).autocorrectionDisabled().frame(width: 160)
                 Button("Save") { if let i = lastIndex, !label.isEmpty { picked.append((label, i)); label = "" } }.disabled(lastIndex == nil)
@@ -30,10 +30,10 @@ struct VertexPickerView: View {
                     ForEach(Array(picked.enumerated()), id: \.offset) { _, p in Text("\"\(p.0)\": \(p.1),").font(.system(.footnote, design: .monospaced)) }
                 }
             }
-            Button("Copy as JSON") { UIPasteboard.general.string = picked.map { "\"\($0.0)\": \($0.1)" }.joined(separator: ",\n") }.buttonStyle(.chunky(.secondary))
-            Text("Paste into ios/Mog/Geometry/landmark_map.json. Indices are stable across devices.").style(TypeStyle.caption, color: Tokens.Colors.ink500)
+            Button("Copy as JSON") { UIPasteboard.general.string = picked.map { "\"\($0.0)\": \($0.1)" }.joined(separator: ",\n") }.buttonStyle(.bordered)
+            Text("Paste into ios/Mog/Geometry/landmark_map.json. Indices are stable across devices.").font(.caption).foregroundStyle(.secondary)
         }
-        .padding(Tokens.Space.s5).background(Tokens.Colors.paper)
+        .padding(20)
         .navigationTitle("Vertex picker")
     }
 }
@@ -98,6 +98,19 @@ struct MeshPickerARView: UIViewRepresentable {
     }
 }
 
+/// Camera feed via an ARSCNView with no scene content.
+struct ARPreview: UIViewRepresentable {
+    let session: ARSession
+    func makeUIView(context: Context) -> ARSCNView {
+        let v = ARSCNView(frame: .zero)
+        v.session = session
+        v.automaticallyUpdatesLighting = false
+        v.scene = SCNScene()
+        return v
+    }
+    func updateUIView(_ uiView: ARSCNView, context: Context) {}
+}
+
 // MARK: - Landmark dump: run gated captures and write per-frame metrics + vertices to Documents
 
 struct LandmarkDumpView: View {
@@ -110,17 +123,17 @@ struct LandmarkDumpView: View {
     private var dir: URL { URL.documentsDirectory.appending(path: "captures/\(sessionName)") }
 
     var body: some View {
-        VStack(spacing: Tokens.Space.s3) {
-            ARPreview(session: cap.session).clipShape(RoundedRectangle(cornerRadius: Tokens.Radius.xl)).aspectRatio(3 / 4, contentMode: .fit)
+        VStack(spacing: 12) {
+            ARPreview(session: cap.session).clipShape(RoundedRectangle(cornerRadius: 20)).aspectRatio(3 / 4, contentMode: .fit)
                 .overlay(alignment: .top) {
-                    HStack { ForEach(Array(cap.gates.chips.enumerated()), id: \.offset) { _, c in GateChip(label: c.label, passing: c.pass) } }.padding(8)
+                    HStack { ForEach(Array(cap.gates.chips.enumerated()), id: \.offset) { _, c in Text(c.pass ? "\(c.label) ✓" : c.label).font(.caption2).foregroundStyle(c.pass ? Color.blue : Color.orange) } }.padding(8)
                 }
-            Text(cap.hint).style(TypeStyle.detail, color: Tokens.Colors.ink700)
+            Text(cap.hint).font(.subheadline)
             HStack {
                 TextField("session", text: $sessionName).frame(width: 120)
                 Spacer()
-                Text("captures: \(captures)").style(TypeStyle.value)
-                Button("Capture") { start() }.buttonStyle(.chunky).frame(width: 140)
+                Text("captures: \(captures)").font(.headline.monospacedDigit())
+                Button("Capture") { start() }.buttonStyle(.borderedProminent)
             }
             ScrollView {
                 VStack(alignment: .leading, spacing: 2) {
@@ -131,15 +144,19 @@ struct LandmarkDumpView: View {
                 }
             }
             Text("Files land in Documents/captures/\(sessionName)/. Pull with Finder/Xcode Devices and run core/tools/cv_analysis.py on the folder. 10 captures × 3 sessions is the week-1 target.")
-                .style(TypeStyle.caption, color: Tokens.Colors.ink500)
+                .font(.caption).foregroundStyle(.secondary)
         }
-        .padding(Tokens.Space.s5).background(Tokens.Colors.paper)
+        .padding(20)
         .navigationTitle("Landmark dump")
         .onDisappear { cap.stop() }
     }
 
     private func start() {
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        // Raw vertices: keep the folder out of device backups and unreadable while the phone is locked.
+        var folder = dir
+        try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        var noBackup = URLResourceValues(); noBackup.isExcludedFromBackup = true
+        try? folder.setResourceValues(noBackup)
         frames = []
         cap.dumpFrames = { frames.append($0) }
         cap.start { collected in
@@ -156,7 +173,7 @@ struct LandmarkDumpView: View {
             let d = Dump(session: sessionName, capture: idx, timestamp: Date().timeIntervalSince1970,
                          frames: zip(collected, perFrame).map { f, m in .init(yaw: f.pose.yaw, pitch: f.pose.pitch, roll: f.pose.roll, distance: f.pose.distance, metrics: m.metrics, vertices: f.vertices.map { [$0.x, $0.y, $0.z] }) },
                          readings: readings)
-            if let data = try? JSONEncoder().encode(d) { try? data.write(to: dir.appending(path: "capture_\(idx).json")) }
+            if let data = try? JSONEncoder().encode(d) { try? data.write(to: dir.appending(path: "capture_\(idx).json"), options: .completeFileProtection) }
             frames = []
         }
     }

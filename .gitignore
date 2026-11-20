@@ -19,7 +19,7 @@ ios/Mog/Config/Secrets.xcconfig
 *.p12
 *.mobileprovision
 # Spike captures (landmark dumps are personal data; keep them out of git)
-tools/captures/
+captures/
 # OS
 .DS_Store
 site/dist/

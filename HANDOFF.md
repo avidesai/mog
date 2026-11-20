@@ -10,14 +10,14 @@ Written 13 Nov 2026 for the Claude Code session taking this over. Paste this fil
 
 ```
 HANDOFF.md  AGENTS.md  CLAUDE.md          ← you are here
-app/         the Exact app: NOT YET CREATED; app/README.md has the exact commands; app/strings/en.json is generated
+app/         the Exact app, the product; app/README.md has the setup and the loop; app/strings/en.json and app/data are generated
 core/        engines (Python = spec, Swift port), data tables, copy deck, legal drafts, App Store assets, 12-week plan, tools
-ios/         SwiftUI reference app (NEVER COMPILED; see §4). Capture + geometry code here is the seed of the Exact native module.
+ios/         Swift capture + geometry that app/modules/apple was ported from, and the dev-only spike tools app (NEVER COMPILED). No screens; see §2.
 backend/     Supabase schema + RLS + tested delete_everything(); three Edge Functions (Deno) with Node-tested logic
 site/        policies site builder (versioned URLs) + Pages workflow
 design/      design system (tokens.json, components, brand book), 28 artboards as HTML, offline renders, bundled fonts
 docs/        engineering design doc, design-language bible, foundation research, project index (snapshots of the live docs)
-tools/       token generator, artboard renderer      scripts/   repo-level: sync-app.mjs (core copy + data → app/)
+tools/       artboard renderer                       scripts/   repo-level: sync-app.mjs (core copy + data → app/)
 .agents/     skills (clean-copy, unslop) and four experts (scoring, privacy, capture, exact-ui)
 .claude/     agent stubs that load the experts
 ```
@@ -61,10 +61,10 @@ Invariants (tests enforce most of them; don't ship a change that breaks one):
 - `legal/` biometric retention/destruction policy, privacy policy, terms. Drafts for counsel. `appstore/` listing + review notes. `plan/build-plan.md` 12-week plan.
 - `tools/cv_analysis.py` (spike 1) and `tools/harness.py` (week 9: per-person test–retest, tier/noise writeback, tone/sex fairness smoke). Both self-test.
 - `appearance/` cheap-path skin evenness and adiposity proxies, tested (incl. lighting and tone invariance).
-- `swift/MogCore`: Swift port, same JSON, golden fixtures. **Compiles and passes the fixtures in CI** (macOS runner); only `ios/` remains uncompiled.
+- `swift/MogCore`: Swift port, same JSON, golden fixtures. **Compiles and passes the fixtures in CI** (macOS runner); `ios/` and `app/modules/apple` remain uncompiled.
 
-### ios/: written, never compiled, now **reference**
-SwiftUI app with every v1 screen, 9 capture gates, ARKit-mesh geometry → 24 metrics, SwiftData store, purchases stub, analytics allowlist, measurement overlays, spike tools (vertex picker, landmark dump). Bundled fonts. XcodeGen `project.yml`. Per the owner's 13 Nov direction (§4) the product moves to expo/exact; this code's **capture and geometry layers are kept** as the native module, and the rest is a faithful reference of what every screen should do. Expect compiler nits on first build; `ios/README.md` lists what's wired vs stubbed.
+### ios/: capture and geometry reference, spike tools; never compiled
+`Mog/Capture` (ARKit session, 9 capture gates, 10-frame median) and `Mog/Geometry` (ARKit-mesh geometry → 24 metrics, `landmark_map.json`) are the Swift that `app/modules/apple` was ported from; keep the two in step. `Mog/Debug/SpikeTools.swift` has the vertex picker and the landmark dump, hosted by a small dev-only app (XcodeGen `project.yml`, bundle id `com.avidesai.mog.spike`) that never ships. The SwiftUI screens, design components, SwiftData store, purchases stub and analytics were deleted on 20 Nov: the Exact app replaced them, and they called copy keys `core/copy/strings.json` no longer has. The last commit with them is `d674aa6`. Expect compiler nits on first build; `ios/README.md` has the map and the spike steps.
 
 ### backend/: done, verified on PostgreSQL 16
 Schema, RLS, consent-gated scans, flat-scalar guard on `metrics_json`, `delete_everything()` with a real test; consents survive account deletion (3-year evidence window). Edge Functions `phrase` (LLM rewording, schema + denylist gated, 204 fallback), `process-deletions`, `revenuecat-webhook`. Logic tested with Node. Not deployed; no Supabase project exists yet.
@@ -81,7 +81,7 @@ Tokens, components, brand book; 28 artboards (`screens-gamified/`); `tools/rende
 
 **3.1 The noise finding (12 Nov).** Simulated test–retest under tier-realistic noise gave a ~1.9-point per-person score SD under the original weighting. Ten times the gate the eng doc set. Cause: coefficient of variation is the wrong reliability measure when a metric's population spread is itself small (symmetry index). Fix shipped as scoring **rules-1.1.0**: reliability weight r = 1/(1+(noise_sd/pop_sd)²), band includes between-session noise, calibration test. Now ~1.1 under the provisional noise table, ~0.55 at half that. Gate: median SD ≤ 0.6 on **measured** noise. The product consequence: **the band is the number.** Until week-1 captures measure real noise, do not promise precision anywhere in copy or marketing. `core/README.md` has the full account; the eng doc has the decision record.
 
-**3.2 Nothing has run on a device.** `core/swift/MogCore` now compiles and passes its tests in CI, but the app in `ios/` has never been built and no capture code has touched a camera. Spike 1 (§6) is the first time any of it meets reality, and three things specifically need verifying on an iPhone: the Euler-angle sign conventions in `CaptureSession.pose`, the `.landscapeRight` buffer projection in `LumaStats`/`SkinEvenness`, and the `Heuristics` anatomical-point estimates on a real mesh.
+**3.2 Nothing has run on a device.** `core/swift/MogCore` now compiles and passes its tests in CI, but neither `<mog-capture>` nor the spike tools app in `ios/` has been built, and no capture code has touched a camera. Spike 1 (§6) is the first time any of it meets reality, and three things specifically need verifying on an iPhone: the Euler-angle sign conventions in `CaptureSession.pose`, the `.landscapeRight` buffer projection in `LumaStats`/`SkinEvenness`, and the `Heuristics` anatomical-point estimates on a real mesh.
 
 **3.3 Everything downstream of `landmark_map.json` is provisional.** All 38 ARKit vertex indices are `null`; heuristics fill in at reduced confidence. The vertex picker exists to fill them. Reliability tiers and `noise_sd` are guesses until `harness.py --write-tiers` runs on real captures.
 
@@ -112,7 +112,7 @@ strings/en.json     generated from core/copy/strings.json (write a 20-line scrip
 
 **Design-system reconciliation (revised 20 Nov).** The app is drawn to the artboards: tokens in `app/app.tamber`, type styles and parts in `app/ui.contract`, bundled Inter Tight and Instrument Serif, lipped buttons, the drawn tab bar (Today / Path / Metrics / You; the plan opens from Today). The five colour-meaning rules hold. The 13 Nov line ("platform chrome wins; drop the lips") is superseded; see `.agents/experts/exact-ui/decisions.md`.
 
-**Fallback.** If Exact cannot ship an App Store build by week 10 (check `docs/recipes/eas-ios.md` and `porting-and-release.md` early), the SwiftUI app in `ios/` ships v1 and Exact becomes v1.1. Decide this by the end of week 3, not week 10.
+**Fallback (dropped 20 Nov).** The plan was for the SwiftUI app in `ios/` to ship v1 if Exact could not produce an App Store build by week 10. Its screens are deleted, so that route now means restoring them from `d674aa6` and rewriting them against the current copy deck. Check `docs/recipes/eas-ios.md` and `porting-and-release.md` early all the same.
 
 ---
 
@@ -130,10 +130,10 @@ strings/en.json     generated from core/copy/strings.json (write a 20-line scrip
 1. **CI is green on `main`** (Python, Postgres, Node, Swift). Keep it that way: never edit a fixture to make a port pass.
 2. **Set up Exact** (source checkout, `bun scripts/exact.mjs setup`), `exact new mog-app` inside this repo as `app/`, run the `tabs` pattern, get `verify ios` green on the placeholder. Decide fonts.
 3. **Port MogCore to TypeScript** in `app/app.ts` (or `app/core/*.ts` imported locally): registry, scoring, planner, habit, denylist. Gate: `core/fixtures/scoring_cases.json` to 1e-6 and the habit tests' scenarios. Write `scripts/strings.mjs` to generate `strings/en.json` from `core/copy/strings.json`.
-4. **Spike 1 (the go/no-go) on a real iPhone** ($99 developer account). Build `modules/apple/MogCapture.swift` from `ios/Mog/Capture` + `ios/Mog/Geometry` (or run the SwiftUI app's Debug tools first, whichever gets a mesh on screen sooner). Pick the 38 vertex indices with the vertex picker. Ten captures × three sessions. `python core/tools/cv_analysis.py captures/`, then `harness.py --write-tiers`. **≥ 6 frontal metrics at tier A/B → go; < 4 → re-scope around skin/adiposity/grooming.** Also read the mesh-derived profile angles' CV: if good, spike 2 (separate profile capture) is cancelled.
+4. **Spike 1 (the go/no-go) on a real iPhone** ($99 developer account). Build `modules/apple/MogCapture.swift` from `ios/Mog/Capture` + `ios/Mog/Geometry` (or run the spike tools app in `ios/` first, whichever gets a mesh on screen sooner). Pick the 38 vertex indices with the vertex picker. Ten captures × three sessions. `python core/tools/cv_analysis.py captures/`, then `harness.py --write-tiers`. **≥ 6 frontal metrics at tier A/B → go; < 4 → re-scope around skin/adiposity/grooming.** Also read the mesh-derived profile angles' CV: if good, spike 2 (separate profile capture) is cancelled.
 5. **Rebuild reference + fixtures, bump model version** once real `noise_sd` lands; re-read the test–retest SD. Lead the reveal with band + tier if the SD is near 1.
 6. **Screens in Contract**, in first-session order, each with an `app.test.contract` flow and a looked-at screenshot: onboarding → consent → capture (native view) → processing → reveal → results → metric detail → paywall (`@exact/purchases`) → Today → task detail → day complete → streak save → plan → path → progress → settings → methodology. Full clean-copy ladder pass as each screen comes up.
-7. **Backend**: create the Supabase project, `supabase db push`, deploy the three functions, Sign in with Apple via `@exact/sign-in`, hosted policies on the domain, replace every `example.invalid`.
+7. **Backend**: create the Supabase project, `supabase db push`, deploy the three functions, Sign in with Apple via `@exact/sign-in`, hosted policies on the domain, linked from the consent screen (`consent.point_policy`) and the App Store listing.
 8. **Week 9**: `harness.py` with 5+ people stratified by sex and tone; MITM audit of a full session; gate ≤ 0.6.
 9. **TestFlight → review → phased launch** per `core/plan/build-plan.md` (dates assume a 17 Nov start; re-plan around the Exact ramp).
 
@@ -143,7 +143,7 @@ strings/en.json     generated from core/copy/strings.json (write a 20-line scrip
 
 - **App name.** "Mog" collides with Mogged/MogMax and is itself on our denylist (comparative vocabulary). Copy is name-agnostic; the listing and policies use `{app_name}`.
 - **Profile capture in v1**: now depends on the week-1 CV of the mesh-derived profile angles.
-- **Exact vs SwiftUI for v1**: Exact by default (§4); fallback decision by end of week 3.
+- **Exact vs SwiftUI for v1**: settled, Exact. The SwiftUI screens were deleted on 20 Nov (§4).
 - **Font**: spike in Exact.
 
 ---

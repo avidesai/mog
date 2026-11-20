@@ -5,22 +5,23 @@
 iPhone-first facial-harmony measurement app for the looksmaxxing audience. Working name. Guided capture → on-device geometry → deterministic score against published norms, with a stated band → evidence-graded plan → one habit loop (streak, eight-week path, scans at weeks 4 and 8).
 
 ```
-app/       the expo/exact app (to be created; see app/README.md); the product from here on
+app/       the expo/exact app, the product (see app/README.md)
 core/      deterministic engines: Python reference (test suite in core/tests) + Swift port (MogCore), shared JSON tables,
            copy deck, legal drafts, App Store assets, 12-week build plan
-ios/       SwiftUI reference app (uncompiled): its Capture/ and Geometry/ seed the Exact native module
+ios/       Swift capture and geometry that app/modules/apple was ported from, plus the dev-only spike tools
+           (vertex picker, landmark dump); uncompiled, no screens
 backend/   Supabase schema, RLS, tested delete_everything(); Edge Functions
 site/      public policies site (versioned URLs), GitHub Pages workflow
 design/    design system (tokens, components, brand book) and the 28 v1 artboards as HTML
 docs/      engineering design doc, design-language bible, foundation research, project index
-tools/     token generator; spike analysis lives in core/tools/cv_analysis.py
+tools/     artboard renderer; spike analysis lives in core/tools/cv_analysis.py
 ```
 
 ## Start here
 
 1. `docs/index.md`: what's decided, what's open, where the live Claude docs are.
 2. `core/plan/build-plan.md`: the 12-week plan with a done-criterion per week. Week 1 is the go/no-go spike.
-3. `ios/README.md`: how to generate the Xcode project and what's wired.
+3. `app/README.md`: how to set up Exact and run the app. `ios/README.md` covers the spike tools.
 
 ## Run the core
 

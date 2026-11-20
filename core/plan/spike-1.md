@@ -1,8 +1,8 @@
 # Spike 1: the go/no-go, on a device
 
 Needs: a TrueDepth iPhone (iPhone X or later), the $99 Apple developer account, a Mac with Xcode 27.1+.
-Two apps take part: the Exact app (`app/`, `<mog-capture>`) for the product path, and the SwiftUI
-reference (`ios/`) for the dev-only tools (vertex picker, landmark dump), which must never ship in the
+Two apps take part: the Exact app (`app/`, `<mog-capture>`) for the product path, and the spike tools
+app (`ios/`, its own bundle id) for the vertex picker and the landmark dump, which must never ship in the
 Exact app. Both read the same geometry; keep `app/modules/apple` and `ios/Mog/{Capture,Geometry}` in step.
 
 1. **Build.** `cd app && bun exact.mjs ios` on the iPhone, then `bun exact.mjs verify ios`. `<mog-capture>`
@@ -19,12 +19,13 @@ Exact app. Both read the same geometry; keep `app/modules/apple` and `ios/Mog/{C
    frame during the burst; move `GeometryPipeline.readings` off main if frames drop.
 5. **Hold and burst.** 15 passing frames, then 10 collected; a drift mid-burst sends `aborted <i>` and
    alignment restarts; `readings` arrives once and the scan saves.
-6. **Vertex picker** (SwiftUI app, Debug › Vertex picker): fill all 38 indices in
+6. **Vertex picker** (spike tools app): fill all 38 indices in
    `ios/Mog/Geometry/landmark_map.json`, run `node scripts/sync-app.mjs`, rebuild, and confirm
    `pickedCount == 38` on the device and that the picked-only metrics (fwhr, eye aspect, midface,
    mouth span, brow position, nasolabial angle, nasal tip projection) now appear in `readings`.
-7. **Landmark dump** (SwiftUI app): ten captures × three sessions → `python core/tools/cv_analysis.py
+7. **Landmark dump** (spike tools app): ten captures × three sessions → `python core/tools/cv_analysis.py
    captures/`, then `harness.py --write-tiers`. **≥ 6 frontal metrics at tier A/B → go; < 4 → re-scope
    around skin, adiposity and grooming.** Read the mesh-derived profile angles' CV: if good, spike 2 is cancelled.
 8. **Privacy.** During a capture the Exact app writes no files and makes no network calls (interception
-   audit). The dumps stay on the dev machine.
+   audit). The dumps stay on the dev machine (`captures/` is gitignored). The spike tools app has no
+   consent screen or region check, so capture only your own face with it.

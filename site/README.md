@@ -9,4 +9,4 @@ python site/build.py --app-name Mog --entity "<legal entity>" --email privacy@<d
 ```
 `--final` strips the "draft for counsel review" callouts; leave it off until counsel has signed off.
 
-`dist/` is gitignored; `.github/workflows/site.yml` builds and deploys to GitHub Pages on push when the repository variable `POLICIES_BASE_URL` is set. Point the custom domain at Pages (free), then put the resulting URLs into `ios/` (search for `example.invalid`) and the App Store listing.
+`dist/` is gitignored; `.github/workflows/site.yml` builds and deploys to GitHub Pages on push when the repository variable `POLICIES_BASE_URL` is set. Point the custom domain at Pages (free), then link the resulting URLs from the app's consent screen (`consent.point_policy`) and the App Store listing.
