@@ -1,6 +1,6 @@
 // Every string is t() over strings/en.json, which scripts/sync-app.mjs generates from core/copy/strings.json.
 // The look is ui.contract's parts over app.tamber's tokens, after design/screens-gamified.
-use Primary, Secondary, Quiet, Option, Label, Chip, Gate, Mark, StreakPill, Chevron, Lock, Check, Pips, Track, Ring, NavBar, StepBar, Tile, FaceArt, Display, T1, T2, T3, RowTitle, Body, Detail, Caption, LabelText, Value, CardBox, LipBox, RaisedBox, WashBox from "./ui.contract"
+use Primary, Secondary, Quiet, Option, PlanOption, Label, Chip, Gate, Mark, StreakPill, Chevron, Lock, Check, Pips, Track, Ring, NavBar, StepBar, Tile, FaceArt, Display, T1, T2, T3, RowTitle, Body, Detail, Caption, LabelText, Value, CardBox, LipBox, RaisedBox, WashBox from "./ui.contract"
 use getDetails, listPurchases, unfinishedPurchases, purchase, restorePurchases, purchasesStatus, ItemDetails, PurchaseDetails, PurchasesStatus from "@exact/purchases"
 
 routes nav
@@ -89,6 +89,9 @@ shape AppView
   hasScan: bool
   scanDate: string
   nMetrics: number
+  nLocked: number
+  lockedMore: number
+  lockedNames: string
   nMovable: number
   score: string
   low: string
@@ -132,12 +135,34 @@ fn cadenceLabel(c: string): string = c == "daily" ? t("task_detail.cadence_daily
 fn gateLabel(i: string): string = i == "0" ? t("capture.gate_angle") : i == "1" ? t("capture.gate_lighting") : i == "2" ? t("capture.gate_distance") : i == "3" ? t("capture.gate_expression") : i == "4" ? t("capture.gate_clear") : t("capture.gate_sharp")
 fn hintLabel(k: string): string = k == "capture.hint_closer" ? t("capture.hint_closer") : k == "capture.hint_further" ? t("capture.hint_further") : k == "capture.hint_yaw" ? t("capture.hint_yaw") : k == "capture.hint_pitch_up" ? t("capture.hint_pitch_up") : k == "capture.hint_pitch_down" ? t("capture.hint_pitch_down") : k == "capture.hint_roll" ? t("capture.hint_roll") : k == "capture.hint_lighting_uneven" ? t("capture.hint_lighting_uneven") : k == "capture.hint_lighting_dark" ? t("capture.hint_lighting_dark") : k == "capture.hint_clipping" ? t("capture.hint_clipping") : k == "capture.hint_expression" ? t("capture.hint_expression") : k == "capture.hint_occlusion" ? t("capture.hint_occlusion") : k == "capture.hint_sharp" ? t("capture.hint_sharp") : t("capture.hint_ready")
 fn stepLabel(i: number): string = i <= 0 ? t("processing.step_landmarks") : i == 1 ? t("processing.step_normalise") : i == 2 ? t("processing.step_metrics") : t("processing.step_reference")
-fn planName(id: string): string = id == "pro.annual" ? t("paywall.plan_annual") : id == "pro.weekly" ? t("paywall.plan_weekly_name") : t("paywall.plan_lifetime_name")
-fn priceOf(plans: ItemDetails[], id: string): string = match first(plans.filter(p => p.itemId == id)) { case some(p) => p.displayPrice, case none => id == "pro.annual" ? "$34.99" : id == "pro.weekly" ? "$4.99" : "$59.99" }
-fn planLine(id: string, price: string): string = id == "pro.annual" ? t("paywall.plan_annual_trial", price_annual=price) : id == "pro.weekly" ? t("paywall.plan_weekly", price_weekly=price) : t("paywall.plan_lifetime", price_lifetime=price)
+fn priceOf(plans: ItemDetails[], id: string): string = match first(plans.filter(p => p.itemId == id)) { case some(p) => p.displayPrice, case none => id == "pro.annual" ? "$34.99" : "$4.99" }
+// The billed amount as a number, for the saving and the weekly equivalent. With no store, the catalog's prices.
+fn priceNum(plans: ItemDetails[], id: string): number = match first(plans.filter(p => p.itemId == id)) { case some(p) => match parseNumber(p.price.value) { case some(n) => n, case none => 0 }, case none => id == "pro.annual" ? 34.99 : 4.99 }
 // The path's eight nodes on a 350 × 560 field, as the artboard places them.
 fn nodeX(w: number): number = w == 1 or w == 5 ? 70 : w == 3 or w == 7 ? 280 : 180
 fn nodeY(w: number): number = 34 + 64 * (w - 1) + (w == 8 ? 8 : 0)
+
+// How the score works: ten frames settle on the median, the marker lands in the range, the score moves inside its band.
+keyframes frameA
+  0% cy=16
+  55% cy=48
+keyframes frameB
+  0% cy=32
+  55% cy=48
+keyframes frameC
+  0% cy=62
+  55% cy=48
+keyframes frameD
+  0% cy=80
+  55% cy=48
+keyframes place
+  from cx=40
+keyframes sweep
+  from translate="0% 0px"
+  to translate="100% 0px"
+
+shape Media
+  prefersReducedMotion: bool
 
 component App
   state onboarded = false persist
@@ -172,10 +197,14 @@ component App
   // A screen gates on what the person holds; delivery reads the store's queue and nothing else.
   resource owned = listPurchases() as shape PurchaseDetails[] else empty()
   resource queue = unfinishedPurchases() as shape PurchaseDetails[] else empty()
-  resource plans = getDetails(itemIds=["pro.annual", "pro.weekly", "pro.lifetime"]) as shape ItemDetails[] else empty()
+  resource plans = getDetails(itemIds=["pro.annual", "pro.weekly"]) as shape ItemDetails[] else empty()
   mutation bought as shape PurchaseDetails refreshes queue, owned then afterBuy
   mutation restored as shape PurchaseDetails[] refreshes owned
   mutation delivered as shape Reply refreshes owned, queue
+  derive yearPrice = priceNum(plans, "pro.annual")
+  derive weekPrice = priceNum(plans, "pro.weekly")
+  derive saving = yearPrice > 0 and yearPrice < weekPrice * 52 ? 1 - yearPrice / (weekPrice * 52) : 0
+  derive inDollars = match first(plans) { case some(p) => p.price.currency == "USD", case none => true }
   derive isPro = owned.filter(p => p.itemId.startsWith("pro.")).length > 0
   derive due = queue.filter(p => p.purchaseState == "purchased").map(p => p.purchaseToken).join(",")
   derive buyError = match failure(bought) { case some(f) => f.code == "AbortError" ? "" : t("paywall.failed"), case none => "" }
@@ -184,6 +213,13 @@ component App
   mutation taskSet as shape TaskReply queue refreshes app then afterTask
   mutation repaired as shape Reply refreshes app
   mutation wiped as shape Reply refreshes app then afterWipe
+  resource media = exactViewport() as shape Media
+  derive still = media.prefersReducedMotion
+  // The band on a 0 to 10 track; before a scan, the example from the old copy.
+  derive bandLow = app.hasScan ? app.low : "5.0"
+  derive bandHigh = app.hasScan ? app.high : "7.8"
+  derive bandStart = (app.hasScan ? app.lowN : 5) * 10
+  derive bandWidth = ((app.hasScan ? app.highN : 7.8) - (app.hasScan ? app.lowN : 5)) * 10
   derive aboutReady = sex != "" and ageBand != "" and adult and region != ""
   // Consent is per policy version (biometric data policy §5): a new version asks again before the next capture.
   derive policyVersion = "1.0"
@@ -324,8 +360,11 @@ component App
   action choosePlan(id: string)
     plan = id
   action buy
-    buyNote = ""
-    send bought = purchase(itemId=plan)
+    if store.available
+      buyNote = ""
+      send bought = purchase(itemId=plan)
+    else
+      buyNote = t("paywall.no_store")
   // The purchase's answer is for this screen; delivery is the queue's.
   action afterBuy
     match bought
@@ -1223,12 +1262,14 @@ component App
                       margin-right="auto"
                       box-sizing="border-box"
                       width="100%"
-                      text t("paywall.title") class=Display
+                      text t("paywall.title", n=`${app.nMetrics}`) class=Display
                         role="heading"
                         aria-level=1
-                        font-size="2.5rem"
+                        font-size="min(-exact-large-title, 44px)"
                         line-height=1.3
-                      text t("paywall.intro") class=Body margin-top=10
+                      text (app.lockedMore > 0 ? t("paywall.intro", names=app.lockedNames, more=`${app.lockedMore}`) : t("paywall.intro_plain")) class=Body
+                        margin-top=10
+                        testId="paywall-intro"
                       column class=CardBox overflow="hidden" margin-top=18
                         row background-color="bg.raised" padding="10px 16px" gap=8
                           view flex=1
@@ -1260,7 +1301,7 @@ component App
                                     stroke-linecap="round"
                                     stroke-linejoin="round"
                               else
-                                text "–" color="ink.mute"
+                                view width=10 height=2 border-radius=1 background-color="ink.faint"
                             row width="3rem" justify-content="center"
                               svg width=12 height=12 viewBox="0 0 12 12" aria-hidden=true
                                 path d="M2 6.5l2.6 2.6L10 3.6"
@@ -1269,26 +1310,27 @@ component App
                                   fill="none"
                                   stroke-linecap="round"
                                   stroke-linejoin="round"
-                      column gap=10 margin-top=16
-                        Option(
-                          label=planName("pro.annual"),
-                          detail=planLine("pro.annual", priceOf(plans, "pro.annual")),
+                      column gap=10 margin-top=16 role="radiogroup"
+                        PlanOption(
+                          name=t("paywall.plan_annual"),
+                          tag=(saving > 0 ? t("paywall.save_tag", pct=formatNumber(saving, "percent")) : ""),
+                          sub=(inDollars and yearPrice > 0 ? t("paywall.week_equivalent", price=formatNumber(yearPrice / 52, "currency", "USD")) : ""),
+                          price=priceOf(plans, "pro.annual"),
+                          per=t("paywall.per_year"),
                           on=(plan == "pro.annual"),
-                          mark="",
                           go=choosePlan("pro.annual"),
                           id="plan-pro.annual"
                         )
-                        row gap=10 flex-wrap="wrap"
-                          for id in ["pro.weekly", "pro.lifetime"] key=id
-                            view flex="1 1 8rem" min-width=0
-                              Option(
-                                label=planName(id),
-                                detail=planLine(id, priceOf(plans, id)),
-                                on=(plan == id),
-                                mark="",
-                                go=choosePlan(id),
-                                id=`plan-${id}`
-                              )
+                        PlanOption(
+                          name=t("paywall.plan_weekly"),
+                          tag="",
+                          sub="",
+                          price=priceOf(plans, "pro.weekly"),
+                          per=t("paywall.per_week"),
+                          on=(plan == "pro.weekly"),
+                          go=choosePlan("pro.weekly"),
+                          id="plan-pro.weekly"
+                        )
                       text t("paywall.renewal_terms") class=Caption margin-top=14
                   column padding="8px 20px 20px"
                     gap=4
@@ -1301,13 +1343,7 @@ component App
                       text (buyError != "" and not pending(bought) ? buyError : buyNote) class=Detail
                         text-align="center"
                         testId="buy-note"
-                    if plans.length > 0
-                      Primary(
-                        label=(plan == "pro.annual" ? t("paywall.cta_trial") : t("paywall.cta")),
-                        go=buy,
-                        off=pending(bought),
-                        id="buy"
-                      )
+                    Primary(label=t("paywall.cta"), go=buy, off=pending(bought), id="buy")
                     Quiet(label=t("paywall.keep_free"), go=back, id="keep-free")
                     if store.available
                       Quiet(label=t("common.restore_purchases"), go=restore, id="restore")
@@ -1488,6 +1524,16 @@ component App
                       box-sizing="border-box"
                       width="100%"
                       if not isPro
+                        column class=WashBox padding=16 gap=12 margin-bottom=18 testId="pro-prompt"
+                          column gap=4
+                            text t("results.pro_title", n=`${app.nLocked}`) class=T2
+                            text t("results.pro_body") class=Detail color="ink.soft"
+                          Primary(
+                            label=t("results.pro_cta", n=`${app.nMetrics}`),
+                            go=visit("/pro"),
+                            off=false,
+                            id="see-pro"
+                          )
                         Label(label=t("results.keep_label"))
                         column class=CardBox overflow="hidden"
                           for m in app.metrics.filter(x => x.id == app.strength or x.id == app.improvable) key=m.id
@@ -1507,7 +1553,7 @@ component App
                               text m.value class=Value
                         row align-items="baseline" justify-content="space-between" margin-top=14
                           Label(label=t("results.locked_label"))
-                          text `${app.metrics.filter(x => not x.free and x.suppressed == "").length}` class=LabelText
+                          text `${app.nLocked}` class=LabelText
                         column class=CardBox overflow="hidden"
                           for m, i in app.metrics.filter(x => not x.free and x.suppressed == "") key=m.id
                             link href=path("paywall")
@@ -1521,20 +1567,6 @@ component App
                               text m.short class=RowTitle flex=1 min-width=0
                               view width=40 height=14 border-radius=4 background-color="bg.track"
                               Lock()
-                          text t("results.free_locked_note") class=Caption
-                            padding="12px 16px"
-                            border-top="1.5px solid"
-                            border-color="line.hair"
-                        column class=WashBox padding=16 gap=10 margin-top=6
-                          column gap=4
-                            text t("results.pro_title", n=`${app.nMetrics}`) class=RowTitle
-                            text t("results.pro_body") class=Detail color="ink.soft"
-                          Primary(
-                            label=t("results.pro_cta"),
-                            go=visit("/pro"),
-                            off=false,
-                            id="see-pro"
-                          )
                       else
                         for g in ["proportion", "eyes", "midface", "lower", "profile", "appearance"] key=g
                           view margin-top=(g == "proportion" ? 0 : 14)
@@ -1729,7 +1761,7 @@ component App
                   NavBar(title="", trailing="", close=false, back=back, backLabel=t("common.back"))
                   scroll flex=1 min-height=0 testId="methodology-list"
                     column padding="0 20px 28px"
-                      gap=10
+                      gap=12
                       max-width="26.25rem"
                       margin-left="auto"
                       margin-right="auto"
@@ -1740,24 +1772,139 @@ component App
                         aria-level=1
                         font-size="2.5rem"
                         line-height=1.3
-                      text t("methodology.what_the_score_is") class=Body margin-top=4
-                      column class=CardBox overflow="hidden" margin-top=8
-                        row align-items="center" padding="13px 16px"
-                          text t("methodology.stat_measurements") class=Body color="ink.main" flex=1
-                          text `${app.nMetrics == 0 ? 36 : app.nMetrics}` class=Value
+                      column class=CardBox padding=16 gap=6 testId="how-frames"
+                        svg viewBox="0 0 310 96" width="100%" aria-hidden=true
+                          line x1=8
+                            y1=48
+                            x2=302
+                            y2=48
+                            stroke="ink.faint"
+                            stroke-width=1.5
+                            stroke-dasharray="4 5"
+                          circle cx=20
+                            cy=48
+                            r=6
+                            fill="accent.main"
+                            animation=(still ? "none" : "frameA 3.6s ease-in-out infinite alternate")
+                          circle cx=50
+                            cy=48
+                            r=6
+                            fill="accent.main"
+                            animation=(still ? "none" : "frameC 3.6s ease-in-out infinite alternate")
+                          circle cx=80
+                            cy=48
+                            r=6
+                            fill="accent.main"
+                            animation=(still ? "none" : "frameB 3.6s ease-in-out infinite alternate")
+                          circle cx=110
+                            cy=48
+                            r=6
+                            fill="accent.main"
+                            animation=(still ? "none" : "frameD 3.6s ease-in-out infinite alternate")
+                          circle cx=140
+                            cy=48
+                            r=6
+                            fill="accent.main"
+                            animation=(still ? "none" : "frameC 3.6s ease-in-out infinite alternate")
+                          circle cx=170
+                            cy=48
+                            r=6
+                            fill="accent.main"
+                            animation=(still ? "none" : "frameA 3.6s ease-in-out infinite alternate")
+                          circle cx=200
+                            cy=48
+                            r=6
+                            fill="accent.main"
+                            animation=(still ? "none" : "frameD 3.6s ease-in-out infinite alternate")
+                          circle cx=230
+                            cy=48
+                            r=6
+                            fill="accent.main"
+                            animation=(still ? "none" : "frameB 3.6s ease-in-out infinite alternate")
+                          circle cx=260
+                            cy=48
+                            r=6
+                            fill="accent.main"
+                            animation=(still ? "none" : "frameC 3.6s ease-in-out infinite alternate")
+                          circle cx=290
+                            cy=48
+                            r=6
+                            fill="accent.main"
+                            animation=(still ? "none" : "frameB 3.6s ease-in-out infinite alternate")
+                        text t("methodology.frames_title") class=RowTitle margin-top=4
+                        text t("methodology.frames_body") class=Detail color="ink.soft"
+                      column class=CardBox padding=16 gap=6 testId="how-range"
+                        svg viewBox="0 0 310 96" width="100%" aria-hidden=true
+                          path d="M110 84 L110 39.4 L116 33.7 L122 28.3 L128 23.4 L134 19.1 L140 15.7 L146 13.4 L152 12.2 L158 12.2 L164 13.4 L170 15.7 L176 19.1 L182 23.4 L188 28.3 L194 33.7 L200 39.4 L200 84 Z"
+                            fill="accent.wash"
+                          path d="M8 83.6 L14 83.3 L20 83.0 L26 82.6 L32 82.0 L38 81.2 L44 80.1 L50 78.7 L56 76.9 L62 74.7 L68 72.0 L74 68.7 L80 64.9 L86 60.6 L92 55.8 L98 50.6 L104 45.1 L110 39.4 L116 33.7 L122 28.3 L128 23.4 L134 19.1 L140 15.7 L146 13.4 L152 12.2 L158 12.2 L164 13.4 L170 15.7 L176 19.1 L182 23.4 L188 28.3 L194 33.7 L200 39.4 L206 45.1 L212 50.6 L218 55.8 L224 60.6 L230 64.9 L236 68.7 L242 72.0 L248 74.7 L254 76.9 L260 78.7 L266 80.1 L272 81.2 L278 82.0 L284 82.6 L290 83.0 L296 83.3 L302 83.6"
+                            stroke="ink.mute"
+                            stroke-width=2
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          line x1=8
+                            y1=84
+                            x2=302
+                            y2=84
+                            stroke="line.hair"
+                            stroke-width=1.5
+                          circle cx=182
+                            cy=84
+                            r=7
+                            fill="accent.main"
+                            stroke="bg.card"
+                            stroke-width=2.5
+                            animation=(still ? "none" : "place 1.6s 300ms ease-out both")
+                        row gap=14 align-items="center" flex-wrap="wrap"
+                          row gap=6 align-items="center"
+                            view width=12 height=12 border-radius=3 background-color="accent.wash"
+                            text t("methodology.range_legend") class=Caption
+                          row gap=6 align-items="center"
+                            view width=10 height=10 border-radius=5 background-color="accent.main"
+                            text t("methodology.you_legend") class=Caption
+                        text t("methodology.range_title") class=RowTitle margin-top=4
+                        text t("methodology.range_body") class=Detail color="ink.soft"
+                      column class=CardBox padding=16 gap=6 testId="how-band"
+                        column gap=6 padding="14px 0 6px"
+                          text t("common.likely_band", low=bandLow, high=bandHigh) class=Value
                             font-weight=700
-                        row align-items="center"
-                          padding="13px 16px"
-                          border-top="1.5px solid"
-                          border-color="line.hair"
-                          text t("methodology.stat_frames") class=Body color="ink.main" flex=1
-                          text "10" class=Value font-weight=700
-                      for s in ["not", "band", "score", "tiers", "capture", "metrics", "reference", "target", "privacy", "versions"] key=s
-                        view margin-top=14
-                          Label(
-                            label=(s == "not" ? t("methodology.section_not") : s == "band" ? t("methodology.section_band") : s == "score" ? t("methodology.section_score") : s == "tiers" ? t("methodology.section_tiers") : s == "capture" ? t("methodology.section_capture") : s == "metrics" ? t("methodology.section_metrics") : s == "reference" ? t("methodology.section_reference") : s == "target" ? t("methodology.section_reliability_target") : s == "privacy" ? t("methodology.section_privacy") : t("methodology.section_versions"))
-                          )
-                        text (s == "not" ? t("methodology.what_it_is_not") : s == "band" ? t("methodology.band_body") : s == "score" ? t("methodology.score_body") : s == "tiers" ? t("methodology.tiers_body") : s == "capture" ? t("methodology.capture_body") : s == "metrics" ? t("methodology.metrics_body") : s == "reference" ? t("methodology.reference_body") : s == "target" ? t("methodology.reliability_target_body") : s == "privacy" ? t("methodology.privacy_body") : t("methodology.versions_body", version="rules-1.1.0")) class=Body
+                            text-align="center"
+                            testId="how-band-range"
+                          view position="relative" height=14
+                            view position="absolute"
+                              left=0
+                              right=0
+                              top=4
+                              height=6
+                              border-radius=3
+                              background-color="bg.track"
+                            view position="absolute"
+                              left=`${bandStart}%`
+                              width=`${bandWidth}%`
+                              top=0
+                              height=14
+                              border-radius=7
+                              background-color="accent.wash"
+                              view width="100%"
+                                height=14
+                                animation=(still ? "none" : "sweep 2.6s ease-in-out infinite alternate")
+                                view width=14
+                                  height=14
+                                  margin-left=-7
+                                  border-radius=7
+                                  background-color="accent.main"
+                          row justify-content="space-between"
+                            text "0" class=Caption
+                            text "10" class=Caption
+                        text t("methodology.band_title") class=RowTitle margin-top=4
+                        text t("methodology.band_body") class=Detail color="ink.soft"
+                      view margin-top=6
+                        Label(label=t("methodology.section_not"))
+                      text t("methodology.what_it_is_not") class=Body
+                      text t("reveal.model_version", version=(app.modelVersion == "" ? "rules-1.1.0" : app.modelVersion)) class=Caption
+                        margin-top=4
+                        testId="how-version"
       row role="tablist"
         appearance="none"
         testId="tabs"

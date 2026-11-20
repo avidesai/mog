@@ -519,7 +519,7 @@ Launch 18+. The audience skews young, which is precisely why.
 
 One entitlement, `pro`, unlocks everything paid. Resolution order is RevenueCat cache, then server, then a grace period on failure. A network error must never present a paying user with a paywall. StoreKit 2 transactions verify server-side via RevenueCat webhooks into `entitlements`.
 
-Products at launch: `weekly_499`, `annual_3499_trial3d`, `lifetime_5999`. Price testing runs through RevenueCat Offerings, so a price change does not need an app release.
+Products at launch: `pro.weekly` ($4.99) and `pro.annual` ($34.99). There is no free trial and no lifetime tier (decided 20 Nov). Price testing runs through RevenueCat Offerings, so a price change does not need an app release.
 
 ### Free versus Pro, in code
 

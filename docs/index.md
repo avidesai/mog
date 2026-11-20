@@ -52,7 +52,7 @@ Snapshots in this Project: `mog-foundation-research.md`, `mog-engineering-design
 - Colour meaning: blue = measurement only; green = done/improved; amber flame = streak only; gold = week-8 finish only. No colour ever encodes score quality.
 - Scoring at launch: deterministic rules-only, percentile vs sex/age reference, confidence band shown. Calibrated model later, funded by in-app peer ratings. Never train on SCUT-FBP5500.
 - Privacy: nothing biometric leaves the device. 18+ at launch. BIPA-grade consent.
-- Monetization: value-first hard paywall; $4.99/wk, $34.99/yr (3-day trial), $59.99 lifetime; RevenueCat + Superwall.
+- Monetization: value-first hard paywall; $4.99/wk and $34.99/yr, with no trial and no lifetime tier (decided 20 Nov); RevenueCat + Superwall.
 - Budget: $300–400 total. Paid options stay documented in the eng doc for later.
 
 ## Still open

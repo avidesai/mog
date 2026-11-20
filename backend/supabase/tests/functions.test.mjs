@@ -75,8 +75,7 @@ test("revenuecat events map to entitlement rows; anonymous ids are dropped", () 
   assert.equal(mapEvent({ type: "CANCELLATION", app_user_id: uid, product_id: "weekly_499", period_type: "NORMAL", expiration_at_ms: t }).status, "active", "cancelled but not yet expired keeps access");
   assert.equal(mapEvent({ type: "CANCELLATION", app_user_id: uid, product_id: "weekly_499", period_type: "NORMAL", expiration_at_ms: Date.now() - 1000 }).status, "expired");
   assert.equal(mapEvent({ type: "EXPIRATION", app_user_id: uid, product_id: "weekly_499" }).status, "expired");
-  assert.equal(mapEvent({ type: "REFUND", app_user_id: uid, product_id: "lifetime_5999" }).status, "refunded");
-  assert.deepEqual(mapEvent({ type: "NON_RENEWING_PURCHASE", app_user_id: uid, product_id: "lifetime_5999" }).expires_at, null);
+  assert.equal(mapEvent({ type: "REFUND", app_user_id: uid, product_id: "weekly_499" }).status, "refunded");
   assert.equal(mapEvent({ type: "TEST", app_user_id: uid, product_id: "weekly_499" }), null);
   assert.equal(mapEvent({ type: "RENEWAL", app_user_id: "$RCAnonymousID:abc", product_id: "weekly_499" }), null);
 });

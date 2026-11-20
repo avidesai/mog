@@ -30,7 +30,5 @@ export function mapEvent(ev: any): EntitlementRow | null {
     default:
       return null;                       // TEST, TRANSFER, SUBSCRIBER_ALIAS, SUBSCRIPTION_PAUSED, etc.
   }
-  // lifetime products never expire
-  if (product.startsWith("lifetime")) return { user_id: userId, product, status: status === "refunded" ? "refunded" : "active", expires_at: null, source: "revenuecat" };
   return { user_id: userId, product, status, expires_at: expiresAt, source: "revenuecat" };
 }

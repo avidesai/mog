@@ -8,7 +8,8 @@ The full reasoning is in the design bible ("Voice and copy"). This is the checkl
 
 - ✓ Every string passes `data/denylist.json`. Fix the string, never the list.
 - ✓ No exclamation marks. Anywhere.
-- ✓ No em dashes. Anywhere. Use a full stop, a colon, a comma or brackets.
+- ✓ No em dashes or en dashes. Anywhere. Use a full stop, a colon, a comma or brackets, and write a range as "3.3 to 6.7".
+- Every string passes the humanizer skill (`.claude/skills/humanizer/SKILL.md`). No "not X but Y", no clipped negative tail ("…, not a verdict"), no row of fragments, no closer that repeats the line before it.
 - ✓ Never "your score is", never "unlock your".
 - ✓ The five evidence badges are exact strings, no variants.
 - Percentile is against *the reference distribution*, never against other users. "68th percentile of the reference distribution", never "you beat 68% of guys".
@@ -21,8 +22,8 @@ The full reasoning is in the design bible ("Voice and copy"). This is the checkl
 - The distress card is calm, unstyled, never A/B tested, never an engagement surface.
 - The app name is `{app_name}` in every string. The working name is itself on the denylist.
 
-**Plain words.** If nobody would say it out loud, rewrite it. A week is "complete", never "banked". Free measurements are "shown free", never "yours to keep".
+**Plain words.** If nobody would say it out loud, rewrite it. A week is "complete", never "banked". Free measurements are "free", never "yours to keep".
 
 **Words that look harmless and aren't:** *just* (minimising), *unfortunately*, *weak*, *poor*, *fix* (for bone), *ideal* (use *typical range*), *perfect*, *flaw*.
 
-**Numbers.** Tabular. One decimal on the score (6.4), whole degrees on angles (128°), three significant figures on ratios (0.228). Bands as "likely 5.9–6.9".
+**Numbers.** Tabular. One decimal on the score (6.4), whole degrees on angles (128°), three significant figures on ratios (0.228). Bands as "likely 5.9 to 6.9".

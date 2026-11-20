@@ -28,13 +28,13 @@ A correct consequence can stay while its permission-style clause ("only use this
 
 - Judge each string **in context** with its neighbouring label, value and button. Redundancy is invisible in isolation: read it on the rendered screen (`python tools/render_screens.py`), not in the JSON.
 - Cut whole clauses rather than swapping words.
-- Use words a person would say out loud. No coined verbs or product-speak: a week is "complete", not "banked"; a free measurement is "shown free", not "yours to keep". No em dashes.
+- Use words a person would say out loud. No coined verbs or product-speak: a week is "complete", not "banked"; a free measurement is "free", not "yours to keep". No em dashes or en dashes.
 - Report a batch as `file:line` → current string → rewrite or **cut** → the rung it failed. Leave passing copy alone.
 - A string that matters only in a rare state should appear only in that state.
 
 ## Mog-specific
 
-- Everything also passes `core/copy/voice.md` and the denylist (CI). The ladder runs *first*; voice polish on a string that should not exist is wasted.
+- Everything also passes the humanizer skill (`.claude/skills/humanizer/SKILL.md`), `core/copy/voice.md` and the denylist (CI). The ladder runs *first*; voice polish on a string that should not exist is wasted.
 - Privacy statements are the exception to rung 3 **only** at the point of capture and deletion (consent screen, processing footnote, delete confirmation). They are consequences shown at the point of choice. Everywhere else, a privacy reassurance is rung 3: cut it.
 - An empty string in `strings.json` means the element is not rendered. Remove the element in the view too.
 - Done in this spirit so far: `today.all_done_body` (cut), `plan.intro` ("Nothing here is generic" cut), `streak.repair_note` (trimmed). The rest of the deck has **not** had a full ladder pass. See HANDOFF.md.
