@@ -17,7 +17,7 @@ backend/     Supabase schema + RLS + tested delete_everything(); three Edge Func
 site/        policies site builder (versioned URLs) + Pages workflow
 design/      design system (tokens.json, components, brand book), 28 artboards as HTML, offline renders, bundled fonts
 docs/        engineering design doc, design-language bible, foundation research, project index (snapshots of the live docs)
-tools/       token generator, artboard renderer      scripts/   repo-level: strings.mjs (core copy → app/strings/en.json)
+tools/       token generator, artboard renderer      scripts/   repo-level: sync-app.mjs (core copy + data → app/)
 .agents/     skills (clean-copy, unslop) and four experts (scoring, privacy, capture, exact-ui)
 .claude/     agent stubs that load the experts
 ```

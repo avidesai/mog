@@ -1,6 +1,6 @@
 # app — the Exact app
 
-`app.contract` (view), `app.ts` (data module), `app.test.contract` (tests), `app.json` (manifest). `strings/en.json` is generated from `core/copy/strings.json` by `node scripts/strings.mjs`; never hand-edit it. Views read it with `t("screen.key")`.
+`app.contract` (view), `app.ts` (data module), `app.test.contract` (tests), `app.json` (manifest). `strings/en.json` and `data/` are generated from `core/` by `node scripts/sync-app.mjs`; never hand-edit them. Views read it with `t("screen.key")`.
 
 ## Setup
 
