@@ -109,12 +109,11 @@ describe('planner', () => {
     expect(everything).not.toContain('jaw_exercise_devices');
   });
 
-  test('adiposity rule excludes the weaker duplicate', () => {
-    const p = plan(['sharper_jawline'], 15, { facial_adiposity: 1.8, cervicomental_angle_deg: 2.0 });
-    const ids = p.plan.map((c) => c.ruleId);
-    expect(ids).toContain('adiposity_high_cervicomental_obtuse');
-    expect(ids).not.toContain('adiposity_moderate_general');
-    expect(p.excludedBy.adiposity_moderate_general).toBe('adiposity_high_cervicomental_obtuse');
+  test('profile-triggered rules stay out of the frontal panel', () => {
+    const p = plan(['sharper_jawline'], 15, { facial_adiposity: 1.8, cervicomental_angle_deg: 2.0, facial_convexity_deg: -2.5 });
+    const ids = [...p.plan, ...p.professional, ...p.info].map((c) => c.ruleId);
+    expect(ids).toContain('adiposity_moderate_general');
+    for (const id of ['adiposity_high_cervicomental_obtuse', 'mewing_myth', 'convexity_orthodontic_referral']) expect(ids).not.toContain(id);
   });
 
   test('professional section is separate and never creates tasks', () => {
@@ -123,16 +122,24 @@ describe('planner', () => {
     expect(hair.plan.map((c) => c.ruleId)).not.toContain('hairline_recession_referral');
     expect(hair.plan.every((c) => c.safetyTier === 1 || c.safetyTier === 2)).toBe(true);
     expect(hair.professional.every((c) => c.safetyTier === 3 || c.safetyTier === 4)).toBe(true);
-    const chin = plan(['sharper_jawline', 'general'], 15, { chin_projection_eline_mm: -3.0, facial_convexity_deg: -2.5 });
+    const chin = plan(['hair', 'better_skin', 'general'], 15, { hairline_stage: 4, skin_evenness: -2.6 });
     const pro = new Set(chin.professional.map((c) => c.ruleId));
     expect(pro.size).toBeGreaterThan(0);
     expect(chin.tasks.some((t) => pro.has(t.ruleId))).toBe(false);
   });
 
-  test('mewing myth card is info, not plan', () => {
-    const p = plan(['sharper_jawline'], 15, { facial_convexity_deg: -1.5 });
-    expect(p.info.map((c) => c.ruleId)).toContain('mewing_myth');
-    expect(p.plan.map((c) => c.ruleId)).not.toContain('mewing_myth');
+  test('info cards never enter the plan', () => {
+    const p = plan(['better_photos', 'general'], 15, { symmetry_index: -1.2, nasal_width_to_intercanthal: 1.6 });
+    const info = new Set(p.info.map((c) => c.ruleId));
+    expect(info.size).toBeGreaterThan(0);
+    expect(p.plan.some((c) => info.has(c.ruleId))).toBe(false);
+  });
+
+  test('profile readings never move the score', () => {
+    const full = score({ sex: 'male', ageBand: '18-24', readings: typical('male', { skin_evenness: -0.7, canthal_tilt_deg: 1.1 }) }, reg, ref);
+    const front = score({ sex: 'male', ageBand: '18-24', readings: typical('male', { skin_evenness: -0.7, canthal_tilt_deg: 1.1 }, false), profileCaptured: false }, reg, ref);
+    expect(full.score).toBe(front.score);
+    expect(full.metrics.filter((m) => m.pose === 'profile').every((m) => m.suppressedReason === 'pose_missing')).toBe(true);
   });
 
   test('goal match gates rules', () => {

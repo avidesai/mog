@@ -110,7 +110,8 @@ function view(s: Saved, today: string, isPro: boolean): View {
   const locked = metrics.filter((m) => !m.free && m.suppressed === '');
   const named = [...locked].sort((x, y) => rank(x.id) - rank(y.id)).slice(0, 3).map((m) => m.short);
   return {
-    hasScan: true, scanDate: scan.date, nMetrics: metrics.length,
+    // What was measured on this scan: profile metrics need a profile capture and are never counted as unlockable.
+    hasScan: true, scanDate: scan.date, nMetrics: metrics.filter((m) => m.suppressed === '').length,
     nLocked: locked.length, lockedMore: locked.length - named.length,
     lockedNames: named.map((n, i) => (i === 0 || n === 'fWHR' ? n : n[0].toLowerCase() + n.slice(1))).join(', '),
     nMovable: r.metrics.filter((m) => m.value !== null && reg.metrics.get(m.id)!.modifiable).length,

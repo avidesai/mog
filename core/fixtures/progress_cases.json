@@ -1,7 +1,7 @@
 [
  {
   "name": "fat_loss_clear",
-  "model_version": "rules-1.1.0",
+  "model_version": "rules-1.2.0",
   "before": {
    "sex": "male",
    "age_band": "18-24",
@@ -450,18 +450,12 @@
   },
   "expected": {
    "comparable": true,
-   "score_delta": 0.131494,
+   "score_delta": 0.461381,
    "score_within_noise": true,
    "metrics": [
     {
      "id": "facial_adiposity",
      "delta": -0.18,
-     "within_noise": false,
-     "better": true
-    },
-    {
-     "id": "cervicomental_angle_deg",
-     "delta": -9.0,
      "within_noise": false,
      "better": true
     },
@@ -482,7 +476,7 @@
  },
  {
   "name": "skin_inside_noise",
-  "model_version": "rules-1.1.0",
+  "model_version": "rules-1.2.0",
   "before": {
    "sex": "male",
    "age_band": "18-24",
@@ -931,7 +925,7 @@
   },
   "expected": {
    "comparable": true,
-   "score_delta": 0.01439,
+   "score_delta": 0.044912,
    "score_within_noise": true,
    "metrics": [
     {
@@ -947,12 +941,6 @@
      "better": false
     },
     {
-     "id": "cervicomental_angle_deg",
-     "delta": 0.0,
-     "within_noise": true,
-     "better": false
-    },
-    {
      "id": "facial_adiposity",
      "delta": 0.0,
      "within_noise": true,
@@ -963,7 +951,7 @@
  },
  {
   "name": "nothing_changed",
-  "model_version": "rules-1.1.0",
+  "model_version": "rules-1.2.0",
   "before": {
    "sex": "female",
    "age_band": "18-24",
@@ -1422,12 +1410,6 @@
      "better": false
     },
     {
-     "id": "cervicomental_angle_deg",
-     "delta": 0.0,
-     "within_noise": true,
-     "better": false
-    },
-    {
      "id": "facial_adiposity",
      "delta": 0.0,
      "within_noise": true,
@@ -1444,7 +1426,7 @@
  },
  {
   "name": "skin_worse",
-  "model_version": "rules-1.1.0",
+  "model_version": "rules-1.2.0",
   "before": {
    "sex": "female",
    "age_band": "18-24",
@@ -1893,7 +1875,7 @@
   },
   "expected": {
    "comparable": true,
-   "score_delta": -3.702969,
+   "score_delta": -4.390911,
    "score_within_noise": false,
    "metrics": [
     {
@@ -1904,12 +1886,6 @@
     },
     {
      "id": "bigonial_to_bizygomatic",
-     "delta": 0.0,
-     "within_noise": true,
-     "better": false
-    },
-    {
-     "id": "cervicomental_angle_deg",
      "delta": 0.0,
      "within_noise": true,
      "better": false

@@ -22,7 +22,9 @@ const TIERS: [number, string, string][] = [
   [100.1, 'Chad', 'Chad'],
 ];
 
-export const SCORING_MODEL_VERSION = 'rules-1.1.0';
+export const SCORING_MODEL_VERSION = 'rules-1.2.0';
+// The v1 panel: only frontal metrics are scored; a profile reading is reported as needing a profile capture.
+export const PANEL_POSE = 'frontal';
 
 export function tierForPercentile(p: number): { short: string; long: string } {
   if (!Number.isFinite(p)) throw new Error(`percentile must be finite, got ${p}`);
@@ -134,7 +136,6 @@ export function score(inp: ScoreInput, reg: Registry, ref: CompositeReference): 
   if (sex !== 'male' && sex !== 'female') throw new Error("sex must be 'male' or 'female'");
   const table = ref.quantiles_std[sex];
   const moments = ref.q_moments[sex];
-  const profileCaptured = inp.profileCaptured ?? true;
 
   const beard = inp.readings.beard_presence;
   const beardPresent = beard != null && beard.value >= 1;
@@ -157,8 +158,8 @@ export function score(inp: ScoreInput, reg: Registry, ref: CompositeReference): 
     const suppressed = (reason: SuppressedReason, confidence: number | null): MetricResult =>
       ({ ...base, value: null, z: null, category: null, display: 'suppressed', suppressedReason: reason, confidence });
 
-    if (r == null) {
-      results.push(suppressed(m.pose === 'profile' && !profileCaptured ? 'pose_missing' : 'not_measured', null));
+    if (m.pose !== PANEL_POSE || r == null) {
+      results.push(suppressed(m.pose !== PANEL_POSE ? 'pose_missing' : 'not_measured', null));
       continue;
     }
     let conf = r.confidence;

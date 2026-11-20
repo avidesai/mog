@@ -10,6 +10,9 @@ composite's reference variance slightly too small where metrics correlate
 (e.g. adiposity and cervicomental angle), which makes percentiles slightly too
 extreme. v1.1's peer-rating data replaces this table with an empirical one.
 
+Each simulated reading carries the metric's capture noise (noise_sd), so a typical person's typical
+capture lands at the median. noise_sd is provisional until Spike 1 measures it; rebuild after.
+
 Run:  python tools/build_reference.py
 """
 
@@ -23,7 +26,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from mogcore.registry import load_registry, DATA_DIR  # noqa: E402
-from mogcore.scoring import quality_from_z  # noqa: E402
+from mogcore.scoring import PANEL_POSE, quality_from_z  # noqa: E402
 
 N = 200_000
 SEED = 20261111
@@ -32,7 +35,7 @@ SEED = 20261111
 def main() -> None:
     reg = load_registry()
     out: dict = {"n": N, "seed": SEED, "q_moments": {}, "quantiles_std": {}, "scorable_metrics": []}
-    scorable = [reg.metrics[m] for m in reg.metric_order if reg.metrics[m].scorable]
+    scorable = [reg.metrics[m] for m in reg.metric_order if reg.metrics[m].scorable and reg.metrics[m].pose == PANEL_POSE]
     out["scorable_metrics"] = [m.id for m in scorable]
 
     for sex in ("male", "female"):
@@ -41,10 +44,13 @@ def main() -> None:
         sqs = {m.id: 0.0 for m in scorable}
         comps: list[float] = []
         total_w = sum(m.weight_for(sex) for m in scorable)
+        # A capture reads the true value plus its noise, so the reference is built from noisy readings too:
+        # quality terms like -|z| are concave, and a noise-free reference scores every real capture low.
+        noise_z = {m.id: m.noise_sd / m.ref(sex)[1] for m in scorable}
         for _ in range(N):
             c = 0.0
             for m in scorable:
-                z = rng.gauss(0.0, 1.0)
+                z = rng.gauss(0.0, 1.0) + rng.gauss(0.0, noise_z[m.id])
                 q = quality_from_z(z, m.direction)
                 sums[m.id] += q
                 sqs[m.id] += q * q

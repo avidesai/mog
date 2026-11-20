@@ -21,14 +21,16 @@ def _sampled_population(reg, n=2000, seed=7, sex="male"):
                 rd[mid] = MetricReading(1.0 if mid == "hairline_stage" else 0.0, 0.9, 0.0)
                 continue
             mean, sd = m.ref(sex)
-            rd[mid] = MetricReading(mean + rng.gauss(0, 1) * sd, 0.9, 0.08 * sd)
+            # a real capture: the person's true value plus that metric's capture noise
+            rd[mid] = MetricReading(mean + rng.gauss(0, 1) * sd + rng.gauss(0, m.noise_sd), 0.9, 0.08 * sd)
         out.append(score(ScoreInput(sex, "18-24", rd), reg))
     return out
 
 
 def test_reference_population_is_calibrated_to_its_own_median(reg):
-    """Faces sampled from the published norms must land at a median of 5.0 and fill the
-    tier bands in their published proportions. This is the product's central calibration claim."""
+    """Faces sampled from the published norms, each read once with capture noise, must land at a median
+    of 5.0 and fill the tier bands in their published proportions. This is the product's central
+    calibration claim; rules-1.2.0 builds the reference from noisy readings so it holds for real captures."""
     pop = _sampled_population(reg)
     scores = sorted(r.score for r in pop)
     median = scores[len(scores) // 2]
@@ -171,10 +173,17 @@ def test_profile_missing_marks_pose_missing_not_a_guess(reg, mk_input):
     assert r.n_scored > 0
 
 
-def test_frontal_only_scan_is_comparable(reg, mk_input):
-    full = score(mk_input(), reg).score
-    frontal = score(mk_input(profile=False), reg).score
-    assert abs(full - frontal) < 0.6
+def test_profile_readings_never_move_the_score(reg):
+    """One panel per model version: a face scores the same with or without profile readings,
+    on faces spread across the distribution (a mean face saturates near 10 and proves nothing)."""
+    import random
+    rng = random.Random(7)
+    for _ in range(25):
+        z = {m.id: rng.gauss(0, 1) for m in reg.metrics.values() if m.unit != "category"}
+        full = score(ScoreInput("male", "18-24", typical_readings(reg, "male", profile=True, **z), True), reg)
+        front = score(ScoreInput("male", "18-24", typical_readings(reg, "male", profile=False, **{k: v for k, v in z.items() if reg.metrics[k].pose != "profile"}), False), reg)
+        assert full.score == front.score
+        assert all(m.suppressed_reason == "pose_missing" for m in full.metrics if m.pose == "profile")
 
 
 def test_beard_reduces_jaw_confidence(reg):
