@@ -133,6 +133,7 @@ function view(s: Saved, today: string, isPro: boolean): View {
 function progressView(s: Saved, shown: { id: string; free: boolean }[]): View['progress'] {
   if (s.scans.length < 2) return emptyProgress();
   const [a, b] = s.scans.slice(-2);
+  if (!!a.sample !== !!b.sample) return emptyProgress(); // a fixture face is never compared with a real one
   const input = (x: Scan) => ({ sex: x.sex, ageBand: x.ageBand, readings: x.readings, profileCaptured: x.profileCaptured });
   const c = compare(input(a), input(b), reg, ref);
   const free = new Map(shown.map((m) => [m.id, m.free]));

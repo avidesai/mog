@@ -83,7 +83,7 @@ Tokens, components, brand book; 28 artboards (`screens-gamified/`); `tools/rende
 
 **3.2 Nothing has run on a device.** `core/swift/MogCore` now compiles and passes its tests in CI, but the app in `ios/` has never been built and no capture code has touched a camera. Spike 1 (§6) is the first time any of it meets reality, and three things specifically need verifying on an iPhone: the Euler-angle sign conventions in `CaptureSession.pose`, the `.landscapeRight` buffer projection in `LumaStats`/`SkinEvenness`, and the `Heuristics` anatomical-point estimates on a real mesh.
 
-**3.3 Everything downstream of `landmark_map.json` is provisional.** All 38 ARKit vertex indices are `null`; heuristics fill in at reduced confidence. The vertex picker exists to fill them. Reliability tiers and `noise_sd` are guesses until `harness.py --write-tiers` runs on real captures.
+**3.3 Everything downstream of `landmark_map.json` is provisional.** All 38 ARKit vertex indices are `null`; heuristics fill in at reduced confidence. The vertex picker exists to fill them. Reliability tiers and `noise_sd` are guesses until `harness.py --write` runs on real captures.
 
 ---
 

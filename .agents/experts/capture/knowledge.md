@@ -5,7 +5,7 @@
 - Gates (`GateEvaluator`): yaw/pitch ±3°, roll ±2°, 45–75 cm, luma 0.30–0.85, L/R asymmetry ≤ 0.12, clipping ≤ 2%, sharpness (Laplacian variance, threshold untuned), expression blendshapes ≤ 0.25, eyes open. Occlusion gate passes when tracked (not implemented). 15 stable frames → auto-capture 10 frames; a drift aborts and discards.
 - `LumaStats` and `SkinEvenness` read the 420f buffer directly; projection uses `.landscapeRight` with the buffer's size (identity transform).
 - Appearance heads, cheap path: skin evenness = sqrt-illumination-scaled texture + chroma spread in a cheek/forehead mask (≈0.05 residual luma dependence); adiposity = geometric proxy (lower-face width, cheek fullness, submental bulge). Python prototype tested; Swift port wired.
-- Spike tooling: Settings › Debug › Vertex picker, Landmark dump → `core/tools/cv_analysis.py` (per-metric CV, provisional tiers) and `core/tools/harness.py` (per-person test–retest, fairness smoke, `--write-tiers` writes `reliability_tier` + `noise_sd`).
+- Spike tooling: Settings › Debug › Vertex picker, Landmark dump → `core/tools/cv_analysis.py` (variance split per metric, r, tier, score SD on a fixed panel) and `core/tools/harness.py` (per-person test–retest, fairness smoke, `--write` writes measured single-capture `noise_sd` and the tier graded on r).
 - None of the Swift has run on a device yet. Euler sign conventions and the buffer orientation are the first things to verify.
 
 ## The Exact capture module (20 Nov)
