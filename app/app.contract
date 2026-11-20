@@ -236,6 +236,9 @@ component App
   resource time = exactTime() as shape Time
   derive today = formatDate(time.epochAtZero + now, time.utcOffset, "iso")
   state plan = "pro.annual"
+  // The share sheet's choices: not persisted, so a share never carries over and Delete everything has nothing to reset.
+  state shareKind = "score"
+  state shareBest = false
   state buyNote = ""
   resource store = purchasesStatus() as shape PurchasesStatus else empty()
   // A screen gates on what the person holds; delivery reads the store's queue and nothing else.
@@ -415,9 +418,21 @@ component App
     checkinSeenOn = today
   action buzz
     haptic("success")
+  action chooseShare(k: string)
+    shareKind = k
+  action setShareBest(on: bool)
+    shareBest = on
+  action openShare
+    shareKind = "score"
+    shareBest = false
+    nav = push(nav, "/share")
   action shareCard
     if page.canSharePictures
-      share(title="mog-score", files=["#share-card"])
+      share(title=`mog-${shareKind}`, files=["#share-card"])
+    else if shareKind == "streak"
+      share(text=t("share.text_streak", app_name="Mog", n=`${app.summary.currentDays}`))
+    else if shareKind == "moved"
+      share(text=t("share.text_moved", app_name="Mog", delta=app.progress.delta))
     else
       share(text=t("share.text", app_name="Mog", score=app.score, tier=app.tier, low=app.low, high=app.high))
   action seeProgress
@@ -675,7 +690,7 @@ component App
                                 else if k.cadence == "weekly"
                                   text t("task_detail.weekly_progress", done=`${k.weeklyDone}`, target=`${k.weeklyTarget}`) class=Detail
                                 else if k.basedOn != ""
-                                  text k.basedOn class=Detail
+                                  text t("today.task_for", metrics=k.basedOn) class=Detail
                               Chevron()
                         link href=path("plan")
                           class=LipBox
@@ -1148,7 +1163,7 @@ component App
                       Quiet(label=t("reveal.cta_today"), go=goHome, id="back-today")
                     else
                       Primary(label=t("reveal.cta_start"), go=goHome, off=false, id="start-week")
-                      Quiet(label=t("reveal.cta_share"), go=visit("/share"), id="share")
+                      Quiet(label=t("reveal.cta_share"), go=openShare, id="share")
               else if e.name == "share"
                 column navigationKey=`${e.id}`
                   navigationBar="none"
@@ -1164,90 +1179,160 @@ component App
                     backLabel=t("common.close")
                   )
                   scroll flex=1 min-height=0
-                    column align-items="center" padding="4px 20px 16px"
+                    column align-items="center" padding="0 20px 16px" gap=16
+                      row gap=8 width="100%" max-width="26.25rem" role="radiogroup"
+                        for k in (app.nScans > 1 ? ["score", "streak", "moved"] : ["score", "streak"]) key=k
+                          button appearance="none"
+                            role="radio"
+                            aria-checked=(shareKind == k)
+                            press=chooseShare(k)
+                            testId=`share-kind-${k}`
+                            flex=1
+                            min-width=0
+                            padding="10px 8px"
+                            border-radius=999
+                            border="1.5px solid"
+                            border-color=(shareKind == k ? "ink.main" : "line.hair")
+                            background-color=(shareKind == k ? "ink.main" : "bg.card")
+                            text (k == "score" ? t("share.kind_score") : k == "streak" ? t("share.kind_streak") : t("share.kind_moved")) font-size="min(-exact-subheadline, 18px)"
+                              font-weight=600
+                              text-align="center"
+                              color=(shareKind == k ? "bg.paper" : "ink.main")
                       column id="share-card"
                         testId="share-card"
                         width=300
                         height=533
                         flex-shrink=0
                         box-sizing="border-box"
-                        padding=24
-                        border-radius=12
-                        background-color="share.ground"
-                        gap=0
-                        row align-items="center" gap=8
+                        padding=26
+                        border-radius=20
+                        border="1.5px solid"
+                        border-color="line.hair"
+                        background-color="bg.card"
+                        align-items="center"
+                        view flex=1
+                        if shareKind == "streak"
+                          svg width=30 height=40 viewBox="0 0 24 32" aria-hidden=true
+                            path d="M12 2C12 2 4 12 4 20a8 8 0 0016 0C20 12 12 2 12 2z"
+                              fill="flame.icon"
+                          text `${app.summary.currentDays}` font-family="Instrument Serif"
+                            font-size="120px"
+                            testId="share-px-1"
+                            line-height=1.3
+                            letter-spacing="-0.03em"
+                            color="ink.main"
+                          text t("share.streak_days") font-size="13px"
+                            testId="share-px-2"
+                            font-weight=700
+                            letter-spacing="0.12em"
+                            text-transform="uppercase"
+                            color="flame.text"
+                          text (app.summary.currentDays <= 1 ? t("share.streak_line_one") : t("share.streak_line", n=`${app.summary.currentDays}`)) font-size="15px"
+                            testId="share-px-3"
+                            color="ink.soft"
+                            text-align="center"
+                            margin-top=18
+                        else if shareKind == "moved"
+                          text app.progress.delta font-family="Instrument Serif"
+                            font-size="112px"
+                            testId="share-px-4"
+                            line-height=1.3
+                            letter-spacing="-0.03em"
+                            color=(app.progress.up and not app.progress.withinNoise ? "positive.text" : "ink.main")
+                          text (app.progress.weeks >= 2 ? t("share.moved_line", before=app.progress.before, after=app.progress.after, weeks=`${app.progress.weeks}`) : t("share.moved_line_days", before=app.progress.before, after=app.progress.after, days=`${app.progress.days}`)) font-size="15px"
+                            testId="share-px-5"
+                            font-weight=600
+                            color="ink.soft"
+                            text-align="center"
+                        else
+                          text app.score font-family="Instrument Serif"
+                            font-size="112px"
+                            testId="share-px-6"
+                            line-height=1.3
+                            letter-spacing="-0.035em"
+                            color="ink.main"
+                          text t("share.card_band", low=app.low, high=app.high) font-size="15px"
+                            testId="share-px-7"
+                            font-weight=600
+                            color="ink.soft"
+                          text tierLong(app.tier) font-size="24px"
+                            testId="share-px-8"
+                            font-weight=700
+                            letter-spacing="-0.02em"
+                            color="ink.main"
+                            margin-top=20
+                            text-align="center"
+                          text t("share.card_pct", pct=app.pct) font-size="13px"
+                            testId="share-px-9"
+                            color="ink.soft"
+                            margin-top=2
+                            text-align="center"
+                          row gap=4 margin-top=16 width="100%"
+                            for tr in ["LTN", "MTN", "HTN", "Chadlite", "Chad"] key=tr
+                              view flex=1
+                                height=6
+                                border-radius=3
+                                background-color=(tr == app.tier ? "accent.main" : "bg.track")
+                          if shareBest
+                            for m in app.metrics.filter(x => x.id == app.strength) key=m.id
+                              row align-items="baseline"
+                                justify-content="space-between"
+                                gap=8
+                                width="100%"
+                                padding="12px 0 0"
+                                margin-top=18
+                                border-top="1.5px solid"
+                                border-color="line.hair"
+                                column gap=1
+                                  text t("share.card_best") font-size="11px"
+                                    testId="share-px-10"
+                                    font-weight=600
+                                    letter-spacing="0.06em"
+                                    text-transform="uppercase"
+                                    color="ink.soft"
+                                  text m.short font-size="16px"
+                                    testId="share-px-11"
+                                    font-weight=600
+                                    color="ink.main"
+                                text m.value font-size="18px"
+                                  testId="share-px-12"
+                                  font-weight=600
+                                  color="ink.main"
+                        view flex=1
+                        row align-self="flex-start" align-items="center" gap=8
                           svg width=20 height=10 viewBox="0 0 20 10" aria-hidden=true
                             line x1=3 y1=5 x2=17 y2=5 stroke="brand.bronze" stroke-width=1.6
                             circle cx=3 cy=5 r=2.8 fill="brand.bronze"
                             circle cx=17 cy=5 r=2.8 fill="brand.bronze"
                           text "mog" font-size="17px"
+                            testId="share-px-13"
                             font-weight=600
                             letter-spacing="-0.03em"
-                            color="share.ink"
-                            testId="share-text-1"
-                        view flex=1
-                        text app.score font-family="Instrument Serif"
-                          font-size="112px"
-                          line-height=1.3
-                          testId="share-score"
-                          letter-spacing="-0.035em"
-                          color="share.ink"
-                        text t("share.card_band", low=app.low, high=app.high) font-size="15px"
-                          font-weight=600
-                          color="share.soft"
-                          testId="share-text-2"
-                        text tierLong(app.tier) font-size="24px"
-                          font-weight=700
-                          letter-spacing="-0.02em"
-                          color="share.ink"
-                          margin-top=22
-                          testId="share-text-3"
-                        text t("share.card_pct", pct=app.pct) font-size="13px"
-                          color="share.soft"
-                          margin-top=2
-                          testId="share-text-4"
-                        row gap=4 margin-top=16
-                          for tr in ["LTN", "MTN", "HTN", "Chadlite", "Chad"] key=tr
-                            view flex=1
-                              height=6
-                              border-radius=3
-                              background-color=(tr == app.tier ? "share.accent" : "share.line")
-                        view flex=1
-                        for m in app.metrics.filter(x => x.id == app.strength) key=m.id
-                          row align-items="baseline"
-                            justify-content="space-between"
-                            gap=8
-                            padding="12px 0"
-                            border-top="1px solid"
-                            border-color="share.line"
-                            column gap=1
-                              text t("share.card_best") font-size="11px"
-                                font-weight=600
-                                letter-spacing="0.06em"
-                                text-transform="uppercase"
-                                color="share.soft"
-                                testId="share-text-5"
-                              text m.short font-size="16px"
-                                font-weight=600
-                                color="share.ink"
-                                testId="share-text-6"
-                            text m.value font-size="18px"
-                              font-weight=600
-                              color="share.ink"
-                              testId="share-text-7"
-                        text t("share.card_footer") font-size="11px"
-                          color="share.soft"
-                          margin-top=10
-                          testId="share-text-8"
+                            color="ink.main"
+                      if shareKind == "score" and app.strength != ""
+                        row class=RaisedBox
+                          align-items="center"
+                          gap=12
+                          padding="14px 16px"
+                          width="100%"
+                          max-width="26.25rem"
+                          box-sizing="border-box"
+                          text t("share.add_best") class=RowTitle flex=1 min-width=0
+                          input type="checkbox" switch
+                            checked=shareBest
+                            change=setShareBest
+                            aria-label=t("share.add_best")
+                            testId="share-best"
                   column padding="8px 20px 20px"
-                    gap=4
+                    gap=6
                     max-width="26.25rem"
                     margin-left="auto"
                     margin-right="auto"
                     box-sizing="border-box"
                     width="100%"
-                    if not page.canSharePictures
-                      text t("share.no_pictures") class=Caption text-align="center"
+                    text (not page.canSharePictures ? t("share.no_pictures") : shareKind == "streak" ? t("share.note_streak") : shareKind == "moved" ? t("share.note_moved") : t("share.note_score")) class=Caption
+                      text-align="center"
+                      testId="share-note"
                     Primary(label=t("share.cta"), go=shareCard, off=false, id="share-now")
               else if e.name == "task"
                 column navigationKey=`${e.id}`
@@ -1875,21 +1960,38 @@ component App
                                 text (m.id == app.strength ? t("results.section_strength") : t("results.section_improvable")) class=Detail
                                   color=(m.id == app.strength ? "positive.text" : "accent.main")
                               text m.value class=Value
+                        column class=CardBox
+                          box-sizing="border-box"
+                          width="100%"
+                          padding=16
+                          gap=10
+                          margin-top=14
+                          testId="rating-ladder"
+                          row align-items="baseline"
+                            justify-content="space-between"
+                            gap=8
+                            flex-wrap="wrap"
+                            Label(label=t("reveal.ladder_label"))
+                            text bandLine(app.lowN, app.highN) class=Detail
+                          TierLadder(low=app.lowN, high=app.highN, current=app.tier)
                         row align-items="baseline" justify-content="space-between" margin-top=14
                           Label(label=t("results.locked_label"))
                           text `${app.nLocked}` class=LabelText
                         column class=CardBox overflow="hidden"
-                          for m, i in app.metrics.filter(x => not x.free and x.suppressed == "") key=m.id
+                          for g, i in ["proportion", "eyes", "midface", "lower", "appearance"].filter(g => app.metrics.filter(x => x.group == g and not x.free and x.suppressed == "").length > 0) key=g
                             link href=path("paywall")
-                              testId=`metric-${m.id}`
+                              testId=`locked-${g}`
                               display="flex"
                               align-items="center"
                               gap=12
                               padding="13px 16px"
                               border-top=(i == 0 ? "0 solid" : "1.5px solid")
                               border-color="line.hair"
-                              text m.short class=RowTitle flex=1 min-width=0
-                              view width=40 height=14 border-radius=4 background-color="bg.track"
+                              column flex=1 min-width=0 gap=2
+                                row align-items="baseline" gap=8 flex-wrap="wrap"
+                                  text groupLabel(g) class=RowTitle
+                                  text t("results.locked_count", n=`${app.metrics.filter(x => x.group == g and not x.free and x.suppressed == "").length}`) class=Caption
+                                text app.metrics.filter(x => x.group == g and not x.free and x.suppressed == "").map(x => x.short).join(", ") class=Detail
                               Lock()
                       else
                         for g in ["proportion", "eyes", "midface", "lower", "profile", "appearance"] key=g
@@ -1913,10 +2015,17 @@ component App
                         view margin-top=14
                           Label(label=t("results.not_measured_label"))
                         column class=CardBox overflow="hidden"
-                          for m, i in app.metrics.filter(x => x.suppressed != "") key=m.id
+                          if app.metrics.filter(x => x.suppressed == "pose_missing").length > 0
+                            column padding="12px 16px" gap=2 testId="profile-needed"
+                              row align-items="baseline" gap=8 flex-wrap="wrap"
+                                text groupLabel("profile") class=RowTitle
+                                text `${app.metrics.filter(x => x.suppressed == "pose_missing").length}` class=Caption
+                              text app.metrics.filter(x => x.suppressed == "pose_missing").map(x => x.short).join(", ") class=Detail
+                              text t("results.profile_note") class=Detail color="ink.mute"
+                          for m in app.metrics.filter(x => x.suppressed != "" and x.suppressed != "pose_missing") key=m.id
                             column padding="12px 16px"
                               gap=1
-                              border-top=(i == 0 ? "0 solid" : "1.5px solid")
+                              border-top="1.5px solid"
                               border-color="line.hair"
                               text m.short class=RowTitle
                               text suppressedLabel(m.suppressed) class=Detail color="state.caution"
@@ -2327,8 +2436,11 @@ component TierLadder
             color="ink.main"
             width="4.75rem"
             flex-shrink=0
-          text (tierLong(tr) == tr ? "" : tierLong(tr)) class=Detail flex="1 1 6rem" min-width=0
-          text tierRange(tr) class=Caption text-align="end"
+          text (tierLong(tr) == tr ? "" : tierLong(tr)) class=Detail
+            flex="1 1 6rem"
+            min-width=0
+            color="ink.soft"
+          text tierRange(tr) class=Caption text-align="end" color="ink.soft"
           if tr == current
             row background-color="accent.main" border-radius=999 padding="2px 8px"
               text t("tiers.you") font-size="0.6875rem" font-weight=700 color="on.accent"

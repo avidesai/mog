@@ -45,48 +45,68 @@
       },
       {
         "finding": "fixed-type",
-        "node": "share-text-1",
-        "why": "The share card is a fixed-size picture; its type is set in pixels so the exported image is the same for everyone."
+        "node": "share-px-1",
+        "why": "The share card is drawn as a picture at a fixed point size, so its type is set in points to keep the exported layout."
       },
       {
         "finding": "fixed-type",
-        "node": "share-text-2",
-        "why": "The share card is a fixed-size picture; its type is set in pixels so the exported image is the same for everyone."
+        "node": "share-px-2",
+        "why": "The share card is drawn as a picture at a fixed point size, so its type is set in points to keep the exported layout."
       },
       {
         "finding": "fixed-type",
-        "node": "share-text-3",
-        "why": "The share card is a fixed-size picture; its type is set in pixels so the exported image is the same for everyone."
+        "node": "share-px-3",
+        "why": "The share card is drawn as a picture at a fixed point size, so its type is set in points to keep the exported layout."
       },
       {
         "finding": "fixed-type",
-        "node": "share-text-4",
-        "why": "The share card is a fixed-size picture; its type is set in pixels so the exported image is the same for everyone."
+        "node": "share-px-4",
+        "why": "The share card is drawn as a picture at a fixed point size, so its type is set in points to keep the exported layout."
       },
       {
         "finding": "fixed-type",
-        "node": "share-text-5",
-        "why": "The share card is a fixed-size picture; its type is set in pixels so the exported image is the same for everyone."
+        "node": "share-px-5",
+        "why": "The share card is drawn as a picture at a fixed point size, so its type is set in points to keep the exported layout."
       },
       {
         "finding": "fixed-type",
-        "node": "share-text-6",
-        "why": "The share card is a fixed-size picture; its type is set in pixels so the exported image is the same for everyone."
+        "node": "share-px-6",
+        "why": "The share card is drawn as a picture at a fixed point size, so its type is set in points to keep the exported layout."
       },
       {
         "finding": "fixed-type",
-        "node": "share-text-7",
-        "why": "The share card is a fixed-size picture; its type is set in pixels so the exported image is the same for everyone."
+        "node": "share-px-7",
+        "why": "The share card is drawn as a picture at a fixed point size, so its type is set in points to keep the exported layout."
       },
       {
         "finding": "fixed-type",
-        "node": "share-text-8",
-        "why": "The share card is a fixed-size picture; its type is set in pixels so the exported image is the same for everyone."
+        "node": "share-px-8",
+        "why": "The share card is drawn as a picture at a fixed point size, so its type is set in points to keep the exported layout."
       },
       {
         "finding": "fixed-type",
-        "node": "share-score",
-        "why": "The share card is a fixed-size picture; its type is set in pixels so the exported image is the same for everyone."
+        "node": "share-px-9",
+        "why": "The share card is drawn as a picture at a fixed point size, so its type is set in points to keep the exported layout."
+      },
+      {
+        "finding": "fixed-type",
+        "node": "share-px-10",
+        "why": "The share card is drawn as a picture at a fixed point size, so its type is set in points to keep the exported layout."
+      },
+      {
+        "finding": "fixed-type",
+        "node": "share-px-11",
+        "why": "The share card is drawn as a picture at a fixed point size, so its type is set in points to keep the exported layout."
+      },
+      {
+        "finding": "fixed-type",
+        "node": "share-px-12",
+        "why": "The share card is drawn as a picture at a fixed point size, so its type is set in points to keep the exported layout."
+      },
+      {
+        "finding": "fixed-type",
+        "node": "share-px-13",
+        "why": "The share card is drawn as a picture at a fixed point size, so its type is set in points to keep the exported layout."
       }
     ]
   }

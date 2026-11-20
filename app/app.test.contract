@@ -30,6 +30,11 @@ test "first session: onboarding, consent, capture, the reveal, then Today"
   tap "share"
   clock settle
   expect tree has "share-card"
+  expect state shareKind == "score"
+  expect state shareBest == false
+  tap "share-kind-streak"
+  expect text "share-note" == "This browser can only share the text."
+  expect state shareKind == "streak"
   back
   clock settle
   tap "start-week"
@@ -441,7 +446,7 @@ test "the paywall: two plans, yearly first, and with no store the button says wh
   tap "see-all"
   clock settle
   expect state nav.tab == "metrics"
-  tap "metric-canthal_tilt_deg"
+  tap "locked-eyes"
   clock settle
   expect text "paywall-intro" == "Canthal tilt, jaw width, midface and 21 more are already measured. Pro shows your number for each one and whether it's in the typical range."
   expect tree has "plan-pro.annual"

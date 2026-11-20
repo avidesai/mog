@@ -21,8 +21,8 @@ When you choose to take a measurement, and only after you have given the consent
 | Camera frames (ten per capture) | Your phone's memory only | Until measurements are computed: seconds | **Never** |
 | TrueDepth depth data | Your phone's memory only | Seconds | **Never** |
 | Face landmark coordinates and mesh | Your phone's memory only | Seconds | **Never** |
-| **Measurements** (named scalar values, e.g. "canthal tilt 4.1°") | Encrypted storage on your phone | Until you delete them | Only if you turn on sync (section 4) |
-| Score, tier and plan | Encrypted storage on your phone | Until you delete them | Only if you turn on sync |
+| **Measurements** (named scalar values, e.g. "canthal tilt 4.1°") | Encrypted storage on your phone | Until you delete them | Only if you turn on sync, or share it yourself (section 4) |
+| Score, tier and plan | Encrypted storage on your phone | Until you delete them | Only if you turn on sync, or share it yourself (section 4) |
 | Your consent record (which policy version, when) | Your phone and our server | Until account deletion + the period in section 7 | Yes: this is how we prove consent |
 
 Measurements are numbers. They are not an image, a template, or a descriptor from which a face can be reconstructed or matched. We nonetheless treat them with the care this policy describes, because whether derived scalar measurements constitute "biometric information" under some statutes is unsettled.
@@ -34,6 +34,8 @@ Measurements are numbers. They are not an image, a template, or a descriptor fro
 - We never disclose biometric identifiers or information to a third party, except as required by a valid legal process, and never to advertising, analytics or attribution services.
 - We never use face data for marketing, advertising, or use-based data mining, and no third-party SDK in the app can access it (Apple App Store Review Guideline 5.1.2(vi)).
 - We never use your data to identify you, to match you against any database, or to compare you against other users.
+
+**Sharing your result.** The Share button makes a picture of your score, its likely range, your tier and your percentile against the reference group, or of your streak, or of your score change between two scans. You can add your best measurement to the score picture; it is off unless you turn it on. Where a picture can't be shared, it sends a line of text instead. It goes only to the app you pick in your iPhone's share sheet. The picture has no photo of you and nothing a face could be rebuilt from. The app deletes its copy when the share sheet closes. What happens to it after that is between you and the app you shared to. A share you start is your own disclosure, not ours.
 
 ## 5. Consent
 

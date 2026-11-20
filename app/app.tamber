@@ -29,8 +29,3 @@ theme
   viewport.ground = #1F1C18  scheme=fixed
   viewport.ink = #FFFFFF  scheme=fixed
   viewport.guide = #C98A2B  scheme=fixed
-  share.ground = #0F0D0B  scheme=fixed
-  share.ink = #FFFFFF  scheme=fixed
-  share.soft = #B8B0A4  scheme=fixed
-  share.accent = #8AA5FF  scheme=fixed
-  share.line = #34302A  scheme=fixed
