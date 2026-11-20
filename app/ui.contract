@@ -1,0 +1,549 @@
+// The design system (design/design-system/tokens.json) as Contract styles and parts.
+// Colours are app.tamber tokens. Type sizes are rem so they follow the reader's text size.
+font "Inter Tight"
+  400 = "assets/fonts/InterTight-Regular.ttf"
+  500 = "assets/fonts/InterTight-Medium.ttf"
+  600 = "assets/fonts/InterTight-SemiBold.ttf"
+  700 = "assets/fonts/InterTight-Bold.ttf"
+font "Instrument Serif" = "assets/fonts/InstrumentSerif-Regular.ttf"
+
+style Display
+  font-family="Instrument Serif"
+  font-weight=400
+  letter-spacing="-0.03em"
+  color="ink.main"
+  line-height=1.3
+
+style T1
+  font-size="min(-exact-title1, 58px)"
+  line-height=1.21
+  font-weight=600
+  letter-spacing="-0.022em"
+  color="ink.main"
+
+style T2
+  font-size="min(-exact-title3, 44px)"
+  line-height=1.3
+  font-weight=700
+  letter-spacing="-0.018em"
+  color="ink.main"
+
+style T3
+  font-size="1.0625rem"
+  line-height=1.41
+  font-weight=600
+  letter-spacing="-0.016em"
+  color="ink.main"
+
+style RowTitle
+  font-size="min(-exact-callout, 30px)"
+  line-height=1.375
+  font-weight=600
+  letter-spacing="-0.014em"
+  color="ink.main"
+
+style Body
+  font-size="0.9375rem"
+  line-height=1.47
+  letter-spacing="-0.012em"
+  color="ink.soft"
+
+style Detail
+  font-size="0.8125rem"
+  line-height=1.46
+  letter-spacing="-0.01em"
+  color="ink.mute"
+
+style Caption
+  font-size="0.75rem"
+  line-height=1.42
+  letter-spacing="-0.01em"
+  color="ink.mute"
+
+style LabelText
+  font-size="0.75rem"
+  line-height=1.33
+  font-weight=700
+  letter-spacing="0.06em"
+  text-transform="uppercase"
+  color="ink.mute"
+
+style Value
+  font-size="1.0625rem"
+  line-height=1.3
+  font-weight=500
+  letter-spacing="-0.01em"
+  color="ink.main"
+
+style CardBox
+  background-color="bg.card"
+  border="1.5px solid"
+  border-color="line.hair"
+  border-radius=16
+
+// Anything pressable carries the 4px lip.
+style LipBox
+  background-color="bg.card"
+  border="1.5px solid"
+  border-bottom-width=4
+  border-color="line.hair"
+  border-radius=16
+  :active
+    background-color="bg.raised"
+
+style OptionBox
+  background-color="bg.card"
+  border="2px solid"
+  border-bottom-width=4
+  border-color="line.hair"
+  border-radius=16
+  :active
+    background-color="bg.raised"
+  :checked
+    border-color="accent.main"
+
+style RaisedBox
+  background-color="bg.raised"
+  border-radius=16
+
+style WashBox
+  background-color="accent.wash"
+  border-radius=16
+
+style PrimaryBox
+  background-color="accent.main"
+  color="on.accent"
+  border-radius=16
+  border-bottom="4px solid"
+  border-color="accent.deep"
+  :active
+    background-color="accent.deep"
+  :disabled
+    opacity=0.4
+
+style QuietBox
+  color="ink.soft"
+  :active
+    opacity=0.6
+
+component Primary
+  props
+    label: string
+    go: action
+    off: bool
+    id: string
+  view
+    button appearance="none"
+      class=PrimaryBox
+      box-sizing="border-box"
+      width="100%"
+      press=go
+      disabled=off
+      testId=id
+      display="flex"
+      align-items="center"
+      justify-content="center"
+      min-height="3.375rem"
+      padding="6px 16px"
+      text label font-size="1rem"
+        line-height="1.25rem"
+        font-weight=700
+        letter-spacing="-0.012em"
+        text-align="center"
+
+component Secondary
+  props
+    label: string
+    go: action
+    id: string
+  view
+    button appearance="none"
+      class=LipBox
+      box-sizing="border-box"
+      width="100%"
+      press=go
+      testId=id
+      display="flex"
+      align-items="center"
+      justify-content="center"
+      min-height="3.375rem"
+      padding="6px 16px"
+      text label font-size="1rem"
+        line-height="1.25rem"
+        font-weight=700
+        letter-spacing="-0.012em"
+        color="ink.main"
+        text-align="center"
+
+component Quiet
+  props
+    label: string
+    go: action
+    id: string
+  view
+    button appearance="none"
+      class=QuietBox
+      box-sizing="border-box"
+      width="100%"
+      press=go
+      testId=id
+      display="flex"
+      align-items="center"
+      justify-content="center"
+      min-height="3rem"
+      padding="4px 16px"
+      text label font-size="0.9375rem"
+        line-height="1.25rem"
+        font-weight=600
+        letter-spacing="-0.012em"
+        text-align="center"
+
+// A choice: one line, or a title over a detail. `mark` is what shows at the end when chosen ("" for nothing).
+component Option
+  props
+    label: string
+    detail: string
+    on: bool
+    mark: string
+    go: action
+    id: string
+  view
+    button appearance="none"
+      class=OptionBox
+      box-sizing="border-box"
+      width="100%"
+      role="radio"
+      aria-checked=on
+      press=go
+      testId=id
+      display="flex"
+      align-items="center"
+      gap=12
+      min-height="3.5rem"
+      padding="10px 16px"
+      text-align="start"
+      column flex=1 min-width=0 gap=2
+        text label font-size="min(-exact-subheadline, 34px)"
+          line-height=1.47
+          font-weight=600
+          letter-spacing="-0.012em"
+          color="ink.main"
+        if detail != ""
+          text detail class=Detail
+      if on and mark != ""
+        text mark font-size="0.8125rem" font-weight=700 color="accent.main"
+
+component Label
+  props
+    label: string
+  view
+    text label class=LabelText
+
+component Chip
+  props
+    label: string
+  view
+    row border="1.5px solid"
+      border-color="line.hair"
+      border-radius=999
+      padding="3px 10px"
+      background-color="bg.card"
+      text label font-size="0.75rem"
+        line-height="1rem"
+        font-weight=600
+        letter-spacing="0.01em"
+        color="ink.soft"
+
+// A capture check: green when it passes, amber outline while it fails.
+component Gate
+  props
+    label: string
+    pass: bool
+  view
+    row align-items="center"
+      gap=5
+      border-radius=999
+      padding="4px 11px"
+      border="1.5px solid"
+      border-color=(pass ? "positive.wash" : "state.caution")
+      background-color=(pass ? "positive.wash" : "bg.card")
+      if pass
+        svg width=11 height=11 viewBox="0 0 12 12" aria-hidden=true
+          path d="M2 6.5l2.6 2.6L10 3.6"
+            stroke="positive.text"
+            stroke-width=1.8
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+      text label font-size="0.75rem"
+        line-height="1rem"
+        font-weight=600
+        color=(pass ? "positive.text" : "state.caution")
+
+component Mark
+  props
+    name: string
+  view
+    row align-items="center" gap=8
+      svg width=20 height=10 viewBox="0 0 20 10" aria-hidden=true
+        line x1=3 y1=5 x2=17 y2=5 stroke="brand.bronze" stroke-width=1.6
+        circle cx=3 cy=5 r=2.8 fill="brand.bronze"
+        circle cx=17 cy=5 r=2.8 fill="brand.bronze"
+      text name font-size="1.0625rem"
+        font-weight=600
+        letter-spacing="-0.03em"
+        color="ink.main"
+        text-transform="lowercase"
+
+// The streak: the only place the flame colour appears.
+component StreakPill
+  props
+    count: number
+  view
+    row align-items="center"
+      gap=5
+      background-color="flame.wash"
+      border-radius=999
+      padding="5px 11px 5px 9px"
+      testId="streak"
+      svg width=13 height=15 viewBox="0 0 13 15" aria-hidden=true
+        path d="M6.5 1C4 4 2 5.6 2 8.6A4.5 4.5 0 0 0 11 8.6C11 5.6 8.4 4.6 6.5 1z" fill="flame.icon"
+      text `${count}` font-size="0.875rem"
+        font-weight=700
+        letter-spacing="-0.01em"
+        color="flame.text"
+
+component Chevron
+  view
+    svg width=8 height=14 viewBox="0 0 8 14" aria-hidden=true flex-shrink=0
+      path d="M1 1l6 6-6 6"
+        stroke="ink.faint"
+        stroke-width=1.8
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+
+component Lock
+  view
+    svg width=14 height=16 viewBox="0 0 16 18" aria-hidden=true flex-shrink=0
+      path d="M4.5 7.5V5a3.5 3.5 0 017 0v2.5" stroke="ink.mute" stroke-width=1.6 fill="none"
+      rect x=2.5 y=7.5 width=11 height=8.5 rx=2 stroke="ink.mute" stroke-width=1.6 fill="none"
+
+// Done or not: a filled green check, or an empty ring.
+component Check
+  props
+    done: bool
+  view
+    svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true flex-shrink=0
+      if done
+        circle cx=15 cy=15 r=15 fill="positive.fill"
+        path d="M8.5 15.5l4 4L21.5 11"
+          stroke="on.accent"
+          stroke-width=2.4
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+      else
+        circle cx=15 cy=15 r=13.75 stroke="ink.faint" stroke-width=2.5 fill="none"
+
+// The week: seven pips, one filled per day done.
+component Pips
+  props
+    days: number
+  view
+    row gap=5
+      for i in [0, 1, 2, 3, 4, 5, 6] key=i
+        view flex=1
+          height=8
+          border-radius=999
+          background-color=(i < days ? "positive.fill" : "bg.track")
+
+// Where a reading sits: the track is ±3 SD of the reference, the wash is the typical range.
+component Track
+  props
+    pos: number
+  view
+    view position="relative" height=14
+      view position="absolute"
+        left=0
+        right=0
+        top=4
+        height=6
+        border-radius=999
+        background-color="bg.track"
+      view position="absolute"
+        left="33.33%"
+        width="33.34%"
+        top=4
+        height=6
+        background-color="accent.wash"
+      view position="absolute"
+        left=`calc(${pos * 100}% - 2px)`
+        top=0
+        width=4
+        height=14
+        border-radius=2
+        background-color="accent.main"
+
+// The score ring. The arc spans the band, low to high on 0–10: the band is the number.
+component Ring
+  props
+    low: number
+    high: number
+  slot
+  view
+    view position="relative" width=262 height=262 max-width="100%" flex-shrink=0
+      svg viewBox="0 0 262 262"
+        position="absolute"
+        inset=0
+        width="100%"
+        height="100%"
+        aria-hidden=true
+        circle cx=131 cy=131 r=116 fill="none" stroke="bg.track" stroke-width=15
+        circle cx=131
+          cy=131
+          r=116
+          fill="none"
+          stroke="accent.main"
+          stroke-width=15
+          stroke-linecap="round"
+          stroke-dasharray=`${72.885 * (high - low)} 729`
+          transform=`rotate(${36 * low - 90} 131 131)`
+      column position="absolute" inset=0 align-items="center" justify-content="center"
+        children
+
+// A pushed screen's bar: back (or close), a title, and a trailing note.
+component NavBar
+  props
+    title: string
+    trailing: string
+    close: bool
+    back: action
+    backLabel: string
+  view
+    row align-items="center" min-height=56 padding="0 20px" gap=4 flex-shrink=0
+      button id="back"
+        appearance="none"
+        press=back
+        aria-label=backLabel
+        testId="back"
+        display="flex"
+        align-items="center"
+        justify-content="center"
+        width=44
+        height=44
+        margin-left=-14
+        if close
+          svg width=14 height=14 viewBox="0 0 14 14" aria-hidden=true
+            path d="M1.5 1.5l11 11M12.5 1.5l-11 11"
+              stroke="ink.main"
+              stroke-width=2
+              fill="none"
+              stroke-linecap="round"
+        else
+          svg width=16 height=16 viewBox="0 0 16 16" aria-hidden=true
+            path d="M10 2.5L4.5 8l5.5 5.5"
+              stroke="ink.main"
+              stroke-width=2
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+      text title class=T3 flex=1 min-width=0
+      if trailing != ""
+        text trailing font-size="0.875rem" font-weight=500 color="ink.mute"
+
+// Onboarding's bar: back and three steps.
+component StepBar
+  props
+    step: number
+    back: action
+    backLabel: string
+  view
+    row align-items="center" min-height=56 padding="0 20px" gap=12 flex-shrink=0
+      button id="back"
+        appearance="none"
+        press=back
+        aria-label=backLabel
+        testId="back"
+        display="flex"
+        align-items="center"
+        justify-content="center"
+        width=44
+        height=44
+        margin-left=-14
+        svg width=16 height=16 viewBox="0 0 16 16" aria-hidden=true
+          path d="M10 2.5L4.5 8l5.5 5.5"
+            stroke="ink.main"
+            stroke-width=2
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+      row flex=1 gap=4
+        for i in [1, 2, 3] key=i
+          view flex=1
+            height=4
+            border-radius=2
+            background-color=(i <= step ? "accent.main" : "bg.track")
+
+// A stat tile: one number and what it counts.
+component Tile
+  props
+    value: string
+    label: string
+    tone: string
+  view
+    column flex="1 1 8rem"
+      min-width=0
+      border-radius=20
+      padding=16
+      gap=4
+      background-color=(tone == "accent" ? "accent.wash" : tone == "flame" ? "flame.wash" : tone == "positive" ? "positive.wash" : "bg.card")
+      border="1.5px solid"
+      border-color=(tone == "plain" ? "line.hair" : "transparent")
+      text value font-size="min(-exact-title1, 44px)"
+        line-height=1.2
+        font-weight=700
+        letter-spacing="-0.02em"
+        color=(tone == "accent" ? "accent.main" : tone == "flame" ? "flame.text" : tone == "positive" ? "positive.text" : "ink.main")
+      text label font-size="0.8125rem"
+        line-height="1.125rem"
+        letter-spacing="-0.01em"
+        color=(tone == "accent" ? "accent.ink" : tone == "flame" ? "flame.text" : tone == "positive" ? "positive.text" : "ink.soft")
+
+// The welcome and plan illustration: a schematic face with one measurement drawn on it.
+component FaceArt
+  props
+    value: string
+    tall: bool
+  view
+    view position="relative"
+      border-radius=20
+      background-color="bg.raised"
+      height=(tall ? 300 : 220)
+      overflow="hidden"
+      svg viewBox="0 0 350 300"
+        position="absolute"
+        inset=0
+        width="100%"
+        height="100%"
+        aria-hidden=true
+        ellipse cx=175 cy=165 rx=88 ry=116 fill="bg.paper" stroke="line.hair" stroke-width=1.5
+        path d="M175 125v62l-14 12"
+          stroke="ink.faint"
+          stroke-width=1.5
+          fill="none"
+          stroke-linecap="round"
+        line x1=153 y1=222 x2=197 y2=222 stroke="ink.faint" stroke-width=1.5 stroke-linecap="round"
+        line x1=137 y1=136 x2=213 y2=136 stroke="accent.main" stroke-width=2.5
+        circle cx=137 cy=136 r=5 fill="accent.main"
+        circle cx=213 cy=136 r=5 fill="accent.main"
+      if value != ""
+        row position="absolute"
+          right="12%"
+          top="38%"
+          background-color="bg.card"
+          border-radius=8
+          padding="4px 10px"
+          border="1.5px solid"
+          border-color="line.hair"
+          text value font-size="1rem" font-weight=500 color="ink.main"

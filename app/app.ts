@@ -8,7 +8,7 @@ import fixtures from './data/scoring_cases.json';
 import { loadRegistry, type Sex } from './core/registry.ts';
 import { score, type CompositeReference, type MetricReading, type ScoreResult } from './core/scoring.ts';
 import { buildPlan, type PlanCard } from './core/planner.ts';
-import { HabitEngine, newHabitState, type HabitState } from './core/habit.ts';
+import { HabitEngine, daysBetween, newHabitState, type HabitState } from './core/habit.ts';
 import { acknowledge, unfinishedPurchases } from '@exact/purchases';
 
 // Privacy invariant: this file holds named measurements and plan state only. No frame, depth map,
@@ -84,12 +84,16 @@ function view(s: Saved, today: string, isPro: boolean): View {
       free, plain: free ? copyOf.get(m.id)!.plain : '',
       refLow: unit === 'category' ? '' : fmt(m.refMean - m.refSd, unit), refHigh: unit === 'category' ? '' : fmt(m.refMean + m.refSd, unit),
       contradicted: m.evidenceGrade === 'contradicted', community: m.evidenceGrade === 'community',
+      // Where the reading sits on a ±3 SD track; locked rows get the middle, so nothing leaks through the lock.
+      pos: m.z === null || !free ? 0.5 : Math.min(1, Math.max(0, (m.z + 3) / 6)),
     }];
   });
   const habit = s.habit ? new HabitEngine(s.habit) : null;
   return {
     hasScan: true, scanDate: scan.date, nMetrics: metrics.length,
-    score: r.score.toFixed(1), low: r.scoreLow.toFixed(1), high: r.scoreHigh.toFixed(1), pct: ordinal(Math.round(r.percentile)),
+    nMovable: r.metrics.filter((m) => m.value !== null && reg.metrics.get(m.id)!.modifiable).length,
+    score: r.score.toFixed(1), low: r.scoreLow.toFixed(1), high: r.scoreHigh.toFixed(1), lowN: r.scoreLow, highN: r.scoreHigh,
+    pct: ordinal(Math.round(r.percentile)),
     tier: r.tier, modelVersion: r.modelVersion,
     strength: r.topStrength ?? '', improvable: r.mostImprovable ?? '',
     metrics,
@@ -111,7 +115,8 @@ function habitTasks(e: HabitEngine, today: string, findings: Map<string, string[
       id: t.taskId, title: rule?.taskTitle ?? t.taskId, cadence: t.cadence,
       done: t.cadence === 'once' ? Object.values(e.s.completions).some((ids) => ids.includes(t.taskId)) : done.includes(t.taskId),
       weeklyDone: weekly[t.taskId]?.[0] ?? 0, weeklyTarget: weekly[t.taskId]?.[1] ?? 0,
-      headline: rule?.copy.headline ?? '', whyThis: rule?.copy.why_this ?? '', effort: rule?.effort ?? 'low',
+      headline: rule?.copy.headline ?? '', body: rule?.copy.body ?? '', whyThis: rule?.copy.why_this ?? '',
+      evidence: rule?.evidenceGrade ?? 'weak', effort: rule?.effort ?? 'low',
       weeksLow: rule?.expectedTimelineWeeks[0] ?? 0, weeksHigh: rule?.expectedTimelineWeeks[1] ?? 0,
       basedOn: (findings.get(rule?.id ?? '') ?? []).map((id) => copyOf.get(id)?.short ?? id).join(', '),
     };
@@ -119,7 +124,7 @@ function habitTasks(e: HabitEngine, today: string, findings: Map<string, string[
 }
 
 const emptySummary = (): View['summary'] => ({
-  week: 0, currentDays: 0, longestDays: 0, thisWeekDays: 0, banked: [], scanWindow: 0, daysUntilScan: -1,
+  day: 0, week: 0, currentDays: 0, longestDays: 0, thisWeekDays: 0, banked: [], scanWindow: 0, daysUntilScan: -1,
   repairAvailable: false, atRisk: false, dayComplete: false, finished: false,
 });
 
@@ -130,7 +135,7 @@ function summaryView(e: HabitEngine, today: string): View['summary'] {
   if (!(atRisk && e.repairAvailable(today))) e.reconcile(today);
   const p = e.pathSummary(today);
   return {
-    week: p.weekIndex, currentDays: p.currentDays, longestDays: p.longestDays, thisWeekDays: p.thisWeekDays,
+    day: daysBetween(today, e.s.planStart) + 1, week: p.weekIndex, currentDays: p.currentDays, longestDays: p.longestDays, thisWeekDays: p.thisWeekDays,
     banked: p.bankedWeeks, scanWindow: p.scanWindow ?? 0, daysUntilScan: p.daysUntilScan ?? -1,
     repairAvailable: p.repairAvailable, atRisk,
     dayComplete: e.dayStatus(today).complete, finished: p.finished,
@@ -138,7 +143,7 @@ function summaryView(e: HabitEngine, today: string): View['summary'] {
 }
 
 const emptyView = (): View => ({
-  hasScan: false, scanDate: '', nMetrics: 0, score: '', low: '', high: '', pct: '', tier: '', modelVersion: '',
+  hasScan: false, scanDate: '', nMetrics: 0, nMovable: 0, score: '', low: '', high: '', lowN: 0, highN: 0, pct: '', tier: '', modelVersion: '',
   strength: '', improvable: '', metrics: [], plan: [], professional: [], info: [], dailyMinutes: 0, tasks: [], summary: emptySummary(),
 });
 
@@ -211,14 +216,15 @@ const sources: Sources = {
 
   setTask: async ([taskId, today, done], _store, storage) => {
     const s = await load(storage);
-    if (!s.habit) return { ok: false, error: 'no plan' };
+    if (!s.habit) return { ok: false, error: 'no plan', dayCompleted: false };
     const e = new HabitEngine(s.habit);
     const once = s.habit.tasks.find((t) => t.taskId === taskId)?.cadence === 'once';
+    const was = e.dayStatus(today).complete;
     if (done) e.completeTask(taskId, today);
     else if (once) e.uncompleteEverywhere(taskId);
     else e.uncompleteTask(taskId, today);
     await save(storage, s);
-    return ok;
+    return { ok: true, error: '', dayCompleted: !was && e.dayStatus(today).complete };
   },
 
   repairStreak: async ([today], _store, storage) => {

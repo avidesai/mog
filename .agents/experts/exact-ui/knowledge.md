@@ -22,3 +22,14 @@
 
 ## Philosophy constraints that collide with our design system
 Controls, bars, type and dark mode are the platform's; emphasis is a *part*, not paint on a control; "leave the rest unsaid". Our chunky lipped buttons are therefore *tells*. Brand survives through `app.tamber` tokens (paper, accent #2E5BFF, positive, flame amber, finish gold) and content parts.
+
+## Drawing the design system in Exact (20 Nov)
+- `app/app.tamber` holds `design/design-system/tokens.json` as tokens; `app/ui.contract` holds the type styles and parts (Primary, Secondary, Quiet, Option, Chip, Gate, Track, Ring, NavBar, StepBar, Tile, …); `app.contract` imports them with `use … from "./ui.contract"`.
+- Token names must be dotted (`bg.paper`, `ink.main`): a bare word is read as a CSS colour name and refused. Tokens resolve only when building `app.contract` itself, not another file beside it.
+- A drawn control is `button appearance="none"` with a `style`: `:active`, `:disabled` and `:checked` (from `aria-checked`) are state blocks. Sizes are content-box: say `box-sizing="border-box"`, and `width="100%"` (a button shrinks to fit).
+- A style row may appear once per `style`; `contract fmt` rewrites `a = b` as `a=b`.
+- `font-size="min(<text style>, Npx)"` caps growth (`min(-exact-title1, 58px)`); `min()` of a rem is refused. Instrument Serif needs `line-height` 1.3 or its glyphs spill their line box.
+- The drawn tab bar follows `recipes/tabs.md`: `row role="tablist" appearance="none"` overlaid at the bottom, shown on the four tab roots only; each root pads its bottom by the bar's height.
+- Pushed screens say `navigationBar="none"` and draw their own bar with a `button id="back"`, which the edge swipe presses. Not yet seen on iOS.
+- `verify web` is clean but for one deliberate finding: the score numeral stays 104 px inside its fixed ring.
+- `ink.mute` and `flame.text` are a shade darker than tokens.json so they hold 4.5:1 on the raised and wash grounds.

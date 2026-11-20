@@ -1,0 +1,31 @@
+tamber brand
+
+theme
+  AccentColor = light-dark(#2E5BFF, #8AA5FF)
+  bg.paper = light-dark(#FBF9F5, #15130F)
+  bg.card = light-dark(#FFFFFF, #1E1B16)
+  bg.raised = light-dark(#F3EFE6, #272319)
+  bg.track = light-dark(#EFE9DD, #2E2920)
+  ink.main = light-dark(#1A1714, #F5F1EA)
+  ink.soft = light-dark(#4A443D, #CFC8BC)
+  ink.mute = light-dark(#736B61, #9B9284)
+  ink.faint = light-dark(#B5ADA2, #6B6457)
+  line.hair = light-dark(#E6E0D6, #332E25)
+  accent.main = light-dark(#2E5BFF, #8AA5FF)
+  accent.deep = light-dark(#1F44CC, #6A86E6)
+  accent.ink = light-dark(#1F44CC, #8AA5FF)
+  accent.wash = light-dark(#E8EDFF, #1F2742)
+  on.accent = light-dark(#FFFFFF, #15130F)
+  positive.text = light-dark(#157A49, #6FC294)
+  positive.fill = light-dark(#1C9D5F, #5FB885)
+  positive.wash = light-dark(#E6F4EC, #16301F)
+  flame.icon = light-dark(#D97A0B, #E8963A)
+  flame.text = light-dark(#9A5607, #E0A355)
+  flame.wash = light-dark(#FDF0DC, #2E2010)
+  finish.gold = light-dark(#E0A020, #E8B24A)
+  brand.bronze = light-dark(#8E6020, #D7A95C)
+  state.caution = light-dark(#9A6514, #D9A24E)
+  state.critical = light-dark(#A8372A, #E57A68)
+  viewport.ground = #1F1C18  scheme=fixed
+  viewport.ink = #FFFFFF  scheme=fixed
+  viewport.guide = #C98A2B  scheme=fixed
