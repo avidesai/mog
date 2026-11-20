@@ -25,10 +25,18 @@ test "first session: onboarding, consent, capture, the reveal, then Today"
   expect text "reveal-band" == "likely 5.2 to 8.0"
   expect text "reveal-tier" == "HTN"
   expect text "reveal-pct" == "· 67th percentile"
+  expect text "ladder-line" == "Your band covers MTN to HTN."
+  expect tree has "rung-HTN"
+  tap "share"
+  clock settle
+  expect tree has "share-card"
+  back
+  clock settle
   tap "start-week"
   clock settle
   expect state nav.tab == "today"
   expect text "day" == "Day 1"
+  expect tree has "today-rating"
   expect text "left" == "2 left today."
 
 test "declining consent says what it means and captures nothing"

@@ -153,12 +153,15 @@
     "eyebrow": "Your measurement",
     "what_it_is": "This is your starting point. About half of what makes a face appealing is personal taste, which no measurement captures.",
     "model_version": "Scoring model {version}",
-    "measured_label": "measurements",
-    "movable_label": "you can change",
     "cta_start": "Start week 1",
     "cta_all": "See all {n} first",
     "cta_progress": "See what changed",
-    "cta_today": "Back to Today"
+    "cta_today": "Back to Today",
+    "ladder_label": "Tiers",
+    "band_covers": "Your band covers {from} to {to}.",
+    "band_inside": "Your band sits inside {tier}.",
+    "cta_share": "Share",
+    "see_all": "See all {n}"
   },
   "results": {
     "title": "Metrics",
@@ -240,7 +243,8 @@
     "all_done": "Done for today.",
     "task_done": "Done",
     "plan_link": "Your plan",
-    "quiet_checkin_call": "Call 988"
+    "quiet_checkin_call": "Call 988",
+    "rating_label": "Your rating"
   },
   "task_detail": {
     "why_this": "Why this",
@@ -313,14 +317,14 @@
     "empty_body": "Your first comparison comes with the week-4 scan."
   },
   "share": {
-    "title": "Share",
-    "toggle_score": "Score",
-    "toggle_tier": "Tier",
-    "toggle_metrics": "Up to three measurements",
-    "toggle_photo": "Include capture",
-    "photo_warning": "Your capture leaves the device only if you choose to include it, and only in the image you share.",
-    "card_footer": "Measured on-device · reference-range percentile",
-    "cta": "Share"
+    "title": "Share your score",
+    "cta": "Share",
+    "card_band": "likely {low} to {high}",
+    "card_pct": "{pct} percentile of the reference group",
+    "card_best": "Best measurement",
+    "card_footer": "Measured on an iPhone against published norms",
+    "no_pictures": "This browser can only share the text.",
+    "text": "{score} on {app_name}, {tier}. Likely {low} to {high}."
   },
   "methodology": {
     "title": "How the score works",
@@ -369,5 +373,13 @@
     "week_label": "week {week}",
     "banked_label": "week {week} complete",
     "note": "Your streak counts the days you did the plan."
+  },
+  "tiers": {
+    "range_LTN": "below 4.5",
+    "range_MTN": "4.5 to 6.5",
+    "range_HTN": "6.5 to 8.5",
+    "range_Chadlite": "8.5 to 9.7",
+    "range_Chad": "9.7 and up",
+    "you": "You"
   }
 }
