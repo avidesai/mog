@@ -139,10 +139,12 @@ const sources: Sources = {
   // Stands in for <mog-capture> until the native module lands: a sample face's readings from the
   // golden fixtures. The real module hands over the same named measurements and nothing else.
   saveSampleScan: async ([today, sex, ageBand, goals, timeBudget], _store, storage) => {
+    if (sex !== 'male' && sex !== 'female') return { ok: false, error: 'no reference table' };
+    if (ageBand === '') return { ok: false, error: 'no age band' };
     const s = await load(storage);
     const sample = (fixtures as any[]).find((c) => c.name === (sex === 'female' ? 'average_female_full' : 'average_male_full'));
     const scan: Scan = { id: `scan-${s.scans.length + 1}`, date: today, sex: sex as Sex, ageBand, profileCaptured: true, readings: sample.readings };
-    const r = score({ sex: scan.sex, ageBand, readings: scan.readings }, reg, ref);
+    const r = score({ sex: scan.sex, ageBand, readings: scan.readings, profileCaptured: scan.profileCaptured }, reg, ref);
     const plan = buildPlan({ goals, timeBudgetMin: timeBudget, score: r }, reg);
     const tasks = plan.tasks.map((t) => ({ taskId: t.taskId, cadence: t.cadence as 'daily' | 'weekly' | 'once', opensWeek: t.opensWeek, weeklyTarget: t.weeklyTarget }));
     const habit = s.habit && s.scans.length ? s.habit : newHabitState(today, tasks);

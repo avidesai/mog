@@ -13,6 +13,7 @@ test "first session: onboarding, consent, capture, reveal, results, plan"
   expect disabled "about-next"
   tap "sex-male"
   tap "age-25-34"
+  tap "region-other"
   tap "adult"
   tap "about-next"
   clock settle
@@ -45,13 +46,14 @@ test "declining consent says what it means and captures nothing"
   clock settle
   tap "sex-female"
   tap "age-18-24"
+  tap "region-other"
   tap "adult"
   tap "about-next"
   clock settle
   tap "time-next"
   clock settle
   tap "decline"
-  expect text "declined" == "Without this, the app can't measure anything. Your account stays; nothing is captured."
+  expect text "declined" == "Without this, the app can't measure anything. Nothing is captured."
   expect state onboarded == false
 
 test "a day's tasks count toward the streak and survive a relaunch"
@@ -62,6 +64,7 @@ test "a day's tasks count toward the streak and survive a relaunch"
   clock settle
   tap "sex-male"
   tap "age-18-24"
+  tap "region-other"
   tap "adult"
   tap "about-next"
   clock settle
@@ -93,6 +96,7 @@ test "delete everything wipes the measurements and returns to the start"
   clock settle
   tap "sex-male"
   tap "age-18-24"
+  tap "region-other"
   tap "adult"
   tap "about-next"
   clock settle
@@ -117,3 +121,66 @@ test "delete everything wipes the measurements and returns to the start"
   expect state onboarded == false
   expect state app.hasScan == false
   expect tree has "start"
+  reload
+  clock data
+  expect state onboarded == false
+  expect state goals == []
+  expect state sex == ""
+  expect state ageBand == ""
+  expect state adult == false
+  expect state adultAt == 0
+  expect state timeBudget == 15
+  expect state region == ""
+  expect state consentedOn == ""
+  expect state consentedAt == 0
+  expect state consentPolicy == ""
+  expect state app.hasScan == false
+
+test "Illinois, Texas or Washington: the consent screen says so and offers no consent"
+  tap "start"
+  clock settle
+  tap "goal-general"
+  tap "goals-next"
+  clock settle
+  tap "sex-male"
+  tap "age-18-24"
+  tap "region-restricted"
+  tap "adult"
+  tap "about-next"
+  clock settle
+  tap "time-next"
+  clock settle
+  expect tree has "state-block"
+  expect tree missing "consent"
+  expect state consentedOn == ""
+
+test "withdrawing consent keeps the measurements and asks again before the next scan"
+  tap "start"
+  clock settle
+  tap "goal-general"
+  tap "goals-next"
+  clock settle
+  tap "sex-male"
+  tap "age-18-24"
+  tap "region-other"
+  tap "adult"
+  tap "about-next"
+  clock settle
+  tap "time-next"
+  clock settle
+  tap "consent"
+  clock settle
+  expect state consentPolicy == "1.0"
+  expect state consentedAt >= 1
+  clock +6000
+  clock data
+  clock settle
+  tap "see-results"
+  clock settle
+  tap "see-plan"
+  clock settle
+  tap "tab-you"
+  clock settle
+  tap "withdraw"
+  expect state consentedOn == ""
+  expect state app.hasScan == true

@@ -123,19 +123,26 @@ component App
   state ageBand = "" persist
   state adult = false persist
   state timeBudget = 15 persist
+  state region = "" persist
   state consentedOn = "" persist
+  state consentedAt = 0 persist
+  state consentPolicy = "" persist
+  state adultAt = 0 persist
   state declined = false
   state capStep = 0
   state capturing = false
   state now = 0
   resource time = exactTime() as shape Time
   derive today = formatDate(time.epochAtZero + now, time.utcOffset, "iso")
-  resource app = loadApp(today, false) as shape AppView else empty()
+  resource app = loadApp(today, false) as shape AppView else empty() transient
   mutation scanned as shape Reply refreshes app then afterScan
   mutation taskSet as shape Reply queue refreshes app
   mutation repaired as shape Reply refreshes app
   mutation wiped as shape Reply refreshes app then afterWipe
-  derive aboutReady = sex != "" and ageBand != "" and adult
+  derive aboutReady = sex != "" and ageBand != "" and adult and region != ""
+  // Consent is per policy version (biometric data policy §5): a new version asks again before the next capture.
+  derive policyVersion = "1.0"
+  derive consentCurrent = consentedOn != "" and consentPolicy == policyVersion
   derive sexPlural = sex == "female" ? t("common.sex_plural_female") : t("common.sex_plural_male")
   task tick mount
     every(60000, step)
@@ -160,20 +167,33 @@ component App
     ageBand = v
   action setAdult(on: bool)
     adult = on
+    adultAt = on ? time.epochAtZero + performanceNow() : 0
+  action setRegion(v: string)
+    region = v
   action setTime(m: number)
     timeBudget = m
   action consent
-    consentedOn = today
-    declined = false
-    capStep = 0
-    capturing = true
-    nav = push(nav, "/capture")
+    if aboutReady and region != "restricted"
+      consentedOn = today
+      consentedAt = time.epochAtZero + performanceNow()
+      consentPolicy = policyVersion
+      declined = false
+      capStep = 0
+      capturing = true
+      nav = push(nav, "/capture")
   action decline
     declined = true
   action startScan
-    capStep = 0
-    capturing = true
-    nav = push(nav, "/capture")
+    if consentCurrent
+      capStep = 0
+      capturing = true
+      nav = push(nav, "/capture")
+    else
+      nav = push(nav, "/start/consent")
+  action withdraw
+    consentedOn = ""
+    consentedAt = 0
+    consentPolicy = ""
   action advance
     if capStep < 10
       capStep = capStep + 1
@@ -200,7 +220,12 @@ component App
     sex = ""
     ageBand = ""
     adult = false
+    adultAt = 0
+    timeBudget = 15
+    region = ""
     consentedOn = ""
+    consentedAt = 0
+    consentPolicy = ""
     nav = open(nav, "/")
 
   view
@@ -371,6 +396,17 @@ component App
                           if ageBand == a
                             image "symbol:checkmark"
                     section
+                      header
+                        text t("onboarding.about_state_label")
+                      for v in ["other", "restricted"] key=v
+                        button role="radio"
+                          aria-checked=(region == v)
+                          press=setRegion(v)
+                          testId=`region-${v}`
+                          text (v == "restricted" ? t("onboarding.about_state_restricted") : t("onboarding.about_state_other")) flex=1
+                          if region == v
+                            image "symbol:checkmark"
+                    section
                       row
                         text t("onboarding.about_age_attest") flex=1 min-width=0
                         input type="checkbox" switch
@@ -439,15 +475,21 @@ component App
                         text t("consent.point_delete") flex=1 min-width=0
                       row padding-top=8 padding-bottom=8
                         text t("consent.point_policy") flex=1 min-width=0
-                    section
-                      text t("consent.affirm_label", app_name="Mog")
-                      footer
-                        text (declined ? t("consent.decline_body") : "") testId="declined"
-                  column gap=8 padding=16
-                    button press=consent buttonStyle="filled" testId="consent"
-                      text t("consent.affirm_cta")
-                    button press=decline testId="decline"
-                      text t("consent.decline_cta")
+                    if region != "restricted"
+                      section
+                        text t("consent.affirm_label", app_name="Mog")
+                        footer
+                          text (declined ? t("consent.decline_body") : "") testId="declined"
+                  if region == "restricted"
+                    column gap=8 padding=16 testId="state-block"
+                      text t("consent.state_block_title") font="-exact-headline"
+                      text t("consent.state_block_body") color="-exact-secondary-label"
+                  else
+                    column gap=8 padding=16
+                      button press=consent buttonStyle="filled" testId="consent"
+                        text t("consent.affirm_cta")
+                      button press=decline testId="decline"
+                        text t("consent.decline_cta")
               else if e.name == "capture"
                 column navigationKey=`${e.id}`
                   navigationBar="none"
@@ -788,13 +830,18 @@ component App
                       section
                         header
                           text t("settings.section_data")
-                        RowText(
-                          title=t("settings.consent_status", date=consentedOn),
-                          detail="",
-                          value=none
-                        )
+                        if consentedOn != ""
+                          RowText(
+                            title=t("settings.consent_status", date=consentedOn),
+                            detail="",
+                            value=none
+                          )
+                          button press=withdraw testId="withdraw"
+                            text t("settings.consent_revoke")
                         button press=askWipe destructive=true testId="delete"
                           text t("settings.delete_everything")
+                        footer
+                          text (consentedOn != "" ? t("settings.consent_revoke_body") : "")
                     section
                       header
                         text t("settings.section_about")
