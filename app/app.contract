@@ -1,5 +1,4 @@
 // Every string is t() over strings/en.json, which scripts/sync-app.mjs generates from core/copy/strings.json.
-// Capture is a stand-in until the native module lands: it walks the six checks, then saves a sample face's readings.
 use EmptyState from "exact:content"
 use SummaryCard from "exact:content"
 use Badge from "exact:content"
@@ -146,6 +145,8 @@ component App
   state captureHint = "capture.hint_yaw"
   state captureAbort = ""
   state captureUnsupported = false
+  state captureDenied = false
+  state captureFailed = false
   state captured = ""
   state now = 0
   resource time = exactTime() as shape Time
@@ -220,6 +221,8 @@ component App
     captureHint = "capture.hint_yaw"
     captureAbort = ""
     captureUnsupported = false
+    captureDenied = false
+    captureFailed = false
     captured = ""
   action onCapture(msg: string)
     if msg.startsWith("gates ")
@@ -229,6 +232,8 @@ component App
       captureAbort = msg.slice(8)
     else if msg == "unsupported"
       captureUnsupported = true
+    else if msg == "denied"
+      captureDenied = true
     else if msg == "sample" or msg.startsWith("readings ")
       captured = msg
       capStep = 0
@@ -239,23 +244,36 @@ component App
       nav = push(nav, "/capture")
     else
       nav = push(nav, "/start/consent")
+  // Withdrawing stops a capture in progress: the camera view unmounts and nothing is saved.
   action withdraw
     consentedOn = ""
     consentedAt = 0
     consentPolicy = ""
+    resetCapture()
+  action openSettings
+    openURL("app-settings:")
   // The processing steps, once the readings are in; then they are scored and saved.
   action advance
     if capStep < 4
       capStep = capStep + 1
     else
       capturing = false
-      if captured == "sample"
+      if not consentCurrent
+        resetCapture()
+      else if captured == "sample"
         send scanned = saveSampleScan(today, sex, ageBand, goals.length == 0 ? ["general"] : goals, timeBudget)
       else
         send scanned = saveScan(today, sex, ageBand, goals.length == 0 ? ["general"] : goals, timeBudget, captured.slice(9))
   action afterScan
-    onboarded = true
-    nav = replace(nav, "/reveal")
+    match scanned
+      case some(r)
+        if r.ok
+          onboarded = true
+          nav = replace(nav, "/reveal")
+        else
+          captureFailed = true
+      case none
+        captureFailed = true
   action finish
     let home = open(nav, "/")
     nav = open(home, "/plan")
@@ -405,8 +423,10 @@ component App
                           text (app.summary.dayComplete ? t("today.all_done_title", streak=`${app.summary.currentDays}`) : "") testId="day-done"
                       section
                         if app.summary.scanWindow > 0
-                          text t("today.scan_open_title", week=`${app.summary.scanWindow}`) font="-exact-headline"
-                          text t("today.scan_open_body") color="-exact-secondary-label"
+                          row padding-top=8 padding-bottom=8
+                            column gap=4 flex=1 min-width=0
+                              text t("today.scan_open_title", week=`${app.summary.scanWindow}`) font="-exact-headline"
+                              text t("today.scan_open_body") color="-exact-secondary-label"
                           button press=startScan testId="rescan"
                             text t("today.scan_open_cta")
                         else if app.summary.daysUntilScan == 1
@@ -598,7 +618,19 @@ component App
                       if captureUnsupported
                         text t("capture.unsupported") color="-exact-secondary-label"
                           testId="capture-unsupported"
-                      else if captured == ""
+                      else if captureDenied
+                        text t("capture.camera_denied") color="-exact-secondary-label"
+                          testId="capture-denied"
+                        button press=openSettings buttonStyle="bordered" testId="open-settings"
+                          text t("capture.open_settings")
+                      else if captureFailed
+                        text t("capture.aborted_title") font="-exact-headline"
+                          color="-exact-label"
+                          testId="capture-failed"
+                        text t("capture.failed_body") color="-exact-secondary-label"
+                        button press=resetCapture buttonStyle="bordered" testId="retake"
+                          text t("common.retake")
+                      else if captured == "" and consentCurrent
                         mog-capture message=onCapture
                           height="20rem"
                           border-radius=16
@@ -618,7 +650,8 @@ component App
                               if captured != "" or captureMask.slice(i, i + 1) == "1"
                                 image "symbol:checkmark" aria-label=gateLabel(`${i}`)
                       if captured != ""
-                        text t("processing.title") font="-exact-title2" -exact-fit="shrink"
+                        text t("processing.title") font="-exact-title2"
+                          -exact-fit="shrink"
                           color="-exact-label"
                           testId="processing"
                         list appearance="auto" listStyle="inset-grouped"

@@ -9,10 +9,12 @@
 //           hairline  the Norwood stage the person picked, "1"…"7"; unset means no hairline reading
 //   events  message   "gates <angle><lighting><distance><expression><clear><sharp> <hint key>", each 0/1,
 //                     whenever a check or the hint changes; "aborted <gate index>" when a check drifts
-//                     mid-burst (nothing kept); "readings <json>" once; "unsupported" without TrueDepth.
+//                     mid-burst (nothing kept); "readings <json>" once; "unsupported" without TrueDepth;
+//                     "denied" when camera access is refused.
 import Foundation
 #if os(iOS) && canImport(ARKit)
 import ARKit
+import AVFoundation
 import SceneKit
 import UIKit
 
@@ -36,8 +38,17 @@ struct FaceFrame {
     struct Pose { let yaw: Double; let pitch: Double; let roll: Double; let distance: Double }
 }
 
-final class MogCapture: ExactNativeInstance, ARSessionDelegate {
+/// ARKit's delegate must be an NSObject and ExactNativeInstance is not, so frames come through this.
+/// ARSession holds its delegate weakly; MogCapture holds the sink.
+private final class FrameSink: NSObject, ARSessionDelegate {
+    weak var owner: MogCapture?
+    func session(_ session: ARSession, didUpdate frame: ARFrame) { owner?.update(session, frame) }
+    func session(_ session: ARSession, didFailWithError error: Error) { owner?.failed(error) }
+}
+
+final class MogCapture: ExactNativeInstance {
     private let scene = ARSCNView(frame: .zero)
+    private let sink = FrameSink()
     private let gates = GateEvaluator()
     private var collected: [FaceFrame] = []
     private var stableStreak = 0
@@ -46,7 +57,8 @@ final class MogCapture: ExactNativeInstance, ARSessionDelegate {
     private var lastSent = ""
     private var beard: Int?, hairline: Int?
     private let framesRequired = 10
-    /// Checks must pass this many frames in a row before the burst (≈0.5 s at 30 fps).
+    /// Checks must pass this many frames in a row before the burst. Face tracking may run at 60 fps,
+    /// which halves the hold; spike 1 records the rate and tunes both counts.
     private let stableFramesRequired = 15
 
     init(_ props: [String: String], _ events: ExactNativeEvents) {
@@ -55,10 +67,13 @@ final class MogCapture: ExactNativeInstance, ARSessionDelegate {
         scene.automaticallyUpdatesLighting = false
         events.intrinsicSize(CGSize(width: 320, height: 420))
         guard ARFaceTrackingConfiguration.isSupported else { events.message("unsupported"); return }
+        let access = AVCaptureDevice.authorizationStatus(for: .video)
+        guard access != .denied && access != .restricted else { events.message("denied"); return }
         let config = ARFaceTrackingConfiguration()
         config.isLightEstimationEnabled = true
         config.maximumNumberOfTrackedFaces = 1
-        scene.session.delegate = self
+        sink.owner = self
+        scene.session.delegate = sink
         scene.session.run(config, options: [.resetTracking, .removeExistingAnchors])
     }
 
@@ -69,7 +84,11 @@ final class MogCapture: ExactNativeInstance, ARSessionDelegate {
         hairline = props["hairline"].flatMap { Int($0) }
     }
 
+    // A frame already queued on main may arrive after this: `finished` and the cleared owner drop it.
     override func destroy() {
+        finished = true
+        sink.owner = nil
+        scene.session.delegate = nil
         scene.session.pause()
         collected = []
     }
@@ -80,11 +99,12 @@ final class MogCapture: ExactNativeInstance, ARSessionDelegate {
         events.message(message)
     }
 
-    func session(_ session: ARSession, didUpdate frame: ARFrame) {
+    fileprivate func update(_ session: ARSession, _ frame: ARFrame) {
         guard !finished else { return }
         guard let face = frame.anchors.compactMap({ $0 as? ARFaceAnchor }).first, face.isTracked else {
             stableStreak = 0
-            if capturing { abort(0) } else { send("gates 000000 capture.hint_yaw") }
+            // A face lost mid-burst is most often something in front of it: name the clear-view check.
+            if capturing { abort(4) } else { send("gates 000000 capture.hint_yaw") }
             return
         }
         let luma = LumaStats.compute(from: frame.capturedImage, face: face, camera: frame.camera)
@@ -119,23 +139,27 @@ final class MogCapture: ExactNativeInstance, ARSessionDelegate {
         events.message("aborted \(gate)")
     }
 
-    func session(_ session: ARSession, didFailWithError error: Error) { events.message("unsupported") }
+    fileprivate func failed(_ error: Error) {
+        events.message((error as? ARError)?.code == .cameraUnauthorized ? "denied" : "unsupported")
+    }
 
-    /// Yaw/pitch/roll of the face relative to the camera in degrees, and its distance in metres.
-    /// The sign conventions are one of spike 1's checks (HANDOFF §3.2).
+    /// Yaw and pitch: where the camera sits as seen from the face, which does not depend on how the
+    /// phone is held. Roll: the face's up against the phone's portrait up, in the image plane.
+    /// ARCamera.transform is fixed to the sensor's landscape axes; on a portrait phone its -x is "up".
+    /// Signs are confirmed on a device in spike 1 (HANDOFF §3.2).
     static func pose(of face: ARFaceAnchor, camera: ARCamera) -> FaceFrame.Pose {
-        let m = camera.transform.inverse * face.transform
-        let r = simd_float3x3(SIMD3(m.columns.0.x, m.columns.0.y, m.columns.0.z),
-                              SIMD3(m.columns.1.x, m.columns.1.y, m.columns.1.z),
-                              SIMD3(m.columns.2.x, m.columns.2.y, m.columns.2.z))
-        // ZYX Euler decomposition; ARKit face +Z points out of the face toward the camera.
-        let pitch = asin(max(-1, min(1, -r[2][1])))
-        let yaw = atan2(r[2][0], r[2][2])
-        let roll = atan2(r[0][1], r[1][1])
-        let t = m.columns.3
+        let inFace = face.transform.inverse * camera.transform
+        let d = SIMD3<Float>(inFace.columns.3.x, inFace.columns.3.y, inFace.columns.3.z)
+        let yaw = atan2(d.x, d.z)
+        let pitch = atan2(d.y, hypot(d.x, d.z))
+        let c = camera.transform
+        let forward = simd_normalize(SIMD3<Float>(c.columns.2.x, c.columns.2.y, c.columns.2.z))
+        func onImage(_ v: SIMD3<Float>) -> SIMD3<Float> { simd_normalize(v - simd_dot(v, forward) * forward) }
+        let phoneUp = onImage(-SIMD3<Float>(c.columns.0.x, c.columns.0.y, c.columns.0.z))
+        let faceUp = onImage(SIMD3<Float>(face.transform.columns.1.x, face.transform.columns.1.y, face.transform.columns.1.z))
+        let roll = atan2(simd_dot(simd_cross(phoneUp, faceUp), forward), simd_dot(phoneUp, faceUp))
         let deg = 180 / Double.pi
-        return .init(yaw: Double(yaw) * deg, pitch: Double(pitch) * deg, roll: Double(roll) * deg,
-                     distance: sqrt(Double(t.x * t.x + t.y * t.y + t.z * t.z)))
+        return .init(yaw: Double(yaw) * deg, pitch: Double(pitch) * deg, roll: Double(roll) * deg, distance: Double(simd_length(d)))
     }
 }
 
@@ -152,8 +176,11 @@ struct GateEvaluator {
         var hintKey = "capture.hint_yaw"
         var allPass: Bool { angle && lighting && distance && expression && clear && sharp }
         var mask: String { [angle, lighting, distance, expression, clear, sharp].map { $0 ? "1" : "0" }.joined() }
-        /// Index of the first failing check, in the order the Contract lists them.
-        var firstFailing: Int? { [angle, lighting, distance, expression, clear, sharp].firstIndex(of: false) }
+        /// The check an abort names: Contract indexes, ranked as the reference ranks them (distance before lighting).
+        var firstFailing: Int? {
+            let checks = [angle, lighting, distance, expression, clear, sharp]
+            return [0, 2, 1, 3, 4, 5].first { !checks[$0] }
+        }
     }
 
     private static let expressionShapes: [ARFaceAnchor.BlendShapeLocation] = [

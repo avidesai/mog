@@ -104,18 +104,22 @@ final class CaptureSession: NSObject, ObservableObject, ARSessionDelegate {
 
     func session(_ session: ARSession, didFailWithError error: Error) { phase = .aborted(error.localizedDescription) }
 
-    /// Yaw/pitch/roll of the face relative to the camera, in degrees, and the distance in metres.
+    /// Yaw and pitch: where the camera sits as seen from the face, which does not depend on how the
+    /// phone is held. Roll: the face's up against the phone's portrait up, in the image plane.
+    /// ARCamera.transform is fixed to the sensor's landscape axes; on a portrait phone its -x is "up".
+    /// Same as app/modules/apple/MogCapture.swift; signs are confirmed on a device in spike 1.
     static func pose(of face: ARFaceAnchor, camera: ARCamera) -> FaceFrame.Pose {
-        let faceInCamera = camera.transform.inverse * face.transform
-        let r = simd_float3x3(SIMD3(faceInCamera.columns.0.x, faceInCamera.columns.0.y, faceInCamera.columns.0.z),
-                              SIMD3(faceInCamera.columns.1.x, faceInCamera.columns.1.y, faceInCamera.columns.1.z),
-                              SIMD3(faceInCamera.columns.2.x, faceInCamera.columns.2.y, faceInCamera.columns.2.z))
-        // ZYX Euler decomposition; ARKit face +Z points out of the face toward the camera.
-        let pitch = asin(max(-1, min(1, -r[2][1])))
-        let yaw = atan2(r[2][0], r[2][2])
-        let roll = atan2(r[0][1], r[1][1])
-        let t = faceInCamera.columns.3
-        let dist = sqrt(Double(t.x * t.x + t.y * t.y + t.z * t.z))
-        return .init(yaw: Double(yaw) * 180 / .pi, pitch: Double(pitch) * 180 / .pi, roll: Double(roll) * 180 / .pi, distance: dist)
+        let inFace = face.transform.inverse * camera.transform
+        let d = SIMD3<Float>(inFace.columns.3.x, inFace.columns.3.y, inFace.columns.3.z)
+        let yaw = atan2(d.x, d.z)
+        let pitch = atan2(d.y, hypot(d.x, d.z))
+        let c = camera.transform
+        let forward = simd_normalize(SIMD3<Float>(c.columns.2.x, c.columns.2.y, c.columns.2.z))
+        func onImage(_ v: SIMD3<Float>) -> SIMD3<Float> { simd_normalize(v - simd_dot(v, forward) * forward) }
+        let phoneUp = onImage(-SIMD3<Float>(c.columns.0.x, c.columns.0.y, c.columns.0.z))
+        let faceUp = onImage(SIMD3<Float>(face.transform.columns.1.x, face.transform.columns.1.y, face.transform.columns.1.z))
+        let roll = atan2(simd_dot(simd_cross(phoneUp, faceUp), forward), simd_dot(phoneUp, faceUp))
+        let deg = 180 / Double.pi
+        return .init(yaw: Double(yaw) * deg, pitch: Double(pitch) * deg, roll: Double(roll) * deg, distance: Double(simd_length(d)))
     }
 }

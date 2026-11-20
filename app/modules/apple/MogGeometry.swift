@@ -29,7 +29,9 @@ final class Landmarker {
 
     init() {
         var m: [String: Int] = [:]
-        if let url = Bundle.main.url(forResource: "landmark_map", withExtension: "json"),
+        // Exact ships app.json's host.ios.resources under ExactResources/<to>; the root is the SwiftUI app's.
+        if let url = Bundle.main.url(forResource: "landmark_map", withExtension: "json", subdirectory: "ExactResources/Resources/geometry")
+            ?? Bundle.main.url(forResource: "landmark_map", withExtension: "json"),
            let data = try? Data(contentsOf: url),
            let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
            let pts = obj["points"] as? [String: Any] {

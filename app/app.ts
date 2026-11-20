@@ -150,7 +150,9 @@ async function storeScan(storage: Storage, today: string, sex: string, ageBand: 
   if (ageBand === '') return { ok: false, error: 'no age band' };
   const s = await load(storage);
   const scan: Scan = { id: `scan-${s.scans.length + 1}`, date: today, sex: sex as Sex, ageBand, profileCaptured, readings };
-  const r = score({ sex: scan.sex, ageBand, readings, profileCaptured }, reg, ref);
+  let r;
+  try { r = score({ sex: scan.sex, ageBand, readings, profileCaptured }, reg, ref); }
+  catch { return { ok: false, error: 'nothing scorable' }; } // every reading under its floor: the screen offers a retake
   const plan = buildPlan({ goals, timeBudgetMin: timeBudget, score: r }, reg);
   const tasks = plan.tasks.map((t) => ({ taskId: t.taskId, cadence: t.cadence as 'daily' | 'weekly' | 'once', opensWeek: t.opensWeek, weeklyTarget: t.weeklyTarget }));
   const habit = s.habit && s.scans.length ? s.habit : newHabitState(today, tasks);
@@ -201,7 +203,7 @@ const sources: Sources = {
       if (!reg.metrics.has(id) || !r || typeof r !== 'object') continue;
       const { value, confidence, iqr } = r;
       if (![value, confidence, iqr].every((x) => typeof x === 'number' && Number.isFinite(x))) continue;
-      readings[id] = { value, confidence, iqr };
+      readings[id] = { value, confidence: Math.min(1, Math.max(0, confidence)), iqr: Math.max(0, iqr) };
     }
     if (Object.keys(readings).length === 0) return Promise.resolve({ ok: false, error: 'nothing measured' });
     return storeScan(storage, today, sex, ageBand, goals, timeBudget, readings, false);

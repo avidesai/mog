@@ -14,9 +14,12 @@
 - Consent records `consentedAt` (epoch ms) and `consentPolicy` (policy version). A version change asks again before the next capture (`consentCurrent`). Withdrawing clears consent and keeps the measurements.
 - The IL/TX/WA exclusion is a "Where you live" answer on the about screen. "Illinois, Texas or Washington" shows `consent.state_block_*` and no consent control.
 - `resource app` is `transient`: the runner never keeps the view's score and readings outside `app:/data`. Call `<mog-capture>` from a mutation, never a resource source; a resource that calls `native.call` keeps its answer across launches.
+- `<mog-capture>` (app/modules/apple) sends only `gates <mask> <hint>`, `aborted <i>`, `unsupported`, `denied` and `readings <json>`; `GeometryPipeline.json` writes finite `{value, confidence, iqr}` per metric id and nothing else. `saveScan` keeps registry metric ids with finite numbers (confidence clamped to [0,1], iqr ≥ 0). The capture view renders only while consent is current; withdrawing resets the capture and nothing is saved (tested).
 - **Ship gates, open:**
-  - Exact sets no file-protection class on `app:/data` (default: readable after first unlock). Policy §8 promises complete protection. Set it, by entitlement or a small native module on the data directory, when `host.ios` is added.
-  - When `host.ios` is added, set `deploy.store.ios: "0"`, or update checks start (Exact reference.md:1427).
-  - Capture is a stand-in that saves a fixture face. No build reaches a real person (share, TestFlight) until `<mog-capture>` replaces it.
+  - Exact sets no file-protection class on `app:/data`, and an Exact app cannot declare entitlements yet (Exact issues/20261113-ios-app-cannot-declare-entitlements-or-plist-keys.md). Set `NSFileProtectionComplete` on the data directory from `modules/apple` before release (policy §8).
+  - No build reaches a real person until `<mog-capture>` compiles with the iOS host and the spike-1 device checks pass (core/plan/spike-1.md).
+  - Run the network-interception audit on the first iOS build with `<mog-capture>` and keep the trace (policy §4).
+  - Add an app-level `PrivacyInfo.xcprivacy` (UserDefaults behind `persist` is a required-reason API) before App Store submission.
   - `consent.point_policy` must become a link to the hosted policy (BIPA 15(a)) before the first real capture.
   - `consent.point_cloud` and `point_delete` describe sync that doesn't exist yet. Revisit them with the backend (step 7).
+- **Closed:** `deploy.store.ios` is "0" in app.json (keep it when anything touches `host`).

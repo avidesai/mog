@@ -1,6 +1,7 @@
 // Generates the Exact app's copies of core's source of truth. Exact bundles nothing outside app/.
 //   app/strings/en.json  flat keys (Exact's strings table) from core/copy/strings.json; "" = not rendered, no key
 //   app/data/*.json      the data tables and golden fixtures the TS port reads, byte for byte
+//   app/geometry/        the landmark map the capture module ships
 //   node scripts/sync-app.mjs            → writes them
 //   node scripts/sync-app.mjs --check    → exits 1 if any is stale
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
@@ -23,6 +24,8 @@ walk(JSON.parse(read("core/copy/strings.json")), "");
 const outputs = { "app/strings/en.json": JSON.stringify(strings, null, 2) + "\n" };
 for (const t of ["metrics", "rules", "references", "denylist", "composite_reference"]) outputs[`app/data/${t}.json`] = read(`core/data/${t}.json`);
 outputs["app/data/scoring_cases.json"] = read("core/fixtures/scoring_cases.json");
+// The ARKit vertex picks <mog-capture> reads from its bundle (app.json host.ios.resources); the picker writes ios/.
+outputs["app/geometry/landmark_map.json"] = read("ios/Mog/Geometry/landmark_map.json");
 
 const check = process.argv.includes("--check");
 const stale = [];
